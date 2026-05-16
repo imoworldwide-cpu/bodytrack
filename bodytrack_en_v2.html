@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BODY TRACK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0ede6;--card:#fff;--primary:#0f0f0f;--gold:#b8963c;
+  --text:#0f0f0f;--muted:#888;--border:#ddd;
+  --green:#2a7a4b;--blue:#1a5a8a;--red:#8a1a1a;--purple:#5a3080;
+  --rose:#b03060;--peach:#e8a090;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+
+/* ── SETUP ── */
+#setupScreen{position:fixed;inset:0;background:var(--primary);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:32px;overflow-y:auto}
+.setup-logo{margin-bottom:28px;text-align:center}
+.setup-subtitle{font-size:10px;letter-spacing:4px;color:rgba(255,255,255,0.3);text-transform:uppercase;font-family:'Oswald',sans-serif;margin-top:6px}
+.setup-card{background:rgba(255,255,255,0.05);border:1px solid rgba(200,168,75,0.3);border-radius:2px;padding:24px;width:100%;max-width:400px}
+.setup-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:18px}
+.sr{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.sl{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.4);text-transform:uppercase;font-family:'Oswald',sans-serif}
+.si{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:9px 11px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;width:100%;transition:border-color .2s}
+.si:focus{border-color:var(--gold)}
+.gr{display:flex;gap:7px}
+.gb{flex:1;padding:9px;border:1.5px solid rgba(255,255,255,0.15);border-radius:2px;background:none;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;transition:all .2s}
+.gb.sel{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,0.1)}
+.gb.sel-rose{border-color:var(--rose);color:var(--rose);background:rgba(176,48,96,0.1)}
+.setup-btn{width:100%;background:var(--gold);color:var(--primary);border:none;padding:11px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:3px;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.setup-btn:hover{opacity:.85}
+.setup-note{font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:12px;line-height:1.5}
+
+/* ── HEADER ── */
+.app-header{background:var(--primary);padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;border-bottom:1.5px solid var(--gold)}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.user-badge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:5px 10px}
+.u-av{width:26px;height:26px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--primary);flex-shrink:0}
+.u-av.rose{background:var(--rose)}
+.u-nm{font-size:11px;color:rgba(255,255,255,0.7)}
+.share-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:5px 12px;border-radius:2px;font-size:9px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;transition:all .2s;text-transform:uppercase}
+.share-btn:hover{background:var(--gold);color:var(--primary)}
+
+/* ── NAV ── */
+.main-nav{background:var(--primary);display:flex;border-top:1px solid rgba(255,255,255,0.06);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav-item{padding:9px 14px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:10px;letter-spacing:2px;white-space:nowrap;transition:all .2s;border-bottom:2px solid transparent;font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase}
+.nav-item.active{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-item.rose-tab.active{color:var(--peach);border-bottom-color:var(--peach)}
+
+/* ── CONTENT ── */
+.content{padding:14px;max-width:900px;margin:0 auto}
+.section{display:none}.section.active{display:block}
+
+/* ── METRIC CARDS ── */
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:9px;margin-bottom:12px}
+.mc{background:var(--card);border-radius:2px;padding:11px 13px;border:1px solid var(--border);position:relative;overflow:hidden}
+.mc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold)}
+.mc.blue::after{background:var(--blue)}.mc.green::after{background:var(--green)}
+.mc.red::after{background:var(--red)}.mc.purple::after{background:var(--purple)}
+.mc.rose::after{background:var(--rose)}
+.mc-l{font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase;font-weight:700}
+.mc-v{font-family:'Oswald',sans-serif;font-size:22px;color:var(--text);line-height:1;font-weight:700}
+.mc-u{font-family:'Inter',sans-serif;font-size:10px;color:var(--muted);margin-left:2px}
+.mc-c{font-size:10px;margin-top:2px;font-weight:700}
+.mc-c.bad{color:#a03030}.mc-c.good{color:var(--green)}
+.mc-sub{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* ── CHART ── */
+.cc{background:var(--card);border-radius:2px;padding:14px;border:1px solid var(--border);margin-bottom:11px}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.ct{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:'Oswald',sans-serif}
+.cleg{display:flex;gap:10px;font-size:10px;color:var(--muted);margin-top:3px;flex-wrap:wrap}
+.cleg span{display:flex;align-items:center;gap:3px}
+.ld{width:8px;height:8px;border-radius:50%;display:inline-block}
+.pr{display:flex;gap:4px;flex-shrink:0}
+.pb{padding:3px 8px;border-radius:2px;border:1px solid var(--border);background:none;font-size:9px;cursor:pointer;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:1px;transition:all .2s}
+.pb.active{background:var(--gold);color:var(--primary);border-color:var(--gold)}
+.cw{position:relative;height:200px}
+
+/* ── INSIGHT CARD ── */
+.ic{background:var(--primary);border-radius:2px;border:1px solid var(--gold);margin-bottom:11px;overflow:hidden}
+.ic.rose-border{border-color:var(--rose)}
+.ic-h{padding:11px 14px;display:flex;align-items:center;gap:9px;border-bottom:1px solid rgba(200,168,75,0.22)}
+.ic-h.rose-bdr{border-bottom-color:rgba(176,48,96,0.3)}
+.ic-ico{width:26px;height:26px;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border-radius:1px;font-family:'Oswald',sans-serif;color:var(--gold);font-weight:700}
+.ic-ico.rose{border-color:var(--rose);color:var(--peach)}
+.ic-t{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase}
+.ic-t.rose{color:var(--peach)}
+.ic-s{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
+.ic-b{padding:11px 14px}
+.ic-row{display:flex;gap:7px;margin-bottom:5px;align-items:flex-start}
+.ic-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:1px;letter-spacing:1px;white-space:nowrap;font-family:'Oswald',sans-serif;text-transform:uppercase}
+.ic-tag.meal{background:rgba(26,90,138,0.3);color:#6ab4f0;border:1px solid rgba(26,90,138,0.5)}
+.ic-tag.ex{background:rgba(42,122,75,0.3);color:#6ad4a0;border:1px solid rgba(42,122,75,0.5)}
+.ic-tag.party{background:rgba(200,168,75,0.2);color:var(--gold);border:1px solid rgba(200,168,75,0.4)}
+.ic-tag.sleep{background:rgba(90,48,128,0.3);color:#c0a0f0;border:1px solid rgba(90,48,128,0.5)}
+.ic-tag.period{background:rgba(176,48,96,0.3);color:var(--peach);border:1px solid rgba(176,48,96,0.5)}
+.ic-c{font-size:11px;color:rgba(255,255,255,0.75);line-height:1.5}
+
+/* ── TREND GRID ── */
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+@media(max-width:500px){.tg{grid-template-columns:1fr}}
+.tp{background:var(--card);border-radius:2px;border:1px solid var(--border);padding:12px}
+.th{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:'Oswald',sans-serif;margin-bottom:9px}
+.th.lose{color:var(--green)}.th.gain{color:var(--red)}
+.ti{font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);line-height:1.4}
+.ti:last-child{border-bottom:none}
+.ti .td2{font-size:9px;color:var(--muted);font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.ti .tk{font-family:'Oswald',sans-serif;font-size:13px;font-weight:700}
+.ti .tk.lose{color:var(--green)}.ti .tk.gain{color:var(--red)}
+
+/* ── DIARY ── */
+.lh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.add-btn{background:var(--primary);border:1.5px solid var(--gold);color:var(--gold);border-radius:2px;padding:6px 13px;font-size:9px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.add-btn:hover{background:var(--gold);color:var(--primary)}
+.dd{background:var(--card);border-radius:2px;border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+.db{background:var(--primary);padding:7px 13px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase}
+.de{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;gap:9px;align-items:flex-start}
+.de:last-child{border-bottom:none}
+.deb{font-size:8px;font-weight:700;padding:3px 7px;border-radius:1px;white-space:nowrap;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:1px;min-width:52px;text-align:center;flex-shrink:0}
+.deb.body{background:var(--primary);color:var(--gold);border:1px solid rgba(200,168,75,0.4)}
+.deb.meal{background:rgba(26,90,138,0.1);color:var(--blue);border:1px solid rgba(26,90,138,0.3)}
+.deb.ex{background:rgba(42,122,75,0.1);color:var(--green);border:1px solid rgba(42,122,75,0.3)}
+.deb.party{background:rgba(200,168,75,0.1);color:var(--gold);border:1px solid rgba(200,168,75,0.3)}
+.deb.sleep{background:rgba(90,48,128,0.1);color:var(--purple);border:1px solid rgba(90,48,128,0.3)}
+.deb.period{background:rgba(176,48,96,0.12);color:var(--rose);border:1px solid rgba(176,48,96,0.35)}
+.dem{font-size:13px;font-weight:700;margin-bottom:2px}
+.des{font-size:11px;color:var(--muted);line-height:1.5}
+.det{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:1px;padding:1px 5px;font-size:10px;color:var(--muted);margin-top:3px;font-weight:700;margin-right:3px}
+.det.rose{border-color:rgba(176,48,96,0.3);color:var(--rose)}
+.det.purple{border-color:rgba(90,48,128,0.3);color:var(--purple)}
+
+/* ── CYCLE CALENDAR ── */
+.cycle-section{margin-bottom:14px}
+.cycle-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cycle-nav{display:flex;align-items:center;gap:10px}
+.cycle-nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:4px 10px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;color:var(--muted);font-weight:700;transition:all .2s}
+.cycle-nav-btn:hover{border-color:var(--rose);color:var(--rose)}
+.cycle-month{font-size:14px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);padding:4px 0;font-family:'Oswald',sans-serif}
+.cal-day{background:var(--card);border:1px solid var(--border);border-radius:2px;min-height:52px;padding:4px;cursor:pointer;transition:all .2s;position:relative}
+.cal-day:hover{border-color:var(--rose)}
+.cal-day.other-month{opacity:.35}
+.cal-day.today{border-color:var(--gold)}
+.cal-day.period-day{background:rgba(176,48,96,0.1);border-color:rgba(176,48,96,0.4)}
+.cal-day.ovulation-day{background:rgba(90,48,128,0.08);border-color:rgba(90,48,128,0.4)}
+.cal-day.fertile-day{background:rgba(26,90,138,0.06)}
+.cal-num{font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--text)}
+.cal-day.today .cal-num{color:var(--gold)}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:3px}
+.cal-dot{width:6px;height:6px;border-radius:50%}
+.cal-dot.period{background:var(--rose)}
+.cal-dot.ovulation{background:var(--purple)}
+.cal-dot.fertile{background:var(--blue)}
+.cal-dot.symptom{background:var(--peach)}
+.cal-dot.weight{background:var(--gold)}
+.cal-dot.sleep{background:#8060b0}
+.cycle-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.cycle-legend span{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+
+/* ── PERIOD FORM ── */
+.period-card{background:linear-gradient(135deg,rgba(176,48,96,0.06),rgba(90,48,128,0.04));border:1px solid rgba(176,48,96,0.2);border-radius:2px;padding:16px;margin-bottom:11px}
+.period-title{font-size:11px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--rose);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid rgba(176,48,96,0.2)}
+.next-period-info{background:rgba(176,48,96,0.08);border:1px solid rgba(176,48,96,0.2);border-radius:2px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.npi-label{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.npi-value{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--rose)}
+.npi-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── MODAL ── */
+.mb-bg{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.ms{background:var(--card);width:100%;max-width:580px;border-radius:2px 2px 0 0;padding:18px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mt2{font-size:12px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:12px;border-bottom:2px solid var(--gold);padding-bottom:7px;color:var(--primary)}
+.mtabs{display:flex;flex-wrap:wrap;border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.mtab{flex:1;padding:7px 4px;text-align:center;font-size:8px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted);border:none;background:none;transition:all .2s;min-width:60px}
+.mtab.active{background:var(--primary);color:var(--gold)}
+.mtab.active.rose-active{background:var(--rose);color:#fff}
+.msec{display:none}.msec.active{display:block}
+.fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-bottom:10px}
+.fg{display:flex;flex-direction:column;gap:3px}
+.fl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:2px}
+.fi{padding:8px 10px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;width:100%}
+.fi:focus{border-color:var(--gold)}
+.fi.rose-focus:focus{border-color:var(--rose)}
+textarea.fi{resize:vertical;min-height:56px;line-height:1.5}
+.sg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.sb2{padding:5px 9px;border:1.5px solid var(--border);border-radius:2px;background:none;cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;font-weight:500;color:var(--muted);transition:all .2s}
+.sb2.sel{border-color:var(--gold);color:var(--primary);background:rgba(200,168,75,0.12);font-weight:700}
+.sb2.sel-rose{border-color:var(--rose);color:var(--rose);background:rgba(176,48,96,0.08);font-weight:700}
+.sb2.sel-purple{border-color:var(--purple);color:var(--purple);background:rgba(90,48,128,0.08);font-weight:700}
+.cp{background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:7px 11px;margin:7px 0;font-size:12px;display:flex;align-items:center;gap:5px}
+.cn{font-family:'Oswald',sans-serif;font-size:19px;font-weight:700}
+.ib{display:flex;gap:5px;margin-top:3px}
+.id{width:22px;height:6px;border-radius:1px;border:1px solid var(--border);cursor:pointer;transition:background .2s}
+.id.on{background:var(--gold);border-color:var(--gold)}
+.il{font-size:10px;color:var(--muted);margin-top:2px;letter-spacing:1px}
+.mf{display:flex;gap:7px;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
+.btn-sv{flex:1;background:var(--primary);color:var(--gold);border:1.5px solid var(--gold);padding:10px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.btn-sv:hover{background:var(--gold);color:var(--primary)}
+.btn-sv.rose-btn{border-color:var(--rose);color:var(--rose)}
+.btn-sv.rose-btn:hover{background:var(--rose);color:#fff}
+.btn-cl{background:none;border:1px solid var(--border);padding:10px 14px;border-radius:2px;font-size:10px;cursor:pointer;font-family:'Oswald',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+
+/* ── SHARE ── */
+.sov{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px}
+.sb3{background:var(--primary);border:1px solid var(--gold);border-radius:2px;padding:22px;width:100%;max-width:420px}
+.st{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:5px}
+.ss{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:12px}
+.su{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:9px 11px;font-size:11px;color:rgba(255,255,255,0.55);word-break:break-all;margin-bottom:11px;line-height:1.5;max-height:80px;overflow-y:auto}
+.sa{display:flex;gap:7px}
+.bcopy{flex:1;background:var(--gold);color:var(--primary);border:none;padding:9px;border-radius:2px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Oswald',sans-serif;letter-spacing:2px;text-transform:uppercase}
+.bcl2{background:transparent;border:1px solid rgba(255,255,255,0.15);padding:9px 14px;border-radius:2px;font-size:10px;cursor:pointer;font-family:'Oswald',sans-serif;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:16px;background:var(--primary);border:1px solid var(--gold);color:var(--gold);padding:9px 16px;border-radius:2px;font-size:10px;font-weight:700;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;font-family:'Oswald',sans-serif;letter-spacing:2px;text-transform:uppercase}
+.toast.show{opacity:1;transform:translateY(0)}
+.nd{text-align:center;padding:24px;color:var(--muted);font-size:12px}
+.form-card{background:var(--card);border-radius:2px;padding:16px;border:1px solid var(--border);margin-bottom:11px}
+.form-title{font-size:11px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--gold);display:inline-block}
+.section-label{font-size:10px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+<div id="setupScreen">
+  <div class="setup-logo">
+    <svg viewBox="0 0 220 44" width="200" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
+      <text x="2" y="28" font-family="'Black Ops One',cursive" fill="#fff" font-size="22" letter-spacing="2">BODY</text>
+      <rect x="74" y="8" width="1.5" height="24" fill="#c8a84b" opacity=".5"/>
+      <text x="80" y="28" font-family="'Black Ops One',cursive" fill="#c8a84b" font-size="22" letter-spacing="2">TRACK</text>
+      <text x="2" y="40" font-family="'Oswald',sans-serif" fill="rgba(255,255,255,0.3)" font-size="7" letter-spacing="5">BODY MANAGEMENT SYSTEM</text>
+      <rect x="0" y="42" width="220" height="1" fill="#c8a84b" opacity=".3"/>
+    </svg>
+    <div class="setup-subtitle">Start your journey</div>
+  </div>
+  <div class="setup-card">
+    <div class="setup-title">Create Your Profile</div>
+    <div class="sr"><div class="sl">Name</div><input class="si" id="sName" placeholder="e.g. Sarah" maxlength="20"></div>
+    <div class="sr"><div class="sl">Age</div><input class="si" id="sAge" type="number" placeholder="e.g. 28" min="10" max="99"></div>
+    <div class="sr">
+      <div class="sl">Biological Sex</div>
+      <div class="gr">
+        <button class="gb sel" id="gM" onclick="sg('Male')">Male</button>
+        <button class="gb" id="gF" onclick="sg('Female')">Female</button>
+        <button class="gb" id="gO" onclick="sg('Other')">Other</button>
+      </div>
+    </div>
+    <div class="sr" id="cycleSetupRow" style="display:none">
+      <div class="sl">Average Cycle Length</div>
+      <input class="si" id="sCycleLen" type="number" placeholder="e.g. 28" min="20" max="45" value="28">
+      <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px">Days between periods (typically 21–35)</div>
+    </div>
+    <div class="sr" id="periodSetupRow" style="display:none">
+      <div class="sl">Last Period Start Date</div>
+      <input class="si" id="sLastPeriod" type="date">
+    </div>
+    <button class="setup-btn" onclick="finishSetup()">START →</button>
+    <div class="setup-note">Your data is stored only on this device.<br>Nothing is sent to any server.</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none">
+<div class="app-header">
+  <svg viewBox="0 0 220 44" height="36" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
+    <text x="2" y="28" font-family="'Black Ops One',cursive" fill="#fff" font-size="22" letter-spacing="2">BODY</text>
+    <rect x="74" y="8" width="1.5" height="24" fill="#c8a84b" opacity=".5"/>
+    <text x="80" y="28" font-family="'Black Ops One',cursive" fill="#c8a84b" font-size="22" letter-spacing="2">TRACK</text>
+    <text x="2" y="40" font-family="'Oswald',sans-serif" fill="rgba(255,255,255,0.3)" font-size="7" letter-spacing="5">BODY MANAGEMENT SYSTEM</text>
+    <rect x="0" y="42" width="220" height="1" fill="#c8a84b" opacity=".3"/>
+  </svg>
+  <div class="hdr-right">
+    <div class="user-badge"><div class="u-av" id="uAv">?</div><div class="u-nm" id="uNm"></div></div>
+    <button class="share-btn" onclick="openShare()">Share</button>
+  </div>
+</div>
+
+<div class="main-nav" id="mainNav">
+  <div class="nav-item active" onclick="sw('dashboard',this)">Dashboard</div>
+  <div class="nav-item" onclick="sw('body',this)">Measurements</div>
+  <div class="nav-item" onclick="sw('diary',this)">Journal</div>
+  <div class="nav-item rose-tab" id="cycleNavItem" onclick="sw('cycle',this)" style="display:none">Cycle</div>
+  <div class="nav-item" onclick="sw('insight',this)">Insights</div>
+</div>
+
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div class="section active" id="section-dashboard">
+    <div class="mg" id="metricGrid"></div>
+    <div class="cc">
+      <div class="ch">
+        <div>
+          <div class="ct">Weight Trend</div>
+          <div class="cleg" id="chartLegend">
+            <span><span class="ld" style="background:#b8963c"></span>Weight</span>
+            <span><span class="ld" style="background:#b03060"></span>Period Day</span>
+            <span><span class="ld" style="background:#5a3080"></span>Poor Sleep</span>
+          </div>
+        </div>
+        <div class="pr">
+          <button class="pb active" onclick="sp(7,this)">7D</button>
+          <button class="pb" onclick="sp(14,this)">14D</button>
+          <button class="pb" onclick="sp(30,this)">30D</button>
+        </div>
+      </div>
+      <div class="cw"><canvas id="wChart"></canvas></div>
+    </div>
+    <div id="hlCard"></div>
+    <div id="cycleStatusCard"></div>
+  </div>
+
+  <!-- MEASUREMENTS -->
+  <div class="section" id="section-body">
+    <div class="form-card">
+      <div class="form-title">Body Measurements</div>
+      <div class="fr">
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate"></div>
+        <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fi" id="bW" placeholder="60.0"></div>
+        <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fi" id="bF" placeholder="22.0"></div>
+        <div class="fg"><label class="fl">Muscle Mass (kg)</label><input type="number" step="0.1" class="fi" id="bM" placeholder="45.0"></div>
+      </div>
+      <button class="btn-sv" onclick="saveBody()">Save Measurement</button>
+    </div>
+    <div id="bodyLog" class="nd">No measurements recorded yet</div>
+  </div>
+
+  <!-- JOURNAL -->
+  <div class="section" id="section-diary">
+    <div class="lh">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted)">Daily Journal</div>
+      <button class="add-btn" id="addEntryBtn" onclick="openModal()">+ Add Entry</button>
+    </div>
+    <div id="diaryList"><div class="nd">No journal entries yet. Tap "+ Add Entry" to start.</div></div>
+  </div>
+
+  <!-- CYCLE -->
+  <div class="section" id="section-cycle">
+    <div class="next-period-info" id="nextPeriodInfo" style="display:none">
+      <div>
+        <div class="npi-label">Next Period</div>
+        <div class="npi-value" id="nextPeriodVal">—</div>
+        <div class="npi-sub" id="nextPeriodSub"></div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="npi-label">Ovulation</div>
+        <div class="npi-value" id="ovulationVal" style="color:var(--purple)">—</div>
+        <div class="npi-sub" id="ovulationSub"></div>
+      </div>
+    </div>
+
+    <div class="cycle-section">
+      <div class="cycle-header">
+        <div class="cycle-nav">
+          <button class="cycle-nav-btn" onclick="prevMonth()">‹</button>
+          <div class="cycle-month" id="calMonthLabel"></div>
+          <button class="cycle-nav-btn" onclick="nextMonth()">›</button>
+        </div>
+        <button class="add-btn" style="border-color:var(--rose);color:var(--rose)" onclick="openPeriodModal()">+ Log Period</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cycle-legend">
+        <span><span class="ld" style="background:var(--rose);width:10px;height:10px;border-radius:2px"></span>Period</span>
+        <span><span class="ld" style="background:var(--purple);width:10px;height:10px;border-radius:2px"></span>Ovulation</span>
+        <span><span class="ld" style="background:var(--blue);width:10px;height:10px;border-radius:2px;opacity:.5"></span>Fertile Window</span>
+        <span><span class="ld" style="background:var(--peach);width:10px;height:10px;border-radius:2px"></span>Symptoms</span>
+      </div>
+    </div>
+
+    <div id="cycleLog" class="nd">No cycle data recorded yet</div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div class="section" id="section-insight">
+    <div class="cc" style="margin-bottom:11px">
+      <div class="ch" style="margin-bottom:10px">
+        <div class="ct">Body Fat / Muscle</div>
+        <div class="cleg">
+          <span><span class="ld" style="background:#1a5a8a"></span>Body Fat %</span>
+          <span><span class="ld" style="background:#2a7a4b"></span>Muscle kg</span>
+        </div>
+      </div>
+      <div class="cw"><canvas id="bChart"></canvas></div>
+    </div>
+    <div class="cc" style="margin-bottom:11px">
+      <div class="ch" style="margin-bottom:10px">
+        <div class="ct">Sleep Duration</div>
+        <div class="cleg">
+          <span><span class="ld" style="background:#5a3080"></span>Hours</span>
+          <span style="color:var(--green);font-size:10px">— 7h recommended</span>
+        </div>
+      </div>
+      <div class="cw"><canvas id="sleepChart"></canvas></div>
+    </div>
+    <div class="tg" id="trendGrid">
+      <div class="tp" style="grid-column:1/-1"><div class="nd">Add 2+ measurements to see trend analysis</div></div>
+    </div>
+    <div id="patternCard"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ENTRY MODAL -->
+<div id="entryModal" style="display:none" class="mb-bg" onclick="if(event.target===this)closeModal()">
+  <div class="ms">
+    <div class="mt2">+ Add Journal Entry</div>
+    <div class="mtabs">
+      <button class="mtab active" onclick="swMT('meal',this)">Meal</button>
+      <button class="mtab" onclick="swMT('exercise',this)">Exercise</button>
+      <button class="mtab" onclick="swMT('sleep',this)">Sleep</button>
+      <button class="mtab" id="symptomTab" onclick="swMT('symptom',this)" style="display:none">Symptoms</button>
+    </div>
+
+    <!-- MEAL -->
+    <div class="msec active" id="ms-meal">
+      <div class="fr">
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="mDate"></div>
+        <div class="fg"><label class="fl">Timing</label>
+          <select class="fi" id="mTiming"><option>Breakfast</option><option>Lunch</option><option selected>Dinner</option><option>Snack</option><option>Protein Shake</option></select>
+        </div>
+      </div>
+      <div class="fl">Cuisine Type</div><div class="sg" id="genreGrid"></div>
+      <div class="fl" style="margin-top:8px">Portion Size</div><div class="sg" id="sizeGrid"></div>
+      <div class="cp">
+        <span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:700">Est. Calories</span>
+        <span class="cn" id="calNum">---</span>
+        <span style="font-size:11px;color:var(--muted)">kcal</span>
+      </div>
+      <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="mNote" placeholder="e.g. Grilled chicken salad, no dressing"></textarea></div>
+    </div>
+
+    <!-- EXERCISE -->
+    <div class="msec" id="ms-exercise">
+      <div class="fr">
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="eDate"></div>
+        <div class="fg"><label class="fl">Duration (min)</label><input type="number" class="fi" id="eDur" placeholder="60"></div>
+      </div>
+      <div class="fl">Type</div><div class="sg" id="exTypeGrid"></div>
+      <div class="fl" style="margin-top:9px">Intensity</div>
+      <div class="ib">
+        <div class="id on" onclick="si2(1)"></div><div class="id" onclick="si2(2)"></div>
+        <div class="id" onclick="si2(3)"></div><div class="id" onclick="si2(4)"></div><div class="id" onclick="si2(5)"></div>
+      </div>
+      <div class="il" id="iLbl">Moderate</div>
+      <div class="fg" style="margin-top:9px"><label class="fl">Notes</label><textarea class="fi" id="eMemo" placeholder="e.g. Bench press 50kg×10×3, 5km run"></textarea></div>
+    </div>
+
+    <!-- SLEEP -->
+    <div class="msec" id="ms-sleep">
+      <div class="fr">
+        <div class="fg"><label class="fl">Date (Night of)</label><input type="date" class="fi" id="slDate"></div>
+        <div class="fg"><label class="fl">Bedtime</label><input type="time" class="fi" id="slBed" value="23:00"></div>
+        <div class="fg"><label class="fl">Wake Up</label><input type="time" class="fi" id="slWake" value="07:00"></div>
+      </div>
+      <div class="fl" style="margin-bottom:6px">Sleep Quality</div>
+      <div class="sg" id="sleepQualityGrid"></div>
+      <div class="cp" style="border-color:rgba(90,48,128,0.3)">
+        <span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:700">Sleep Duration</span>
+        <span class="cn" id="sleepHrNum" style="color:var(--purple)">---</span>
+        <span style="font-size:11px;color:var(--muted)">hours</span>
+      </div>
+      <div class="fl" style="margin-bottom:6px">Night Wakings</div>
+      <div class="sg" id="wakeUpGrid"></div>
+      <div class="fg" style="margin-top:4px"><label class="fl">Notes</label><textarea class="fi" id="slNote" placeholder="e.g. Slept well, had vivid dreams, restless"></textarea></div>
+    </div>
+
+    <!-- SYMPTOMS (period-related) -->
+    <div class="msec" id="ms-symptom">
+      <div class="fr">
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi rose-focus" id="symDate"></div>
+      </div>
+      <div class="fl" style="margin-bottom:6px">Physical Symptoms</div>
+      <div class="sg" id="physSymGrid"></div>
+      <div class="fl" style="margin-bottom:6px;margin-top:8px">Mood</div>
+      <div class="sg" id="moodGrid"></div>
+      <div class="fl" style="margin-bottom:6px;margin-top:8px">Flow (if applicable)</div>
+      <div class="sg" id="flowGrid"></div>
+      <div class="fl" style="margin-bottom:6px;margin-top:8px">Energy Level</div>
+      <div class="sg" id="energyGrid"></div>
+      <div class="fg" style="margin-top:4px"><label class="fl">Notes</label><textarea class="fi" id="symNote" placeholder="Any additional notes..."></textarea></div>
+    </div>
+
+    <div class="mf">
+      <button class="btn-cl" onclick="closeModal()">Cancel</button>
+      <button class="btn-sv" id="saveEntryBtn" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERIOD LOG MODAL -->
+<div id="periodModal" style="display:none" class="mb-bg" onclick="if(event.target===this)closePeriodModal()">
+  <div class="ms">
+    <div class="mt2" style="border-color:var(--rose);color:var(--rose)">Log Period</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Period Start Date</label><input type="date" class="fi rose-focus" id="pStartDate"></div>
+      <div class="fg"><label class="fl">Period End Date</label><input type="date" class="fi rose-focus" id="pEndDate"></div>
+    </div>
+    <div class="fl" style="margin-bottom:6px">Flow Intensity</div>
+    <div class="sg" id="periodFlowGrid"></div>
+    <div class="fl" style="margin-bottom:6px;margin-top:8px">Symptoms</div>
+    <div class="sg" id="periodSymGrid"></div>
+    <div class="fg" style="margin-top:8px"><label class="fl">Notes</label><textarea class="fi" id="periodNote" placeholder="e.g. Heavy first two days, mild cramps"></textarea></div>
+    <div class="mf">
+      <button class="btn-cl" onclick="closePeriodModal()">Cancel</button>
+      <button class="btn-sv rose-btn" onclick="savePeriod()">Save Period</button>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div id="shareModal" style="display:none" class="sov" onclick="if(event.target===this)this.style.display='none'">
+  <div class="sb3">
+    <div class="st">Share Data</div>
+    <div class="ss">Send this link to your trainer or partner — read-only access</div>
+    <div class="su" id="shareUrl"></div>
+    <div class="sa">
+      <button class="bcopy" onclick="copyUrl()">Copy Link</button>
+      <button class="bcl2" onclick="document.getElementById('shareModal').style.display='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SK='bt_en_v1';
+let D=(()=>{try{return JSON.parse(localStorage.getItem(SK))||{p:null,body:[],ents:[],periods:[]};}catch{return{p:null,body:[],ents:[],periods:[]};} })();
+if(!D.periods)D.periods=[];
+const SV=()=>localStorage.setItem(SK,JSON.stringify(D));
+
+const isV=new URLSearchParams(location.search).get('view')==='1';
+if(isV){try{const raw=new URLSearchParams(location.search).get('d');if(raw)D=JSON.parse(atob(raw));}catch{}}
+
+// State
+let sGender='Male',sGenre='American',sSize='Regular',sExType='Weight Training',sInt=3;
+let sSleepQ='Good',sWakeUp='None';
+let sPhysSym=[],sMood='Neutral',sFlow='None',sEnergy='Normal';
+let sPeriodFlow='Medium',sPeriodSym=[];
+let aMT='meal',curP=7,calYear,calMonth;
+let wCh=null,bCh=null,slCh=null;
+
+// Data
+const genres=['Japanese','American','Chinese','Korean','Fast Food','Salad','Protein','Other'];
+const sizes=['Light','Regular','Large'];
+const exTs=['Weights','Cardio','HIIT','Stretch','Yoga','Other'];
+const sleepQualities=['Excellent','Good','OK','Poor','Very Poor'];
+const wakeUps=['None','Once','Twice','3+ times'];
+const physSyms=['Cramps','Bloating','Headache','Back Pain','Breast Tenderness','Nausea','Fatigue','Acne','Food Cravings','Spotting'];
+const moods=['Happy','Calm','Neutral','Anxious','Irritable','Sad','Emotional'];
+const flows=['None','Spotting','Light','Medium','Heavy','Very Heavy'];
+const energies=['High','Normal','Low','Exhausted'];
+const periodFlows=['Spotting','Light','Medium','Heavy','Very Heavy'];
+const periodSyms=['Cramps','Bloating','Headache','Back Pain','Nausea','Fatigue','Breast Pain','Mood Swings'];
+const iLbls=['','Light','Moderate-Light','Moderate','Hard','Very Hard'];
+
+const calT={'Japanese':[350,580,820],'American':[420,680,920],'Chinese':[400,650,880],'Korean':[360,600,840],'Fast Food':[480,730,1020],'Salad':[180,320,480],'Protein':[140,240,340],'Other':[340,580,820]};
+const mEx={'Japanese':{'Light':'Rice ball + miso soup','Regular':'Set meal (rice, soup, main & side)','Large':'Donburi or katsu large portion'},'American':{'Light':'Sandwich + soup','Regular':'Pasta or burger set','Large':'Steak set or pizza'},'Chinese':{'Light':'Gyoza or dim sum','Regular':'Fried rice or noodles','Large':'Chinese set meal large'},'Korean':{'Light':'Kimchi & banchan','Regular':'Bibimbap or BBQ','Large':'Jjigae stew set'},'Fast Food':{'Light':'Single burger','Regular':'Burger + fries M set','Large':'Double burger + L fries'},'Salad':{'Light':'Side salad','Regular':'Salad + soup + bread','Large':'Grilled chicken salad set'},'Protein':{'Light':'1 protein shake','Regular':'Protein shake + banana','Large':'2 shakes + oats'},'Other':{'Light':'Light snack','Regular':'Regular meal','Large':'Large portion'}};
+
+const td=()=>new Date().toISOString().split('T')[0];
+const fmt=d=>{const dt=new Date(d);return(dt.getMonth()+1)+'/'+(dt.getDate());};
+const fmtFull=d=>{const dt=new Date(d),dw=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return mo[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear()+' ('+dw[dt.getDay()]+')';};
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);};
+
+function calcSleepHours(){
+  const bed=document.getElementById('slBed').value,wake=document.getElementById('slWake').value;
+  if(!bed||!wake)return null;
+  const[bh,bm]=bed.split(':').map(Number),[wh,wm]=wake.split(':').map(Number);
+  let mins=(wh*60+wm)-(bh*60+bm);if(mins<0)mins+=1440;
+  return Math.round(mins/6)/10;
+}
+function updateSleepCalc(){const h=calcSleepHours();document.getElementById('sleepHrNum').textContent=h!==null?h.toFixed(1):'---';}
+
+// Multi-select toggle
+function toggleSym(arr,val,el,cls){
+  const i=arr.indexOf(val);
+  if(i>=0){arr.splice(i,1);el.classList.remove(cls);}
+  else{arr.push(val);el.classList.add(cls);}
+}
+
+// Build single-select grids
+function bld(con,items,gC,setter,cb,selCls='sel'){
+  items.forEach(it=>{
+    const b=document.createElement('button');
+    b.className='sb2'+(gC()===it?' '+selCls:'');
+    b.textContent=it;
+    b.onclick=()=>{setter(it);con.querySelectorAll('.sb2').forEach((btn,i)=>{btn.className='sb2'+(items[i]===gC()?' '+selCls:'');});if(cb)cb();};
+    con.appendChild(b);
+  });
+}
+// Build multi-select grids
+function bldMulti(con,items,arr,selCls='sel-rose'){
+  items.forEach(it=>{
+    const b=document.createElement('button');
+    b.className='sb2'+(arr.includes(it)?' '+selCls:'');
+    b.textContent=it;
+    b.onclick=()=>toggleSym(arr,it,b,selCls);
+    con.appendChild(b);
+  });
+}
+
+function rfr(con,items,gC,cls='sel'){con.querySelectorAll('.sb2').forEach((b,i)=>{b.className='sb2'+(items[i]===gC()?' '+cls:'');});}
+
+bld(document.getElementById('genreGrid'),genres,()=>sGenre,v=>{sGenre=v;},uMeal);
+bld(document.getElementById('sizeGrid'),sizes,()=>sSize,v=>{sSize=v;},uMeal);
+bld(document.getElementById('exTypeGrid'),exTs,()=>sExType,v=>{sExType=v;},null);
+bld(document.getElementById('sleepQualityGrid'),sleepQualities,()=>sSleepQ,v=>{sSleepQ=v;},null,'sel-purple');
+bld(document.getElementById('wakeUpGrid'),wakeUps,()=>sWakeUp,v=>{sWakeUp=v;},null,'sel-purple');
+bldMulti(document.getElementById('physSymGrid'),physSyms,sPhysSym);
+bld(document.getElementById('moodGrid'),moods,()=>sMood,v=>{sMood=v;},null,'sel-rose');
+bld(document.getElementById('flowGrid'),flows,()=>sFlow,v=>{sFlow=v;},null,'sel-rose');
+bld(document.getElementById('energyGrid'),energies,()=>sEnergy,v=>{sEnergy=v;},null,'sel-rose');
+bld(document.getElementById('periodFlowGrid'),periodFlows,()=>sPeriodFlow,v=>{sPeriodFlow=v;},null,'sel-rose');
+bldMulti(document.getElementById('periodSymGrid'),periodSyms,sPeriodSym);
+
+function uMeal(){rfr(document.getElementById('genreGrid'),genres,()=>sGenre);rfr(document.getElementById('sizeGrid'),sizes,()=>sSize);document.getElementById('calNum').textContent=calT[sGenre][sizes.indexOf(sSize)];document.getElementById('mNote').placeholder='e.g. '+(mEx[sGenre]?.[sSize]||'');}
+
+function si2(v){sInt=v;document.querySelectorAll('.id').forEach((d,i)=>d.classList.toggle('on',i<v));document.getElementById('iLbl').textContent=iLbls[v];}
+si2(3);
+
+document.getElementById('slBed').addEventListener('change',updateSleepCalc);
+document.getElementById('slWake').addEventListener('change',updateSleepCalc);
+
+function sg(g){
+  sGender=g;
+  ['gM','gF','gO'].forEach((id,i)=>document.getElementById(id).classList.remove('sel','sel-rose'));
+  const el=document.getElementById(['gM','gF','gO'][['Male','Female','Other'].indexOf(g)]);
+  if(el)el.classList.add(g==='Female'?'sel-rose':'sel');
+  document.getElementById('cycleSetupRow').style.display=g==='Female'?'flex':'none';
+  document.getElementById('periodSetupRow').style.display=g==='Female'?'flex':'none';
+}
+
+function finishSetup(){
+  const name=document.getElementById('sName').value.trim();
+  if(!name){alert('Please enter your name');return;}
+  const isFemale=sGender==='Female';
+  D.p={name,age:parseInt(document.getElementById('sAge').value)||0,gender:sGender,cycleLen:isFemale?parseInt(document.getElementById('sCycleLen').value)||28:null,lastPeriod:isFemale?document.getElementById('sLastPeriod').value||null:null};
+  SV();
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  initApp();
+}
+
+function initApp(){
+  if(D.p){
+    const isFemale=D.p.gender==='Female';
+    const av=document.getElementById('uAv');
+    av.textContent=D.p.name.slice(0,2).toUpperCase();
+    if(isFemale)av.classList.add('rose');
+    document.getElementById('uNm').textContent=D.p.name+(D.p.age?' / '+D.p.age:'');
+    if(isFemale){
+      document.getElementById('cycleNavItem').style.display='block';
+      document.getElementById('symptomTab').style.display='block';
+    }
+  }
+  document.getElementById('bDate').value=td();
+  if(isV){document.querySelector('.share-btn').style.display='none';const ab=document.getElementById('addEntryBtn');if(ab)ab.style.display='none';}
+  const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();
+  renderDash();renderDiary();renderBodyLog();renderInsight();
+  if(D.p?.gender==='Female'){renderCycle();renderCycleStatus();}
+}
+
+function sw(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='dashboard')renderDash();
+  if(id==='diary')renderDiary();
+  if(id==='body')renderBodyLog();
+  if(id==='cycle')renderCycle();
+  if(id==='insight')renderInsight();
+}
+
+function openModal(){
+  const t=td();['mDate','eDate','pDate','slDate','symDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=t;});
+  updateSleepCalc();
+  document.getElementById('entryModal').style.display='flex';
+  uMeal();
+}
+function closeModal(){document.getElementById('entryModal').style.display='none';}
+function swMT(tab,btn){
+  aMT=tab;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active','rose-active'));
+  document.querySelectorAll('.msec').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  if(tab==='symptom')btn.classList.add('rose-active');
+  document.getElementById('ms-'+tab).classList.add('active');
+  const sb=document.getElementById('saveEntryBtn');
+  sb.className='btn-sv'+(tab==='symptom'?' rose-btn':'');
+}
+
+function openPeriodModal(){document.getElementById('pStartDate').value=td();document.getElementById('pEndDate').value='';document.getElementById('periodModal').style.display='flex';}
+function closePeriodModal(){document.getElementById('periodModal').style.display='none';}
+
+function saveBody(){
+  const r={date:document.getElementById('bDate').value,weight:parseFloat(document.getElementById('bW').value)||null,bodyFat:parseFloat(document.getElementById('bF').value)||null,muscle:parseFloat(document.getElementById('bM').value)||null};
+  if(!r.date||!r.weight){alert('Please enter date and weight');return;}
+  D.body.push(r);D.body.sort((a,b)=>a.date.localeCompare(b.date));SV();
+  toast('✓ Measurement saved');
+  ['bW','bF','bM'].forEach(id=>document.getElementById(id).value='');
+  renderBodyLog();renderDash();renderInsight();
+}
+
+function savePeriod(){
+  const r={type:'period',date:document.getElementById('pStartDate').value,endDate:document.getElementById('pEndDate').value,flow:sPeriodFlow,symptoms:[...sPeriodSym],note:document.getElementById('periodNote').value};
+  if(!r.date){alert('Please select a start date');return;}
+  D.periods.push(r);D.periods.sort((a,b)=>a.date.localeCompare(b.date));
+  if(!D.p.lastPeriod||r.date>D.p.lastPeriod){D.p.lastPeriod=r.date;}
+  SV();closePeriodModal();toast('✓ Period logged');
+  sPeriodSym=[];
+  document.getElementById('periodNote').value='';
+  renderCycle();renderDash();renderCycleStatus();
+}
+
+function saveEntry(){
+  let r;
+  if(aMT==='meal'){
+    const idx=sizes.indexOf(sSize);
+    r={type:'meal',date:document.getElementById('mDate').value,timing:document.getElementById('mTiming').value,genre:sGenre,size:sSize,calories:calT[sGenre][idx],note:document.getElementById('mNote').value||mEx[sGenre]?.[sSize]||''};
+    if(!r.date){alert('Please enter date');return;}
+    document.getElementById('mNote').value='';
+  } else if(aMT==='exercise'){
+    r={type:'exercise',date:document.getElementById('eDate').value,exType:sExType,duration:parseInt(document.getElementById('eDur').value)||null,intensity:sInt,memo:document.getElementById('eMemo').value};
+    if(!r.date){alert('Please enter date');return;}
+    document.getElementById('eMemo').value='';document.getElementById('eDur').value='';
+  } else if(aMT==='sleep'){
+    const hrs=calcSleepHours();
+    r={type:'sleep',date:document.getElementById('slDate').value,bedTime:document.getElementById('slBed').value,wakeTime:document.getElementById('slWake').value,hours:hrs,quality:sSleepQ,wakeUp:sWakeUp,note:document.getElementById('slNote').value};
+    if(!r.date){alert('Please enter date');return;}
+    if(!hrs){alert('Please enter bedtime and wake time');return;}
+    document.getElementById('slNote').value='';
+  } else if(aMT==='symptom'){
+    r={type:'symptom',date:document.getElementById('symDate').value,physSyms:[...sPhysSym],mood:sMood,flow:sFlow,energy:sEnergy,note:document.getElementById('symNote').value};
+    if(!r.date){alert('Please enter date');return;}
+    document.getElementById('symNote').value='';
+    sPhysSym=[];
+    document.querySelectorAll('#physSymGrid .sb2').forEach(b=>b.classList.remove('sel-rose'));
+  }
+  D.ents.push(r);D.ents.sort((a,b)=>a.date.localeCompare(b.date));SV();
+  closeModal();toast('✓ Entry saved');
+  renderDiary();renderDash();renderInsight();
+  if(D.p?.gender==='Female')renderCycle();
+}
+
+// Cycle helpers
+function getCycleDates(){
+  const len=D.p?.cycleLen||28;
+  const lastPeriod=D.p?.lastPeriod;
+  if(!lastPeriod)return{};
+  const lp=new Date(lastPeriod);
+  // Predict next period
+  const nextP=new Date(lp);nextP.setDate(nextP.getDate()+len);
+  // Ovulation ~14 days before next period
+  const ovul=new Date(nextP);ovul.setDate(ovul.getDate()-14);
+  // Fertile window: 5 days before ovulation + ovulation day
+  const fertStart=new Date(ovul);fertStart.setDate(fertStart.getDate()-5);
+  const fertEnd=new Date(ovul);fertEnd.setDate(fertEnd.getDate()+1);
+  return{nextPeriod:nextP,ovulation:ovul,fertileStart:fertStart,fertileEnd:fertEnd,lastPeriod:lp};
+}
+
+function daysUntil(d){const now=new Date();now.setHours(0,0,0,0);const diff=d-now;return Math.ceil(diff/86400000);}
+function dateStr(d){const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return mo[d.getMonth()]+' '+d.getDate();}
+function isoStr(d){return d.toISOString().split('T')[0];}
+
+function renderCycleStatus(){
+  const el=document.getElementById('cycleStatusCard');
+  if(!D.p||D.p.gender!=='Female'){el.innerHTML='';return;}
+  const cd=getCycleDates();
+  if(!cd.nextPeriod){el.innerHTML='';return;}
+  const daysToP=daysUntil(cd.nextPeriod);
+  const daysToO=daysUntil(cd.ovulation);
+  const isInFertile=daysToO>=-1&&daysToO<=5;
+  el.innerHTML=`<div class="ic rose-border">
+    <div class="ic-h rose-bdr">
+      <div class="ic-ico rose">🌸</div>
+      <div><div class="ic-t rose">Cycle Status</div><div class="ic-s">Based on a ${D.p.cycleLen||28}-day cycle</div></div>
+    </div>
+    <div class="ic-b">
+      <div class="ic-row"><span class="ic-tag period">Next Period</span><span class="ic-c">${dateStr(cd.nextPeriod)} — in <b style="color:var(--peach)">${Math.abs(daysToP)} day${Math.abs(daysToP)!==1?'s':''}</b>${daysToP<0?' (overdue)':''}</span></div>
+      <div class="ic-row"><span class="ic-tag period" style="background:rgba(90,48,128,0.3);color:#c0a0f0;border-color:rgba(90,48,128,0.5)">Ovulation</span><span class="ic-c">${dateStr(cd.ovulation)} — in <b style="color:#c0a0f0">${Math.abs(daysToO)} day${Math.abs(daysToO)!==1?'s':''}</b></span></div>
+      <div class="ic-row"><span class="ic-tag period" style="background:rgba(26,90,138,0.3);color:#6ab4f0;border-color:rgba(26,90,138,0.5)">Fertile Window</span><span class="ic-c">${dateStr(cd.fertileStart)} – ${dateStr(cd.fertileEnd)}${isInFertile?' <b style="color:#6ab4f0">You are in your fertile window</b>':''}</span></div>
+    </div>
+  </div>`;
+}
+
+function prevMonth(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCycle();}
+function nextMonth(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCycle();}
+
+function renderCycle(){
+  const mo=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent=mo[calMonth]+' '+calYear;
+  const cd=getCycleDates();
+  // build sets of special dates
+  const periodDays=new Set();
+  D.periods.forEach(p=>{
+    const s=new Date(p.date);
+    const e=p.endDate?new Date(p.endDate):new Date(p.date);
+    for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1))periodDays.add(isoStr(new Date(d)));
+  });
+  const ovulDay=cd.ovulation?isoStr(cd.ovulation):null;
+  const fertileDays=new Set();
+  if(cd.fertileStart&&cd.fertileEnd){
+    for(let d=new Date(cd.fertileStart);d<=cd.fertileEnd;d.setDate(d.getDate()+1))fertileDays.add(isoStr(new Date(d)));
+  }
+  const symptomDays=new Set(D.ents.filter(e=>e.type==='symptom').map(e=>e.date));
+  const weightDays=new Set(D.body.map(b=>b.date));
+  const sleepDays=new Set(D.ents.filter(e=>e.type==='sleep').map(e=>e.date));
+
+  const firstDay=new Date(calYear,calMonth,1);
+  const lastDay=new Date(calYear,calMonth+1,0);
+  const startDow=firstDay.getDay();
+  const todayStr=td();
+
+  const grid=document.getElementById('calGrid');
+  grid.innerHTML='';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
+
+  // fill blanks
+  for(let i=0;i<startDow;i++){const el=document.createElement('div');el.className='cal-day other-month';grid.appendChild(el);}
+
+  for(let day=1;day<=lastDay.getDate();day++){
+    const ds=calYear+'-'+(String(calMonth+1).padStart(2,'0'))+'-'+(String(day).padStart(2,'0'));
+    const el=document.createElement('div');
+    let cls='cal-day';
+    if(ds===todayStr)cls+=' today';
+    if(periodDays.has(ds))cls+=' period-day';
+    else if(ds===ovulDay)cls+=' ovulation-day';
+    else if(fertileDays.has(ds))cls+=' fertile-day';
+    el.className=cls;
+    el.innerHTML=`<div class="cal-num">${day}</div><div class="cal-dots">
+      ${periodDays.has(ds)?'<div class="cal-dot period"></div>':''}
+      ${ds===ovulDay?'<div class="cal-dot ovulation"></div>':''}
+      ${fertileDays.has(ds)&&ds!==ovulDay?'<div class="cal-dot fertile"></div>':''}
+      ${symptomDays.has(ds)?'<div class="cal-dot symptom"></div>':''}
+      ${weightDays.has(ds)?'<div class="cal-dot weight"></div>':''}
+      ${sleepDays.has(ds)?'<div class="cal-dot sleep"></div>':''}
+    </div>`;
+    el.onclick=()=>showDayDetail(ds);
+    grid.appendChild(el);
+  }
+
+  // Next Period info
+  const npi=document.getElementById('nextPeriodInfo');
+  if(cd.nextPeriod){
+    npi.style.display='flex';
+    const dp=daysUntil(cd.nextPeriod);
+    document.getElementById('nextPeriodVal').textContent=dateStr(cd.nextPeriod);
+    document.getElementById('nextPeriodSub').textContent=dp>=0?'In '+dp+' days':'Overdue '+Math.abs(dp)+' days';
+    document.getElementById('ovulationVal').textContent=cd.ovulation?dateStr(cd.ovulation):'—';
+    document.getElementById('ovulationSub').textContent=cd.ovulation?'In '+daysUntil(cd.ovulation)+' days':'';
+  } else npi.style.display='none';
+
+  renderCycleLog();
+}
+
+function showDayDetail(ds){
+  const ents=D.ents.filter(e=>e.date===ds);
+  const periods=D.periods.filter(p=>p.date===ds);
+  const body=D.body.filter(b=>b.date===ds);
+  if(!ents.length&&!periods.length&&!body.length){return;}
+  // Simple alert summary
+  let msg=fmtFull(ds)+'\n\n';
+  body.forEach(b=>msg+=`⚖ Weight: ${b.weight}kg${b.bodyFat?' · Fat: '+b.bodyFat+'%':''}\n`);
+  periods.forEach(p=>msg+=`🌸 Period start · Flow: ${p.flow}\n`);
+  ents.forEach(e=>{
+    if(e.type==='meal')msg+=`🍽 ${e.timing}: ${e.genre}/${e.size} (${e.calories}kcal)\n`;
+    if(e.type==='exercise')msg+=`💪 ${e.exType} · ${e.duration||'?'} min · Intensity ${'●'.repeat(e.intensity)}\n`;
+    if(e.type==='party')msg+=`🥂 ${e.pType} · Alcohol: ${e.alcohol}\n`;
+    if(e.type==='sleep')msg+=`😴 Sleep: ${e.hours}h · ${e.quality}\n`;
+    if(e.type==='symptom')msg+=`🌸 Symptoms: ${e.physSyms.join(', ')||'none'} · Mood: ${e.mood} · Flow: ${e.flow}\n`;
+  });
+  alert(msg);
+}
+
+function renderCycleLog(){
+  const el=document.getElementById('cycleLog');
+  const items=[...D.periods,...D.ents.filter(e=>e.type==='symptom')].sort((a,b)=>b.date.localeCompare(a.date));
+  if(!items.length){el.innerHTML='<div class="nd">No cycle data recorded yet. Tap "+ Log Period" to start.</div>';return;}
+  el.innerHTML=items.slice(0,10).map(r=>{
+    if(r.type==='period'){
+      return `<div class="dd"><div class="db">${fmtFull(r.date)}</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Start${r.endDate?' – '+fmt(r.endDate):''} · ${r.flow}</div><div class="des">${r.symptoms?.join(', ')||''} ${r.note||''}</div></div></div></div>`;
+    } else {
+      return `<div class="dd"><div class="db">${fmtFull(r.date)}</div><div class="de"><div class="deb period" style="color:var(--purple);border-color:rgba(90,48,128,0.35)">Symptoms</div><div><div class="dem">Flow: ${r.flow} · Mood: ${r.mood} · Energy: ${r.energy}</div><div class="des">${r.physSyms?.join(', ')||'No physical symptoms'} ${r.note?'· '+r.note:''}</div></div></div></div>`;
+    }
+  }).join('');
+}
+
+function renderBodyLog(){
+  const el=document.getElementById('bodyLog');
+  if(!D.body.length){el.innerHTML='<div class="nd">No measurements recorded yet</div>';return;}
+  el.innerHTML=[...D.body].reverse().map(r=>`<div class="dd"><div class="db">${fmtFull(r.date)}</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight ${r.weight}kg</div><div class="des">${[r.bodyFat?'Body Fat '+r.bodyFat+'%':null,r.muscle?'Muscle '+r.muscle+'kg':null].filter(Boolean).join(' · ')||'—'}</div></div></div></div>`).join('');
+}
+
+function renderDiary(){
+  const el=document.getElementById('diaryList');
+  const dates=[...new Set(D.ents.map(e=>e.date))].sort().reverse();
+  if(!dates.length){el.innerHTML='<div class="nd">No journal entries yet. Tap "+ Add Entry" to start.</div>';return;}
+  el.innerHTML=dates.map(date=>{
+    const bOnDate=D.body.filter(b=>b.date===date);
+    const ents=D.ents.filter(e=>e.date===date);
+    let h=`<div class="dd"><div class="db">${fmtFull(date)}`;
+    if(bOnDate.length){const b=bOnDate[bOnDate.length-1];h+=` &nbsp;·&nbsp; <span style="color:rgba(232,201,106,0.85);font-size:10px">${b.weight}kg</span>`;}
+    h+=`</div>`;
+    ents.forEach(e=>{
+      if(e.type==='meal'){
+        h+=`<div class="de"><div class="deb meal">${e.timing}</div><div><div class="dem">${e.genre} / ${e.size}</div><div class="des">${e.note||''}</div><span class="det">${e.calories} kcal</span></div></div>`;
+      } else if(e.type==='exercise'){
+        h+=`<div class="de"><div class="deb ex">Exercise</div><div><div class="dem">${e.exType} ${'●'.repeat(e.intensity)}${'○'.repeat(5-e.intensity)}</div><div class="des">${e.duration?e.duration+' min · ':''}${e.memo||''}</div></div></div>`;
+      } else if(e.type==='sleep'){
+        const qc={Excellent:'var(--green)',Good:'var(--purple)',OK:'var(--gold)',Poor:'var(--orange)',['Very Poor']:'var(--red)'}[e.quality]||'var(--muted)';
+        h+=`<div class="de"><div class="deb sleep">Sleep</div><div><div class="dem">${e.hours?e.hours.toFixed(1)+' hours':'—'} &nbsp; <span style="color:${qc};font-size:11px">${e.quality}</span></div><div class="des">${e.bedTime||''}–${e.wakeTime||''} &nbsp; Wakings: ${e.wakeUp}${e.note?' · '+e.note:''}</div></div></div>`;
+      } else if(e.type==='symptom'){
+        h+=`<div class="de"><div class="deb period">Symptoms</div><div><div class="dem">Mood: ${e.mood} · Flow: ${e.flow} · Energy: ${e.energy}</div><div class="des">${e.physSyms?.join(', ')||'No physical symptoms'}${e.note?' · '+e.note:''}</div></div></div>`;
+      }
+    });
+    return h+'</div>';
+  }).join('');
+}
+
+function sp(d,btn){curP=d;document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWChart(d);}
+
+function renderDash(){
+  const isFemale=D.p?.gender==='Female';
+  const cd=isFemale?getCycleDates():{};
+  const lat=D.body[D.body.length-1],prev=D.body[D.body.length-2];
+  const slEnts=D.ents.filter(e=>e.type==='sleep').sort((a,b)=>b.date.localeCompare(a.date));
+  const latSl=slEnts[0];
+  function chg(a,b,k,lg){if(!a||!b||!a[k]||!b[k])return '';const d=(a[k]-b[k]).toFixed(1);const cl=(d>0)===lg?'bad':'good';return `<div class="mc-c ${cl}">${d>0?'+':''}${d} prev</div>`;}
+  const slC=latSl?latSl.hours>=7?'#2a7a4b':latSl.hours>=5?'#b8963c':'#8a1a1a':'#888';
+  const isFemale=D.p?.gender==='Female';
+  const cd=isFemale?getCycleDates():{};
+  document.getElementById('metricGrid').innerHTML=`
+    <div class="mc"><div class="mc-l">Weight</div><div class="mc-v">${lat?lat.weight.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'weight',true)}</div>
+    <div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">${lat?.bodyFat?lat.bodyFat.toFixed(1):'--'}<span class="mc-u">%</span></div>${chg(lat,prev,'bodyFat',true)}</div>
+    <div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">${lat?.muscle?lat.muscle.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'muscle',false)}</div>
+    <div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:${slC};font-size:20px">${latSl?latSl.hours.toFixed(1):'--'}<span class="mc-u">h</span></div><div class="mc-sub">${latSl?latSl.quality:''}</div></div>
+    ${isFemale&&cd.nextPeriod?`<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">${dateStr(cd.nextPeriod)}</div><div class="mc-sub">${daysUntil(cd.nextPeriod)>=0?'In '+daysUntil(cd.nextPeriod)+' days':'Overdue'}</div></div>`:''}
+  `;
+  renderWChart(curP);renderHL();
+  if(isFemale)renderCycleStatus();
+}
+
+function renderWChart(days){
+  const cut=new Date();cut.setDate(cut.getDate()-days);const cutS=cut.toISOString().split('T')[0];
+  const fil=D.body.filter(r=>r.date>=cutS);
+  const badSlDates=new Set(D.ents.filter(e=>e.type==='sleep'&&e.hours<5).map(e=>e.date));
+  const periodDates=new Set();D.periods.forEach(p=>{const s=new Date(p.date),e=p.endDate?new Date(p.endDate):new Date(p.date);for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1))periodDates.add(isoStr(new Date(d)));});
+  if(wCh)wCh.destroy();
+  const ctx=document.getElementById('wChart').getContext('2d');
+  wCh=new Chart(ctx,{type:'line',data:{labels:fil.map(r=>fmt(r.date)),datasets:[{label:'Weight(kg)',data:fil.map(r=>r.weight),borderColor:'#888780',backgroundColor:'rgba(184,150,60,0.06)',borderWidth:2,pointBackgroundColor:fil.map(r=>pDates.has(r.date)?'#8a1a1a':badSlDates.has(r.date)?'#5a3080':periodDates.has(r.date)?'#b03060':'#b8963c'),pointBorderColor:fil.map(r=>pDates.has(r.date)?'#8a1a1a':badSlDates.has(r.date)?'#5a3080':periodDates.has(r.date)?'#b03060':'#b8963c'),pointRadius:6,tension:0.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const r=fil[c.dataIndex];let x='';if(badSlDates.has(r.date))x=' 🌙 Poor sleep';else if(periodDates.has(r.date))x=' 🌸 Period';return c.parsed.y.toFixed(1)+'kg'+x;}}}},scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v.toFixed(1)+'kg'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+}
+
+function renderHL(){
+  const el=document.getElementById('hlCard');
+  if(D.body.length<2){el.innerHTML='';return;}
+  let mx=0,mxi=1;for(let i=1;i<D.body.length;i++){const d=Math.abs(D.body[i].weight-D.body[i-1].weight);if(d>mx){mx=d;mxi=i;}}
+  const dt=D.body[mxi].date,dp=D.body[mxi-1].date,diff=(D.body[mxi].weight-D.body[mxi-1].weight).toFixed(1);
+  const isDown=diff<0;
+  const mealsOn=D.ents.filter(e=>e.date===dt&&e.type==='meal');
+  const exOn=D.ents.filter(e=>e.date===dt&&e.type==='exercise');
+  const sleepOn=D.ents.filter(e=>e.date===dt&&e.type==='sleep');
+  const symOn=D.ents.filter(e=>e.date===dt&&e.type==='symptom');
+  const mH=mealsOn.map(m=>`<div class="ic-row"><span class="ic-tag meal">${m.timing}</span><span class="ic-c">${m.genre}/${m.size} ${m.note} (${m.calories}kcal)</span></div>`).join('');
+  const eH=exOn.map(e=>`<div class="ic-row"><span class="ic-tag ex">${e.exType}</span><span class="ic-c">${e.duration?e.duration+' min · ':''}Intensity ${'●'.repeat(e.intensity)} ${e.memo||''}</span></div>`).join('');
+  const slH=sleepOn.map(s=>`<div class="ic-row"><span class="ic-tag sleep">Sleep</span><span class="ic-c">${s.hours?s.hours.toFixed(1)+' hours':'—'} / ${s.quality} / Wakings: ${s.wakeUp}</span></div>`).join('');
+  const syH=symOn.map(s=>`<div class="ic-row"><span class="ic-tag period">Symptoms</span><span class="ic-c">Mood: ${s.mood} · Flow: ${s.flow} · ${s.physSyms?.join(', ')||'—'}</span></div>`).join('');
+  const body=mH+eH+slH+syH||`<div style="font-size:11px;color:rgba(255,255,255,0.25);margin:4px 0">No entries recorded for this day</div>`;
+  el.innerHTML=`<div class="ic"><div class="ic-h"><div class="ic-ico">${isDown?'↓':'↑'}</div><div><div class="ic-t">Biggest Change: ${fmt(dp)} → ${fmt(dt)}</div><div class="ic-s">Weight ${diff>0?'+':''}${diff}kg (day-over-day) — What happened?</div></div></div><div class="ic-b">${body}</div></div>`;
+}
+
+function renderInsight(){
+  renderBChart();renderSleepChart();
+  if(D.body.length<2){document.getElementById('trendGrid').innerHTML='<div class="tp" style="grid-column:1/-1"><div class="nd">Add 2+ measurements to see trend analysis</div></div>';renderPattern();return;}
+  const lose=[],gain=[];
+  for(let i=1;i<D.body.length;i++){
+    const d=D.body[i].weight-D.body[i-1].weight,ds=D.body[i].date;
+    const obj={date:ds,diff:d,meals:D.ents.filter(e=>e.date===ds&&e.type==='meal'),parties:D.ents.filter(e=>e.date===ds&&e.type==='party'),ex:D.ents.filter(e=>e.date===ds&&e.type==='exercise'),sleeps:D.ents.filter(e=>e.date===ds&&e.type==='sleep'),syms:D.ents.filter(e=>e.date===ds&&e.type==='symptom')};
+    if(d<-0.05)lose.push(obj);else if(d>0.05)gain.push(obj);
+  }
+  lose.sort((a,b)=>a.diff-b.diff);gain.sort((a,b)=>b.diff-a.diff);
+  function tList(arr,cls){
+    if(!arr.length)return '<div class="nd" style="padding:10px;font-size:12px">No data yet</div>';
+    return arr.slice(0,4).map(item=>{
+      const tags=[...item.meals.map(m=>`<span class="det">${m.genre}/${m.size}</span>`),...item.ex.map(e=>`<span class="det" style="color:var(--green)">${e.exType}</span>`),...item.sleeps.map(s=>`<span class="det purple">${s.hours?s.hours.toFixed(1)+'h':''}</span>`),...item.syms.map(s=>`<span class="det rose">Flow:${s.flow}</span>`)].join('');
+      return `<div class="ti"><div class="td2">${fmtFull(item.date)}</div><div class="tk ${cls}">${item.diff>0?'+':''}${item.diff.toFixed(1)}kg</div>${tags||'<span style="font-size:11px;color:var(--muted)">No entries</span>'}</div>`;
+    }).join('');
+  }
+  document.getElementById('trendGrid').innerHTML=`<div class="tp"><div class="th lose">↓ Days Weight Dropped</div>${tList(lose,'lose')}</div><div class="tp"><div class="th gain">↑ Days Weight Increased</div>${tList(gain,'gain')}</div>`;
+  renderPattern();
+}
+
+function renderBChart(){
+  const fil=D.body;if(bCh)bCh.destroy();
+  const ctx=document.getElementById('bChart').getContext('2d');
+  bCh=new Chart(ctx,{type:'line',data:{labels:fil.map(r=>fmt(r.date)),datasets:[{label:'Body Fat%',data:fil.map(r=>r.bodyFat),borderColor:'#1a5a8a',backgroundColor:'rgba(26,90,138,0.07)',borderWidth:2,pointRadius:3,tension:0.3,yAxisID:'y'},{label:'Muscle kg',data:fil.map(r=>r.muscle),borderColor:'#2a7a4b',backgroundColor:'rgba(42,122,75,0.07)',borderWidth:2,pointRadius:3,tension:0.3,yAxisID:'y2',borderDash:[4,4]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{position:'left',grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v+'%'}},y2:{position:'right',grid:{display:false},ticks:{font:{size:10},callback:v=>v+'kg'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+}
+
+function renderSleepChart(){
+  const sl=D.ents.filter(e=>e.type==='sleep').sort((a,b)=>a.date.localeCompare(b.date));
+  if(slCh)slCh.destroy();
+  const ctx=document.getElementById('sleepChart').getContext('2d');
+  const qColors=sl.map(s=>({Excellent:'rgba(42,122,75,0.85)',Good:'rgba(90,48,128,0.85)',OK:'rgba(184,150,60,0.85)',Poor:'rgba(184,90,0,0.85)','Very Poor':'rgba(138,26,26,0.85)'}[s.quality]||'rgba(90,48,128,0.85)'));
+  slCh=new Chart(ctx,{type:'bar',data:{labels:sl.map(s=>fmt(s.date)),datasets:[{label:'Sleep (h)',data:sl.map(s=>s.hours||0),backgroundColor:qColors,borderRadius:2,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const s=sl[c.dataIndex];return c.parsed.y.toFixed(1)+'h / '+s.quality;}}}},scales:{y:{min:0,max:12,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v+'h'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+}
+
+function renderPattern(){
+  const el=document.getElementById('patternCard');let html='';
+  if(slEnts.length>=3){const avgH=(slEnts.reduce((s,e)=>s+(e.hours||0),0)/slEnts.length).toFixed(1),short=slEnts.filter(e=>e.hours<6).length,good=slEnts.filter(e=>e.hours>=7&&(e.quality==='Good'||e.quality==='Excellent')).length;
+  html+=`<div class="ic" style="margin-top:11px"><div class="ic-h"><div class="ic-ico" style="font-size:9px">AI</div><div><div class="ic-t">Sleep Pattern</div><div class="ic-s">Your sleep trends</div></div></div><div class="ic-b"><div class="ic-row"><span class="ic-tag sleep">Average</span><span class="ic-c">Average sleep duration: <b style="color:${avgH>=7?'#6ad4a0':avgH>=5?'var(--gold)':'#e07070'}">${avgH} hours</b> (recommended: 7–9h)</span></div><div class="ic-row"><span class="ic-tag sleep">Short Sleep</span><span class="ic-c">Nights under 6 hours: <b style="color:${short>2?'#e07070':'#6ad4a0'}">${short}</b></span></div><div class="ic-row"><span class="ic-tag sleep">Good Sleep</span><span class="ic-c">7h+ with good quality: <b style="color:#6ad4a0">${good}</b> nights</span></div></div></div>`;}
+  if(D.p?.gender==='Female'){
+    const symEnts=D.ents.filter(e=>e.type==='symptom');
+    if(symEnts.length>=2){
+      const topSyms={};symEnts.forEach(e=>e.physSyms?.forEach(s=>{topSyms[s]=(topSyms[s]||0)+1;}));
+      const sorted=Object.entries(topSyms).sort((a,b)=>b[1]-a[1]).slice(0,3);
+      const moodCount={};symEnts.forEach(e=>{moodCount[e.mood]=(moodCount[e.mood]||0)+1;});
+      const topMood=Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0];
+      html+=`<div class="ic rose-border" style="margin-top:11px"><div class="ic-h rose-bdr"><div class="ic-ico rose">🌸</div><div><div class="ic-t rose">Cycle Insights</div><div class="ic-s">Your symptom patterns</div></div></div><div class="ic-b">${sorted.length?`<div class="ic-row"><span class="ic-tag period">Top Symptoms</span><span class="ic-c">${sorted.map(s=>s[0]+' ('+s[1]+'×)').join(', ')}</span></div>`:''}${topMood?`<div class="ic-row"><span class="ic-tag period">Common Mood</span><span class="ic-c">${topMood[0]} recorded ${topMood[1]} time${topMood[1]!==1?'s':''}</span></div>`:''}</div></div>`;
+    }
+  }
+  el.innerHTML=html;
+}
+
+function openShare(){const enc=btoa(JSON.stringify(D));document.getElementById('shareUrl').textContent=location.href.split('?')[0]+'?view=1&d='+enc;document.getElementById('shareModal').style.display='flex';}
+function copyUrl(){const url=document.getElementById('shareUrl').textContent;navigator.clipboard.writeText(url).then(()=>toast('✓ Link copied')).catch(()=>{const el=document.getElementById('shareUrl');const r=document.createRange();r.selectNode(el);window.getSelection().removeAllRanges();window.getSelection().addRange(r);document.execCommand('copy');toast('✓ Link copied');});}
+
+if(D.p||isV){document.getElementById('setupScreen').style.display='none';document.getElementById('mainApp').style.display='block';initApp();}
+</script>
+</body>
+</html>
