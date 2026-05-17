@@ -696,14 +696,9 @@ async function doLogout() {
 document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
 // ─── AUTH STATE ───────────────────────────────────────
-// Fallback: if supabase never responds, show login after 5s
-setTimeout(()=>{
-  const ls=document.getElementById('loadingScreen');
-  if(ls&&ls.style.display!=='none'){
-    ls.style.display='none';
-    showAuth('login');
-  }
-},5000);
+// Show login immediately as default, auth state will override if logged in
+document.getElementById('loadingScreen').style.display='none';
+showAuth('login');
 
 sb.auth.onAuthStateChange(async(event,session)=>{
   document.getElementById('loadingScreen').style.display='none';
