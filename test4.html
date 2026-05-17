@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test 4</title>
+<style>
+body{background:#0f0f0f;color:#fff;font-family:sans-serif;padding:30px;font-size:14px;line-height:1.8}
+</style>
+</head>
+<body>
+<div id="status">Loading Supabase...</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<script>
+var el = document.getElementById('status');
+try {
+  if (typeof supabase === 'undefined') {
+    el.innerHTML = '❌ Supabase not loaded';
+  } else {
+    el.innerHTML = '✅ Supabase loaded<br>';
+    var sb = supabase.createClient(
+      'https://tjbslsvekrtpamtpweqi.supabase.co',
+      'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS'
+    );
+    el.innerHTML += '✅ Client created<br>';
+    sb.auth.getSession().then(function(result) {
+      el.innerHTML += result.error 
+        ? '❌ Session error: ' + result.error.message 
+        : '✅ Session OK - user: ' + (result.data.session ? result.data.session.user.email : 'none');
+    }).catch(function(e) {
+      el.innerHTML += '❌ Promise error: ' + e.message;
+    });
+  }
+} catch(e) {
+  el.innerHTML = '❌ JS Error: ' + e.message;
+}
+</script>
+</body>
+</html>
