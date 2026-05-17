@@ -198,6 +198,12 @@ input.fi[type="date"]:valid{border-color:var(--gold);background:rgba(184,150,60,
 textarea.fi:not(:placeholder-shown){border-color:var(--gold);background:rgba(184,150,60,0.06)}
 select.fi{border-color:var(--gold);background:rgba(184,150,60,0.06)}
 
+
+.edit-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:3px 8px;font-size:9px;cursor:pointer;font-family:'Oswald',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-left:auto;flex-shrink:0}
+.edit-btn:hover{border-color:var(--gold);color:var(--gold)}
+.del-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:3px 8px;font-size:9px;cursor:pointer;font-family:'Oswald',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px;flex-shrink:0}
+.del-btn:hover{border-color:#a03030;color:#a03030}
+
 </style>
 </head>
 <body>
@@ -483,6 +489,8 @@ var selSleepQ = 'Good', selWakeUp = 'None', selInt = 3;
 var selPhysSym = [], selMood = 'Neutral', selFlow = 'None', selEnergy = 'Normal';
 var selPFlow = 'Medium', selPSym = [];
 var activeTab = 'meal', curDays = 7, calYear, calMonth;
+var editingEntryId = null;
+var editingMeasId = null;
 var wChart = null, slChart = null;
 
 var GENRES = ['American','Japanese','Chinese','Korean','Fast Food','Salad','Protein','Other'];
@@ -668,6 +676,24 @@ function finishSetup() {
   });
 }
 
+
+function editBodyEntry(id) {
+  var meas = null;
+  for (var i = 0; i < bodyData.length; i++) {
+    if (bodyData[i].id === id) { meas = bodyData[i]; break; }
+  }
+  if (!meas) return;
+  editingMeasId = id;
+  document.getElementById('bDate').value = meas.date;
+  document.getElementById('bW').value = meas.weight || '';
+  document.getElementById('bF').value = meas.body_fat || '';
+  document.getElementById('bM').value = meas.muscle || '';
+  document.getElementById('saveMeasBtn').textContent = 'Update Measurement';
+  // Scroll to form
+  document.getElementById('sec-body').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
 function saveBody() {
   var date = document.getElementById('bDate').value;
   var weight = parseFloat(document.getElementById('bW').value);
@@ -676,18 +702,41 @@ function saveBody() {
   var mu = parseFloat(document.getElementById('bM').value) || null;
   var btn = document.getElementById('saveMeasBtn');
   btn.disabled = true; setSync('ing');
-  sb.from('measurements').insert({user_id: currentUser.id, date: date, weight: weight, body_fat: bf, muscle: mu}).select().single().then(function(result) {
-    btn.disabled = false;
-    if (result.error) { setSync(''); showToast('Error saving'); return; }
-    bodyData.push(result.data);
-    bodyData.sort(function(a,b) { return a.date.localeCompare(b.date); });
-    document.getElementById('bW').value = '';
-    document.getElementById('bF').value = '';
-    document.getElementById('bM').value = '';
-    setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
-    showToast('Measurement saved');
-    renderBodyLog(); renderDash(); renderInsight();
-  });
+
+  if (editingMeasId) {
+    var mid = editingMeasId;
+    sb.from('measurements').update({date: date, weight: weight, body_fat: bf, muscle: mu}).eq('id', mid).then(function(result) {
+      btn.disabled = false; btn.textContent = 'Save Measurement';
+      if (result.error) { setSync(''); showToast('Error updating'); return; }
+      for (var i = 0; i < bodyData.length; i++) {
+        if (bodyData[i].id === mid) {
+          bodyData[i].date = date; bodyData[i].weight = weight;
+          bodyData[i].body_fat = bf; bodyData[i].muscle = mu; break;
+        }
+      }
+      bodyData.sort(function(a,b) { return a.date.localeCompare(b.date); });
+      editingMeasId = null;
+      document.getElementById('bW').value = '';
+      document.getElementById('bF').value = '';
+      document.getElementById('bM').value = '';
+      setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+      showToast('Measurement updated');
+      renderBodyLog(); renderDash(); renderInsight();
+    });
+  } else {
+    sb.from('measurements').insert({user_id: currentUser.id, date: date, weight: weight, body_fat: bf, muscle: mu}).select().single().then(function(result) {
+      btn.disabled = false;
+      if (result.error) { setSync(''); showToast('Error saving'); return; }
+      bodyData.push(result.data);
+      bodyData.sort(function(a,b) { return a.date.localeCompare(b.date); });
+      document.getElementById('bW').value = '';
+      document.getElementById('bF').value = '';
+      document.getElementById('bM').value = '';
+      setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+      showToast('Measurement saved');
+      renderBodyLog(); renderDash(); renderInsight();
+    });
+  }
 }
 
 function savePeriod() {
@@ -709,6 +758,87 @@ function savePeriod() {
     setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
     closePeriodModal(); showToast('Period logged');
     renderCycle(); renderDash();
+  });
+}
+
+
+function editEntry(id) {
+  var entry = null;
+  for (var i = 0; i < entries.length; i++) {
+    if (entries[i]._id === id) { entry = entries[i]; break; }
+  }
+  if (!entry) return;
+  editingEntryId = id;
+
+  // Open modal on correct tab
+  openEntryModal();
+  var tabBtns = document.querySelectorAll('.mtab');
+  var tabMap = {meal:0, exercise:1, sleep:2, symptom:3};
+  var tabIdx = tabMap[entry.type] || 0;
+  swTab(entry.type, tabBtns[tabIdx]);
+
+  // Pre-fill fields
+  if (entry.type === 'meal') {
+    document.getElementById('mDate').value = entry.date;
+    document.getElementById('mTiming').value = entry.timing || 'Dinner';
+    selGenre = entry.genre || 'American';
+    selSize = entry.size || 'Regular';
+    document.getElementById('mNote').value = entry.note || '';
+    buildSingle('genreGrid', GENRES, function(){return selGenre;}, function(v){selGenre=v;}, 'on', updateMealUI);
+    buildSingle('sizeGrid', SIZES, function(){return selSize;}, function(v){selSize=v;}, 'on', updateMealUI);
+    updateMealUI();
+  } else if (entry.type === 'exercise') {
+    document.getElementById('eDate').value = entry.date;
+    document.getElementById('eDur').value = entry.duration || '';
+    document.getElementById('eMemo').value = entry.memo || '';
+    selExType = entry.exType || 'Weights';
+    selInt = entry.intensity || 3;
+    buildSingle('exTypeGrid', EX_TYPES, function(){return selExType;}, function(v){selExType=v;}, 'on', null);
+    setInt(selInt);
+  } else if (entry.type === 'sleep') {
+    document.getElementById('slDate').value = entry.date;
+    document.getElementById('slBed').value = entry.bedTime || '23:00';
+    document.getElementById('slWake').value = entry.wakeTime || '07:00';
+    document.getElementById('slNote').value = entry.note || '';
+    selSleepQ = entry.quality || 'Good';
+    selWakeUp = entry.wakeUp || 'None';
+    buildSingle('sleepQGrid', SLEEP_Q, function(){return selSleepQ;}, function(v){selSleepQ=v;}, 'onp', null);
+    buildSingle('wakeGrid', WAKE_UPS, function(){return selWakeUp;}, function(v){selWakeUp=v;}, 'onp', null);
+    updateSlCalc();
+  } else if (entry.type === 'symptom') {
+    document.getElementById('symDate').value = entry.date;
+    document.getElementById('symNote').value = entry.note || '';
+    selMood = entry.mood || 'Neutral';
+    selFlow = entry.flow || 'None';
+    selEnergy = entry.energy || 'Normal';
+    selPhysSym = (entry.physSyms || []).slice();
+    buildSingle('moodGrid', MOODS, function(){return selMood;}, function(v){selMood=v;}, 'onr', null);
+    buildSingle('flowGrid', FLOWS, function(){return selFlow;}, function(v){selFlow=v;}, 'onr', null);
+    buildSingle('energyGrid', ENERGIES, function(){return selEnergy;}, function(v){selEnergy=v;}, 'onr', null);
+    buildMulti('physSymGrid', PHYS_SYMS, selPhysSym, 'onr');
+  }
+
+  // Change save button text
+  document.getElementById('saveEntryBtn').textContent = 'Update Entry';
+}
+
+function deleteEntry(id) {
+  if (!confirm('Delete this entry?')) return;
+  sb.from('entries').delete().eq('id', id).then(function(result) {
+    if (result.error) { showToast('Error deleting'); return; }
+    entries = entries.filter(function(e) { return e._id !== id; });
+    showToast('Entry deleted');
+    renderJournal(); renderDash(); renderInsight();
+  });
+}
+
+function deleteBodyEntry(id) {
+  if (!confirm('Delete this measurement?')) return;
+  sb.from('measurements').delete().eq('id', id).then(function(result) {
+    if (result.error) { showToast('Error deleting'); return; }
+    bodyData = bodyData.filter(function(b) { return b.id !== id; });
+    showToast('Measurement deleted');
+    renderBodyLog(); renderDash(); renderInsight();
   });
 }
 
@@ -739,18 +869,41 @@ function saveEntry() {
   if (!date) { alert('Please enter a date'); return; }
   var btn = document.getElementById('saveEntryBtn');
   btn.disabled = true; setSync('ing');
-  sb.from('entries').insert({user_id: currentUser.id, date: date, type: type, data: entryData}).select().single().then(function(result) {
-    btn.disabled = false;
-    if (result.error) { setSync(''); showToast('Error saving'); return; }
-    var obj = entryData;
-    obj.date = date; obj.type = type; obj._id = result.data.id;
-    entries.push(obj);
-    entries.sort(function(a,b) { return a.date.localeCompare(b.date); });
-    setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
-    closeEntryModal(); showToast('Entry saved');
-    renderJournal(); renderDash(); renderInsight();
-    if (profile && profile.gender === 'Female') renderCycle();
-  });
+
+  if (editingEntryId) {
+    // UPDATE existing entry
+    var eid = editingEntryId;
+    sb.from('entries').update({date: date, type: type, data: entryData}).eq('id', eid).then(function(result) {
+      btn.disabled = false; btn.textContent = 'Save Entry';
+      if (result.error) { setSync(''); showToast('Error updating'); return; }
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i]._id === eid) {
+          var obj = entryData; obj.date = date; obj.type = type; obj._id = eid;
+          entries[i] = obj; break;
+        }
+      }
+      entries.sort(function(a,b) { return a.date.localeCompare(b.date); });
+      editingEntryId = null;
+      setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+      closeEntryModal(); showToast('Entry updated');
+      renderJournal(); renderDash(); renderInsight();
+      if (profile && profile.gender === 'Female') renderCycle();
+    });
+  } else {
+    // INSERT new entry
+    sb.from('entries').insert({user_id: currentUser.id, date: date, type: type, data: entryData}).select().single().then(function(result) {
+      btn.disabled = false;
+      if (result.error) { setSync(''); showToast('Error saving'); return; }
+      var obj = entryData;
+      obj.date = date; obj.type = type; obj._id = result.data.id;
+      entries.push(obj);
+      entries.sort(function(a,b) { return a.date.localeCompare(b.date); });
+      setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+      closeEntryModal(); showToast('Entry saved');
+      renderJournal(); renderDash(); renderInsight();
+      if (profile && profile.gender === 'Female') renderCycle();
+    });
+  }
 }
 
 function initUI() {
@@ -893,7 +1046,7 @@ function openEntryModal() {
   updateMealUI(); updateSlCalc();
   document.getElementById('entryModal').style.display = 'flex';
 }
-function closeEntryModal() { document.getElementById('entryModal').style.display = 'none'; }
+function closeEntryModal() { document.getElementById('entryModal').style.display = 'none'; editingEntryId = null; document.getElementById('saveEntryBtn').textContent = 'Save Entry'; }
 function openPeriodModal() {
   document.getElementById('pStart').value = today();
   document.getElementById('pEnd').value = ''; document.getElementById('pNote').value = '';
@@ -949,7 +1102,7 @@ function renderBodyLog() {
     var sub = [];
     if (r.body_fat) sub.push('Fat '+r.body_fat+'%');
     if (r.muscle) sub.push('Muscle '+r.muscle+'kg');
-    html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight '+r.weight+'kg</div><div class="des">'+sub.join(' · ')+'</div></div></div></div>';
+    html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb body">Measure</div><div style="flex:1"><div class="dem">Weight '+r.weight+'kg</div><div class="des">'+sub.join(' · ')+'</div></div><button class="edit-btn" onclick="editBodyEntry(\''+r.id+'\')" >Edit</button><button class="del-btn" onclick="deleteBodyEntry(\''+r.id+'\')" >✕</button></div></div>';
   }
   el.innerHTML = html;
 }
@@ -971,15 +1124,15 @@ function renderJournal() {
     for (var i = 0; i < ents.length; i++) {
       var e = ents[i];
       if (e.type === 'meal') {
-        html += '<div class="de"><div class="deb meal">'+e.timing+'</div><div><div class="dem">'+e.genre+' / '+e.size+'</div><div class="des">'+(e.note||'')+'</div><span class="det">'+e.calories+' kcal</span></div></div>';
+        html += '<div class="de"><div class="deb meal">'+e.timing+'</div><div style="flex:1"><div class="dem">'+e.genre+' / '+e.size+'</div><div class="des">'+(e.note||'')+'</div><span class="det">'+e.calories+' kcal</span></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'exercise') {
         var dots = ''; for (var j = 0; j < e.intensity; j++) dots += '●'; for (var j = e.intensity; j < 5; j++) dots += '○';
-        html += '<div class="de"><div class="deb ex">Exercise</div><div><div class="dem">'+e.exType+' '+dots+'</div><div class="des">'+(e.duration ? e.duration+' min · ' : '')+(e.memo||'')+'</div></div></div>';
+        html += '<div class="de"><div class="deb ex">Exercise</div><div style="flex:1"><div class="dem">'+e.exType+' '+dots+'</div><div class="des">'+(e.duration ? e.duration+' min · ' : '')+(e.memo||'')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'sleep') {
-        html += '<div class="de"><div class="deb sleep">Sleep</div><div><div class="dem">'+(e.hours ? e.hours.toFixed(1)+' hours' : '—')+'</div><div class="des">'+e.bedTime+'–'+e.wakeTime+' · '+e.quality+' · Wakings: '+e.wakeUp+(e.note ? ' · '+e.note : '')+'</div></div></div>';
+        html += '<div class="de"><div class="deb sleep">Sleep</div><div style="flex:1"><div class="dem">'+(e.hours ? e.hours.toFixed(1)+' hours' : '—')+'</div><div class="des">'+e.bedTime+'–'+e.wakeTime+' · '+e.quality+' · Wakings: '+e.wakeUp+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'symptom') {
         var symsText = (e.physSyms && e.physSyms.length) ? e.physSyms.join(', ') : 'No physical symptoms';
-        html += '<div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: '+e.mood+' · Flow: '+e.flow+' · Energy: '+e.energy+'</div><div class="des">'+symsText+(e.note ? ' · '+e.note : '')+'</div></div></div>';
+        html += '<div class="de"><div class="deb sym">Symptoms</div><div style="flex:1"><div class="dem">Mood: '+e.mood+' · Flow: '+e.flow+' · Energy: '+e.energy+'</div><div class="des">'+symsText+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       }
     }
     html += '</div>';
