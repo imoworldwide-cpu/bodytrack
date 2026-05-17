@@ -613,13 +613,6 @@ if (typeof Chart === 'undefined') {
     if (ct) { ct.fillStyle='rgba(184,150,60,0.1)'; ct.fillRect(0,0,canvas.width,canvas.height); ct.fillStyle='#888'; ct.font='12px sans-serif'; ct.textAlign='center'; ct.fillText('Chart unavailable', canvas.width/2, canvas.height/2); }
   };
 }
-// Unregister any service workers that might cache old versions
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for (let reg of registrations) { reg.unregister(); }
-  });
-}
-
 window.onerror = function(msg, src, line, col, err) {
   var d = document.createElement('div');
   d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f0f;color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8;z-index:99999;overflow:auto';
@@ -627,12 +620,7 @@ window.onerror = function(msg, src, line, col, err) {
   document.body.appendChild(d);
   return false;
 };
-window.addEventListener('unhandledrejection', function(e) {
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f0f;color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8;z-index:99999;overflow:auto';
-  d.innerHTML = '<b style="font-size:16px">Promise Error:</b><br><br>' + (e.reason ? (e.reason.message || e.reason) : 'Unknown') + (e.reason && e.reason.stack ? '<br><br>' + e.reason.stack.substring(0,300) : '');
-  document.body.appendChild(d);
-});
+
 // ─── SUPABASE ─────────────────────────────────────────
 if (typeof supabase === 'undefined') {
   document.getElementById('loadingScreen').style.display = 'none';
@@ -757,7 +745,7 @@ document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='En
 sb.auth.onAuthStateChange(async(event,session)=>{
   try {
   document.getElementById('loadingScreen').style.display='none';
-  if(session?.user){
+  if((session && session.user)){
     currentUser=session.user;
     ['login','signup','forgot'].forEach(n=>{document.getElementById(n+'Screen').style.display='none';});
     await loadAll();
@@ -862,7 +850,7 @@ async function saveEntry() {
   let date,type,entryData;
   if(activeTab==='meal'){
     date=document.getElementById('mDate').value; type='meal';
-    entryData={timing:document.getElementById('mTiming').value,genre:selGenre,size:selSize,calories:CAL[selGenre][SIZES.indexOf(selSize)],note:document.getElementById('mNote').value||MEAL_EX[selGenre]?.[selSize]||''};
+    entryData={timing:document.getElementById('mTiming').value,genre:selGenre,size:selSize,calories:CAL[selGenre][SIZES.indexOf(selSize)],note:document.getElementById('mNote').value||(MEAL_EX[selGenre] && MEAL_EX[selGenre][selSize])||''};
     document.getElementById('mNote').value='';
   } else if(activeTab==='exercise'){
     date=document.getElementById('eDate').value; type='exercise';
@@ -891,16 +879,16 @@ async function saveEntry() {
   setSync('ok'); setTimeout(()=>setSync(''),2000);
   closeEntryModal(); showToast('✓ Entry saved');
   renderJournal(); renderDash(); renderInsight();
-  if(profile?.gender==='Female') renderCycle();
+  if((profile && profile.gender==='Female')) renderCycle();
 }
 
 // ─── UI INIT ──────────────────────────────────────────
 function initUI() {
-  const isFemale=profile?.gender==='Female';
+  const isFemale=(profile && profile.gender==='Female');
   const av=document.getElementById('uAv');
-  av.textContent=(profile?.name||'U').slice(0,2).toUpperCase();
+  av.textContent=((profile && profile.name||'U')).slice(0,2).toUpperCase();
   if(isFemale)av.classList.add('rose');
-  document.getElementById('uNm').textContent=profile?.name||'';
+  document.getElementById('uNm').textContent=(profile && profile.name||'');
   if(isFemale){
     document.getElementById('cycleNav').style.display='block';
     document.getElementById('symTab').style.display='block';
@@ -951,7 +939,7 @@ function initSel(){
 }
 function updateMealUI(){
   document.getElementById('calNum').textContent=CAL[selGenre][SIZES.indexOf(selSize)];
-  document.getElementById('mNote').placeholder='e.g. '+(MEAL_EX[selGenre]?.[selSize]||'');
+  document.getElementById('mNote').placeholder='e.g. '+((MEAL_EX[selGenre] && MEAL_EX[selGenre][selSize])||'');
 }
 function setInt(v){selInt=v;document.querySelectorAll('.int-dot').forEach((d,i)=>d.classList.toggle('on',i<v));document.getElementById('intLbl').textContent=INT_LBLS[v];}
 function calcSleepHrs(){const bed=document.getElementById('slBed').value,wake=document.getElementById('slWake').value;if(!bed||!wake)return null;const[bh,bm]=bed.split(':').map(Number),[wh,wm]=wake.split(':').map(Number);let m=(wh*60+wm)-(bh*60+bm);if(m<0)m+=1440;return Math.round(m/6)/10;}
@@ -1003,11 +991,11 @@ function closePeriodModal(){document.getElementById('periodModal').style.display
 function getAvgCycleLen(){
   const s=[...periods].sort((a,b)=>a.date.localeCompare(b.date));
   if(s.length>=2){const diffs=[];for(let i=1;i<s.length;i++){const d=Math.round((new Date(s[i].date)-new Date(s[i-1].date))/86400000);if(d>=15&&d<=60)diffs.push(d);}if(diffs.length>=1)return Math.round(diffs.reduce((a,v)=>a+v,0)/diffs.length);}
-  return profile?.cycle_len||28;
+  return (profile && profile.cycle_len||28);
 }
 function getLastPeriodDate(){
   if(periods.length>0){const s=[...periods].sort((a,b)=>b.date.localeCompare(a.date));return new Date(s[0].date);}
-  if(profile?.last_period)return new Date(profile.last_period);
+  if((profile && profile.last_period))return new Date(profile.last_period);
   return null;
 }
 function getCycleDates(){
@@ -1041,14 +1029,14 @@ function renderJournal(){
       if(e.type==='meal') h+=`<div class="de"><div class="deb meal">${e.timing}</div><div><div class="dem">${e.genre} / ${e.size}</div><div class="des">${e.note||''}</div><span class="det">${e.calories} kcal</span></div></div>`;
       else if(e.type==='exercise') h+=`<div class="de"><div class="deb ex">Exercise</div><div><div class="dem">${e.exType} ${'●'.repeat(e.intensity)}${'○'.repeat(5-e.intensity)}</div><div class="des">${e.duration?e.duration+' min · ':''}${e.memo||''}</div></div></div>`;
       else if(e.type==='sleep') h+=`<div class="de"><div class="deb sleep">Sleep</div><div><div class="dem">${e.hours?e.hours.toFixed(1)+' hours':'—'}</div><div class="des">${e.bedTime}–${e.wakeTime} · ${e.quality} · Wakings: ${e.wakeUp}${e.note?' · '+e.note:''}</div></div></div>`;
-      else if(e.type==='symptom') h+=`<div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${e.mood} · Flow: ${e.flow} · Energy: ${e.energy}</div><div class="des">${e.physSyms?.join(', ')||'No physical symptoms'}${e.note?' · '+e.note:''}</div></div></div>`;
+      else if(e.type==='symptom') h+=`<div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${e.mood} · Flow: ${e.flow} · Energy: ${e.energy}</div><div class="des">${(e.physSyms && e.physSyms.join(', '))||'No physical symptoms'}${e.note?' · '+e.note:''}</div></div></div>`;
     });
     return h+'</div>';
   }).join('');
 }
 
 function renderDash(){
-  const isFemale=profile?.gender==='Female';
+  const isFemale=(profile && profile.gender==='Female');
   const cd=isFemale?getCycleDates():{};
   const lat=bodyData[bodyData.length-1],prev=bodyData[bodyData.length-2];
   const slEnts=entries.filter(e=>e.type==='sleep').sort((a,b)=>b.date.localeCompare(a.date));
@@ -1059,8 +1047,8 @@ function renderDash(){
   if(isFemale&&cd.next){const dp=daysUntil(cd.next);cycleCard=`<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">${dateStr(cd.next)}</div><div class="mc-sub">${dp>=0?'In '+dp+' days':'Overdue '+Math.abs(dp)+'d'}</div></div>`;}
   document.getElementById('metricGrid').innerHTML=`
     <div class="mc"><div class="mc-l">Weight</div><div class="mc-v">${lat?lat.weight.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'weight',true)}</div>
-    <div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">${lat?.body_fat?lat.body_fat.toFixed(1):'--'}<span class="mc-u">%</span></div>${chg(lat,prev,'body_fat',true)}</div>
-    <div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">${lat?.muscle?lat.muscle.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'muscle',false)}</div>
+    <div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">${(lat && lat.body_fat)?lat.body_fat.toFixed(1):'--'}<span class="mc-u">%</span></div>${chg(lat,prev,'body_fat',true)}</div>
+    <div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">${(lat && lat.muscle)?lat.muscle.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'muscle',false)}</div>
     <div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:${slC};font-size:20px">${latSl?latSl.hours.toFixed(1):'--'}<span class="mc-u">h</span></div><div class="mc-sub">${latSl?latSl.quality:''}</div></div>
     ${cycleCard}`;
   renderWChart(curDays); renderHL();
@@ -1070,7 +1058,7 @@ function renderDash(){
 function setPer(d,btn){curDays=d;document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWChart(d);}
 
 function renderWChart(days){
-  const isFemale=profile?.gender==='Female';
+  const isFemale=(profile && profile.gender==='Female');
   const cut=new Date(); cut.setDate(cut.getDate()-days);
   const fil=bodyData.filter(r=>r.date>=cut.toISOString().split('T')[0]);
   const badSl=new Set(entries.filter(e=>e.type==='sleep'&&e.hours<5).map(e=>e.date));
@@ -1141,8 +1129,8 @@ function renderCycleLog(){
   const items=[...periods,...entries.filter(e=>e.type==='symptom')].sort((a,b)=>b.date.localeCompare(a.date));
   if(!items.length){el.innerHTML='<div class="nd">No cycle data yet.</div>';return;}
   el.innerHTML=items.slice(0,12).map(r=>{
-    if(!r.type||r.flow!==undefined&&!r.physSyms)return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Flow: ${r.flow}${r.endDate?' · Ends '+fmt(r.endDate):''}</div><div class="des">${r.symptoms?.join(', ')||''}${r.note?' · '+r.note:''}</div></div></div></div>`;
-    return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${r.mood} · Flow: ${r.flow} · Energy: ${r.energy}</div><div class="des">${r.physSyms?.join(', ')||'No physical symptoms'}</div></div></div></div>`;
+    if(!r.type||r.flow!==undefined&&!r.physSyms)return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Flow: ${r.flow}${r.endDate?' · Ends '+fmt(r.endDate):''}</div><div class="des">${(r.symptoms && r.symptoms.join(', '))||''}${r.note?' · '+r.note:''}</div></div></div></div>`;
+    return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${r.mood} · Flow: ${r.flow} · Energy: ${r.energy}</div><div class="des">${(r.physSyms ? r.physSyms.join(', ') : 'No physical symptoms')}</div></div></div></div>`;
   }).join('');
 }
 
@@ -1176,7 +1164,7 @@ function renderSlChart(){
 }
 
 function renderPattern(){
-  const el=document.getElementById('patternCard'); const isFemale=profile?.gender==='Female'; let html='';
+  const el=document.getElementById('patternCard'); const isFemale=(profile && profile.gender==='Female'); let html='';
   const slEnts=entries.filter(e=>e.type==='sleep');
   if(slEnts.length>=3){
     const avgH=(slEnts.reduce((s,e)=>s+(e.hours||0),0)/slEnts.length).toFixed(1);
@@ -1190,7 +1178,7 @@ function renderPattern(){
     if(numP>=2){
       const s2=[...periods].sort((a,b)=>a.date.localeCompare(b.date));
       const cl=[];for(let i=1;i<s2.length;i++){const d=Math.round((new Date(s2[i].date)-new Date(s2[i-1].date))/86400000);if(d>=15&&d<=60)cl.push(d);}
-      html+=`<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">From your logged periods</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">${avgCL} days</b>${cl.length?' (range: '+Math.min(...cl)+'–'+Math.max(...cl)+' days)':''} from ${numP} periods</span></div>${symEnts.length>=2?`<div class="drow"><span class="dtag period">Top Symptoms</span><span class="dc">${(()=>{const t={};symEnts.forEach(e=>e.physSyms?.forEach(s=>{t[s]=(t[s]||0)+1;}));return Object.entries(t).sort((a,b)=>b[1]-a[1]).slice(0,3).map(s=>s[0]+' ('+s[1]+'×)').join(', ')||'Not enough data';})()}</span></div>`:''}</div></div>`;
+      html+=`<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">From your logged periods</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">${avgCL} days</b>${cl.length?' (range: '+Math.min(...cl)+'–'+Math.max(...cl)+' days)':''} from ${numP} periods</span></div>${symEnts.length>=2?`<div class="drow"><span class="dtag period">Top Symptoms</span><span class="dc">${(()=>{const t={};symEnts.forEach(e=>(e.physSyms && e.physSyms.forEach(s=>{t[s]=(t[s]||0)+1;})));return Object.entries(t).sort((a,b)=>b[1]-a[1]).slice(0,3).map(s=>s[0]+' ('+s[1]+'×)').join(', ')||'Not enough data';})()}</span></div>`:''}</div></div>`;
     } else if(numP===1){
       html+=`<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">Keep logging to improve accuracy</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Progress</span><span class="dc">1 period logged. Log <b style="color:var(--peach)">at least 2</b> to calculate your personal cycle length.</span></div></div></div>`;
     }
