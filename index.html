@@ -355,6 +355,7 @@ select.fi{border-color:var(--gold);background:rgba(184,150,60,0.06)}
       </div>
       <div class="frow">
         <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate" style="color-scheme:light"></div>
+        <div class="fg"><label class="fl">Timing</label><select class="fi" id="bTiming"><option>Morning</option><option>Noon</option><option>Night</option></select></div>
         <div class="fg"><label class="fl" id="wLabel">Weight (kg)</label><input type="number" step="0.1" class="fi" id="bW" placeholder="60.0" inputmode="decimal"></div>
         <div class="fg"><label class="fl">Body Fat % <span style="color:var(--muted);font-size:8px;letter-spacing:0">(optional)</span></label><input type="number" step="0.1" class="fi" id="bF" placeholder="Leave blank if N/A" inputmode="decimal"></div>
         <div class="fg"><label class="fl">Muscle kg <span style="color:var(--muted);font-size:8px;letter-spacing:0">(optional)</span></label><input type="number" step="0.1" class="fi" id="bM" placeholder="Leave blank if N/A" inputmode="decimal"></div>
@@ -726,6 +727,7 @@ function editBodyEntry(id) {
   if (!meas) return;
   editingMeasId = id;
   document.getElementById('bDate').value = meas.date;
+  document.getElementById('bTiming').value = meas.timing || 'Morning';
   document.getElementById('bW').value = meas.weight || '';
   document.getElementById('bF').value = meas.body_fat || '';
   document.getElementById('bM').value = meas.muscle || '';
@@ -748,7 +750,8 @@ function saveBody() {
 
   if (editingMeasId) {
     var mid = editingMeasId;
-    sb.from('measurements').update({date: date, weight: weight, body_fat: bf, muscle: mu}).eq('id', mid).then(function(result) {
+    var timing = document.getElementById('bTiming').value;
+      sb.from('measurements').update({date: date, weight: weight, body_fat: bf, muscle: mu, timing: timing}).eq('id', mid).then(function(result) {
       btn.disabled = false; btn.textContent = 'Save Measurement';
       if (result.error) { setSync(''); showToast('Error updating'); return; }
       for (var i = 0; i < bodyData.length; i++) {
@@ -767,7 +770,8 @@ function saveBody() {
       renderBodyLog(); renderDash(); renderInsight();
     });
   } else {
-    sb.from('measurements').insert({user_id: currentUser.id, date: date, weight: weight, body_fat: bf, muscle: mu}).select().single().then(function(result) {
+    var timing = document.getElementById('bTiming').value;
+    sb.from('measurements').insert({user_id: currentUser.id, date: date, weight: weight, body_fat: bf, muscle: mu, timing: timing}).select().single().then(function(result) {
       btn.disabled = false;
       if (result.error) { setSync(''); showToast('Error saving'); return; }
       bodyData.push(result.data);
@@ -1148,7 +1152,8 @@ function renderBodyLog() {
     if (r.body_fat) sub.push('Fat '+r.body_fat+'%');
     if (r.muscle) sub.push('Muscle '+r.muscle+'kg');
     var dispW = weightUnit === 'lbs' ? (r.weight * 2.20462).toFixed(1)+' lbs' : r.weight+'kg';
-    html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb body">Measure</div><div style="flex:1"><div class="dem">Weight '+dispW+'</div><div class="des">'+sub.join(' · ')+'</div></div><button class="edit-btn" onclick="editBodyEntry(\''+r.id+'\')" >Edit</button><button class="del-btn" onclick="deleteBodyEntry(\''+r.id+'\')" >✕</button></div></div>';
+    var timingTag = r.timing ? ' · '+r.timing : '';
+    html += '<div class="dd"><div class="db">'+fmtF(r.date)+timingTag+'</div><div class="de"><div class="deb body">Measure</div><div style="flex:1"><div class="dem">Weight '+dispW+'</div><div class="des">'+sub.join(' · ')+'</div></div><button class="edit-btn" onclick="editBodyEntry(\''+r.id+'\')" >Edit</button><button class="del-btn" onclick="deleteBodyEntry(\''+r.id+'\')" >✕</button></div></div>';
   }
   el.innerHTML = html;
 }
