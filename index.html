@@ -585,25 +585,35 @@ document.getElementById('loginPw').addEventListener('keydown', function(e) {
 });
 
 sb.auth.onAuthStateChange(function(event, session) {
-  if (session && session.user) {
-    currentUser = session.user;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('signupScreen').style.display = 'none';
-    document.getElementById('forgotScreen').style.display = 'none';
-    loadAll().then(function() {
-      if (profile) {
-        document.getElementById('setupScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
-        initUI();
-      } else {
-        document.getElementById('setupScreen').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
-      }
-    });
-  } else {
-    document.getElementById('mainApp').style.display = 'none';
-    document.getElementById('setupScreen').style.display = 'none';
-    showAuth('login');
+  try {
+    if (session && session.user) {
+      currentUser = session.user;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('signupScreen').style.display = 'none';
+      document.getElementById('forgotScreen').style.display = 'none';
+      loadAll().then(function() {
+        try {
+          if (profile) {
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            initUI();
+          } else {
+            document.getElementById('setupScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+          }
+        } catch(e2) {
+          document.body.innerHTML = '<div style="background:#0f0f0f;color:#e07070;padding:30px;font-family:sans-serif;font-size:13px;line-height:1.8"><b>Error in loadAll callback:</b><br>'+e2.message+'<br><br>'+e2.stack+'</div>';
+        }
+      }).catch(function(e3) {
+        document.body.innerHTML = '<div style="background:#0f0f0f;color:#e07070;padding:30px;font-family:sans-serif;font-size:13px;line-height:1.8"><b>loadAll promise error:</b><br>'+e3.message+'</div>';
+      });
+    } else {
+      document.getElementById('mainApp').style.display = 'none';
+      document.getElementById('setupScreen').style.display = 'none';
+      showAuth('login');
+    }
+  } catch(e) {
+    document.body.innerHTML = '<div style="background:#0f0f0f;color:#e07070;padding:30px;font-family:sans-serif;font-size:13px;line-height:1.8"><b>Auth callback error:</b><br>'+e.message+'<br><br>'+e.stack+'</div>';
   }
 });
 
