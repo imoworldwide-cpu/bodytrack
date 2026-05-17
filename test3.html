@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test</title>
+<style>
+body{background:#0f0f0f;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px}
+button{background:#b8963c;color:#000;border:none;padding:12px 24px;font-size:16px;border-radius:4px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="msg">Page loaded successfully!</div>
+<div id="count">Refresh count: 0</div>
+<button onclick="document.getElementById('msg').textContent='Button works!'">Tap Me</button>
+<script>
+var count = parseInt(localStorage.getItem('rc') || 0) + 1;
+localStorage.setItem('rc', count);
+document.getElementById('count').textContent = 'Refresh count: ' + count;
+</script>
+</body>
+</html>
