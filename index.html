@@ -577,6 +577,15 @@ input, select, textarea {font-size:16px !important}
 <div class="toast" id="toast"></div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  document.body.style.background = '#0f0f0f';
+  document.body.innerHTML = '<div style="color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8">'
+    + '<b style="font-size:16px">JS Error:</b><br>'
+    + msg + '<br><br>'
+    + 'Line: ' + line + '<br>'
+    + 'File: ' + src + '</div>';
+  return false;
+};
 // ─── SUPABASE ─────────────────────────────────────────
 if (typeof supabase === 'undefined') {
   document.getElementById('loadingScreen').style.display = 'none';
