@@ -375,6 +375,8 @@ textarea.fi{resize:vertical;min-height:56px;line-height:1.5}
       <div class="frow">
         <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate" style="color-scheme:light"></div>
         <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fi" id="bW" placeholder="60.0" inputmode="decimal"></div>
+        <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fi" id="bF" placeholder="22.0" inputmode="decimal"></div>
+        <div class="fg"><label class="fl">Muscle Mass (kg)</label><input type="number" step="0.1" class="fi" id="bM" placeholder="45.0" inputmode="decimal"></div>
       </div>
       <button class="btn-save" id="saveMeasBtn" onclick="saveBody()">Save Measurement</button>
     </div>
@@ -685,11 +687,11 @@ async function saveBody() {
   if(!date||!weight){alert('Please enter date and weight');return;}
   const btn=document.getElementById('saveMeasBtn');
   btn.disabled=true; setSync('ing');
-  const {data,error}=await sb.from('measurements').insert({user_id:currentUser.id,date,weight}).select().single();
+  const bf=parseFloat(document.getElementById('bF').value)||null;const mu=parseFloat(document.getElementById('bM').value)||null;const {data,error}=await sb.from('measurements').insert({user_id:currentUser.id,date,weight,body_fat:bf,muscle:mu}).select().single();
   btn.disabled=false;
   if(error){setSync('');showToast('Error saving');return;}
   bodyData.push(data); bodyData.sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('bW').value='';
+  document.getElementById('bW').value='';document.getElementById('bF').value='';document.getElementById('bM').value='';
   setSync('ok'); setTimeout(()=>setSync(''),2000);
   showToast('✓ Measurement saved');
   renderBodyLog(); renderDash(); renderInsight();
@@ -881,7 +883,7 @@ function getCycleDates(){
 function renderBodyLog(){
   const el=document.getElementById('bodyLog');
   if(!bodyData.length){el.innerHTML='<div class="nd">No measurements recorded yet</div>';return;}
-  el.innerHTML=[...bodyData].reverse().map(r=>`<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight ${r.weight}kg</div></div></div></div>`).join('');
+  el.innerHTML=[...bodyData].reverse().map(r=>`<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight ${r.weight}kg</div><div class="des">${[r.body_fat?'Body Fat '+r.body_fat+'%':null,r.muscle?'Muscle '+r.muscle+'kg':null].filter(Boolean).join(' · ')||''}</div></div></div></div>`).join('');
 }
 
 function renderJournal(){
@@ -916,6 +918,8 @@ function renderDash(){
   if(isFemale&&cd.next){const dp=daysUntil(cd.next);cycleCard=`<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">${dateStr(cd.next)}</div><div class="mc-sub">${dp>=0?'In '+dp+' days':'Overdue '+Math.abs(dp)+'d'}</div></div>`;}
   document.getElementById('metricGrid').innerHTML=`
     <div class="mc"><div class="mc-l">Weight</div><div class="mc-v">${lat?lat.weight.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'weight',true)}</div>
+    <div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">${lat?.body_fat?lat.body_fat.toFixed(1):'--'}<span class="mc-u">%</span></div>${chg(lat,prev,'body_fat',true)}</div>
+    <div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">${lat?.muscle?lat.muscle.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'muscle',false)}</div>
     <div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:${slC};font-size:20px">${latSl?latSl.hours.toFixed(1):'--'}<span class="mc-u">h</span></div><div class="mc-sub">${latSl?latSl.quality:''}</div></div>
     ${cycleCard}`;
   renderWChart(curDays); renderHL();
