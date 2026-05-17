@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>BODY TRACK</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#f0ede6;--card:#fff;--primary:#0f0f0f;--gold:#b8963c;--text:#0f0f0f;--muted:#888;--border:#ddd;--green:#2a7a4b;--blue:#1a5a8a;--red:#8a1a1a;--purple:#5a3080;--rose:#b03060;--peach:#e8a090}
@@ -182,8 +182,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .cb-s{font-size:11px;color:var(--muted);margin-top:2px}
 
 /* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:300;display:flex;align-items:flex-end;justify-content:center}
-.modal-sheet{background:var(--card);width:100%;max-width:580px;border-radius:4px 4px 0 0;padding:18px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:300;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
+.modal-sheet{background:var(--card);width:100%;max-width:580px;border-radius:4px 4px 0 0;padding:18px 18px 32px;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .modal-t{font-size:12px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:12px;border-bottom:2px solid var(--gold);padding-bottom:7px;color:var(--primary)}
 .modal-t.rose{border-color:var(--rose);color:var(--rose)}
 .mtabs{display:flex;flex-wrap:wrap;border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px}
@@ -221,6 +221,76 @@ textarea.fi{resize:vertical;min-height:56px;line-height:1.5}
 .toast.show{opacity:1;transform:translateY(0)}
 .nd{text-align:center;padding:24px;color:var(--muted);font-size:12px}
 .slbl2{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'Oswald',sans-serif}
+
+/* ── MOBILE IMPROVEMENTS ── */
+@media(max-width:600px){
+  /* Larger tap targets */
+  .nav-item{padding:11px 12px;font-size:9px}
+  .add-btn{padding:10px 16px;font-size:10px}
+  .pb{padding:6px 10px;font-size:10px}
+  
+  /* Bigger form inputs */
+  .fi{padding:12px 12px;font-size:16px !important} /* 16px prevents iOS zoom */
+  .ainp{font-size:16px !important}
+  .sinp{font-size:16px !important}
+  .login-sel{font-size:16px !important}
+  select.fi{font-size:16px !important}
+  
+  /* Bigger selector buttons */
+  .sb{padding:9px 12px;font-size:13px;min-height:40px}
+  
+  /* Larger metric cards */
+  .mc-v{font-size:26px}
+  .mg{grid-template-columns:repeat(2,1fr)}
+  
+  /* Better modal on mobile */
+  .modal-sheet{padding:16px 16px 40px;max-height:88vh}
+  .modal-t{font-size:13px;margin-bottom:14px}
+  .mtab{padding:10px 4px;font-size:10px}
+  
+  /* Bigger save/cancel buttons */
+  .btn-save{padding:14px;font-size:11px;letter-spacing:1px}
+  .btn-cancel{padding:14px 16px;font-size:11px}
+  .mfooter{position:sticky;bottom:0;background:var(--card);padding-top:12px;margin-bottom:-20px}
+  
+  /* Better selector grid */
+  .sg{gap:6px}
+  
+  /* Intensity dots bigger */
+  .int-dot{width:36px;height:10px}
+  
+  /* Bigger auth inputs */
+  .auth-card{padding:22px 18px}
+  .auth-btn{padding:14px;font-size:13px}
+  
+  /* Setup screen */
+  .setup-card{padding:20px 16px}
+  .genbtn{padding:13px 8px;font-size:13px}
+  .start-btn{padding:14px;font-size:14px}
+  
+  /* Calendar days bigger */
+  .cal-day{min-height:44px}
+  .cal-num{font-size:12px}
+  
+  /* Journal entries more readable */
+  .dem{font-size:14px}
+  .des{font-size:12px}
+  
+  /* Header adjustments */
+  .app-header{height:52px}
+  .unm{display:none} /* hide name on small screens, just show avatar */
+  
+  /* Content padding */
+  .content{padding:10px}
+}
+
+/* Fix iOS input zoom - always */
+input, select, textarea {font-size:16px !important}
+
+/* Safe area for notched phones */
+.app-header{padding-left:max(16px, env(safe-area-inset-left));padding-right:max(16px, env(safe-area-inset-right))}
+.content{padding-bottom:max(14px, env(safe-area-inset-bottom))}
+
 </style>
 </head>
 <body>
@@ -507,6 +577,7 @@ textarea.fi{resize:vertical;min-height:56px;line-height:1.5}
 <div class="toast" id="toast"></div>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 // ─── SUPABASE ─────────────────────────────────────────
 const SB_URL = 'https://tjbslsvekrtpamtpweqi.supabase.co';
 const SB_KEY = 'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS';
@@ -1056,6 +1127,34 @@ function renderPattern(){
   }
   el.innerHTML=html;
 }
+
+// ── MOBILE KEYBOARD / SCROLL FIX ─────────────────────
+function fixModalScroll() {
+  const modal = document.querySelector('.modal-sheet');
+  if (!modal) return;
+  const inputs = modal.querySelectorAll('input, textarea, select');
+  inputs.forEach(inp => {
+    inp.addEventListener('focus', function() {
+      setTimeout(() => {
+        this.scrollIntoView({behavior:'smooth', block:'center'});
+      }, 350); // wait for keyboard to open
+    });
+  });
+}
+
+// Call after modal opens
+const _origOpenEntry = openEntryModal;
+openEntryModal = function() {
+  _origOpenEntry();
+  setTimeout(fixModalScroll, 100);
+};
+const _origOpenPeriod = openPeriodModal;
+openPeriodModal = function() {
+  _origOpenPeriod();
+  setTimeout(fixModalScroll, 100);
+};
+
+}); // end DOMContentLoaded
 </script>
 </body>
 </html>
