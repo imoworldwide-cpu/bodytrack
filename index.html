@@ -577,7 +577,6 @@ input, select, textarea {font-size:16px !important}
 <div class="toast" id="toast"></div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
 // ─── SUPABASE ─────────────────────────────────────────
 const SB_URL = 'https://tjbslsvekrtpamtpweqi.supabase.co';
 const SB_KEY = 'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS';
@@ -692,6 +691,15 @@ async function doLogout() {
 document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
 // ─── AUTH STATE ───────────────────────────────────────
+// Fallback: if supabase never responds, show login after 5s
+setTimeout(()=>{
+  const ls=document.getElementById('loadingScreen');
+  if(ls&&ls.style.display!=='none'){
+    ls.style.display='none';
+    showAuth('login');
+  }
+},5000);
+
 sb.auth.onAuthStateChange(async(event,session)=>{
   document.getElementById('loadingScreen').style.display='none';
   if(session?.user){
@@ -1154,7 +1162,6 @@ openPeriodModal = function() {
   setTimeout(fixModalScroll, 100);
 };
 
-}); // end DOMContentLoaded
 </script>
 </body>
 </html>
