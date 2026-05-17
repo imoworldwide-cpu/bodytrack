@@ -615,14 +615,18 @@ if ('serviceWorker' in navigator) {
 }
 
 window.onerror = function(msg, src, line, col, err) {
-  document.body.style.background = '#0f0f0f';
-  document.body.innerHTML = '<div style="color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8">'
-    + '<b style="font-size:16px">JS Error:</b><br>'
-    + msg + '<br><br>'
-    + 'Line: ' + line + '<br>'
-    + 'File: ' + src + '</div>';
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f0f;color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8;z-index:99999;overflow:auto';
+  d.innerHTML = '<b style="font-size:16px">Error (show this to developer):</b><br><br>' + msg + '<br><br>Line: ' + line + '<br>File: ' + (src||'').split('/').pop() + (err ? '<br><br>' + (err.stack||'').substring(0,300) : '');
+  document.body.appendChild(d);
   return false;
 };
+window.addEventListener('unhandledrejection', function(e) {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f0f;color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8;z-index:99999;overflow:auto';
+  d.innerHTML = '<b style="font-size:16px">Promise Error:</b><br><br>' + (e.reason ? (e.reason.message || e.reason) : 'Unknown') + (e.reason && e.reason.stack ? '<br><br>' + e.reason.stack.substring(0,300) : '');
+  document.body.appendChild(d);
+});
 // ─── SUPABASE ─────────────────────────────────────────
 if (typeof supabase === 'undefined') {
   document.getElementById('loadingScreen').style.display = 'none';
