@@ -294,7 +294,7 @@ input, select, textarea {font-size:16px !important}
 <body>
 
 <!-- LOADING -->
-<div id="loadingScreen">
+<div id="loadingScreen" style="display:none">
   <svg viewBox="0 0 220 44" width="180" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
     <text x="2" y="28" font-family="'Black Ops One',cursive" fill="#fff" font-size="22" letter-spacing="2">BODY</text>
@@ -307,7 +307,7 @@ input, select, textarea {font-size:16px !important}
 </div>
 
 <!-- LOGIN -->
-<div class="auth-screen" id="loginScreen">
+<div class="auth-screen" id="loginScreen" style="display:flex">
   <div class="auth-logo">
     <svg viewBox="0 0 220 44" width="200" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
@@ -705,9 +705,7 @@ async function doLogout() {
 document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
 // ─── AUTH STATE ───────────────────────────────────────
-// Show login immediately as default, auth state will override if logged in
-document.getElementById('loadingScreen').style.display='none';
-showAuth('login');
+// Login shown by default via HTML
 
 sb.auth.onAuthStateChange(async(event,session)=>{
   document.getElementById('loadingScreen').style.display='none';
