@@ -2,23 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>BODY TRACK</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Oswald:wght@400;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#f0ede6;--card:#fff;--primary:#0f0f0f;--gold:#b8963c;--text:#0f0f0f;--muted:#888;--border:#ddd;--green:#2a7a4b;--blue:#1a5a8a;--red:#8a1a1a;--purple:#5a3080;--rose:#b03060;--peach:#e8a090}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
-
-/* LOADING */
-#loadingScreen{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--primary);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px}
-.spinner{width:32px;height:32px;border:2px solid rgba(200,168,75,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-txt{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,0.4);font-family:'Oswald',sans-serif;text-transform:uppercase}
-
 /* AUTH */
 .auth-screen{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--primary);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;padding:24px;overflow-y:auto}
 .auth-card{background:rgba(255,255,255,0.05);border:1px solid rgba(200,168,75,0.3);border-radius:4px;padding:26px;width:100%;max-width:380px;margin-top:16px}
@@ -27,72 +18,61 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .auth-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:18px}
 .arow{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
 .albl{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.45);text-transform:uppercase;font-family:'Oswald',sans-serif}
-.ainp{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:11px 12px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;width:100%;transition:border-color .2s}
+.ainp{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:11px 12px;font-size:16px;color:#fff;font-family:'Inter',sans-serif;outline:none;width:100%;-webkit-appearance:none}
 .ainp:focus{border-color:var(--gold)}
-.auth-btn{width:100%;background:var(--gold);color:var(--primary);border:none;padding:12px;border-radius:3px;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:3px;cursor:pointer;margin-top:6px;transition:opacity .2s}
-.auth-btn:hover{opacity:.85}
-.auth-btn:disabled{opacity:.45;cursor:not-allowed}
+.auth-btn{width:100%;background:var(--gold);color:var(--primary);border:none;padding:14px;border-radius:3px;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;cursor:pointer;margin-top:6px}
 .auth-err{font-size:12px;color:#e07070;text-align:center;margin-top:8px;min-height:16px;line-height:1.4}
 .auth-ok{font-size:12px;color:#6ad4a0;text-align:center;margin-top:8px;line-height:1.4}
 .auth-hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:14px 0}
-.auth-link{text-align:center;font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:6px}
+.auth-link{text-align:center;font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:6px}
 .auth-link a{color:var(--gold);cursor:pointer;text-decoration:underline}
 .auth-note{font-size:11px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;line-height:1.6}
-
 /* SETUP */
 .setup-screen{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--primary);z-index:9998;display:none;align-items:center;justify-content:center;flex-direction:column;padding:24px;overflow-y:auto}
 .setup-card{background:rgba(255,255,255,0.05);border:1px solid rgba(200,168,75,0.3);border-radius:4px;padding:24px;width:100%;max-width:400px}
 .setup-title{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:18px}
 .srow{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
 .slbl{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.45);text-transform:uppercase;font-family:'Oswald',sans-serif}
-.sinp{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:10px 12px;font-size:14px;color:#fff;font-family:'Inter',sans-serif;outline:none;width:100%;transition:border-color .2s}
-.sinp:focus{border-color:var(--gold)}
+.sinp{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:11px 12px;font-size:16px;color:#fff;font-family:'Inter',sans-serif;outline:none;width:100%;-webkit-appearance:none}
 .gbrow{display:flex;gap:8px}
-.genbtn{flex:1;padding:10px;border:1.5px solid rgba(255,255,255,0.2);border-radius:3px;background:none;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;transition:all .2s}
+.genbtn{flex:1;padding:12px;border:1.5px solid rgba(255,255,255,0.2);border-radius:3px;background:none;color:rgba(255,255,255,0.5);cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px}
 .genbtn.am{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,0.12)}
 .genbtn.af{border-color:var(--rose);color:var(--peach);background:rgba(176,48,96,0.12)}
 .genbtn.ao{border-color:var(--gold);color:var(--gold);background:rgba(200,168,75,0.12)}
-.start-btn{width:100%;background:var(--gold);color:var(--primary);border:none;padding:12px;border-radius:3px;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;cursor:pointer;margin-top:6px;transition:opacity .2s}
-.start-btn:disabled{opacity:.45;cursor:not-allowed}
+.start-btn{width:100%;background:var(--gold);color:var(--primary);border:none;padding:14px;border-radius:3px;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:3px;cursor:pointer;margin-top:6px}
 .cycle-fields{background:rgba(176,48,96,0.08);border:1px solid rgba(176,48,96,0.2);border-radius:3px;padding:14px;margin-top:4px;display:none;flex-direction:column;gap:10px}
 .cycle-fields.show{display:flex}
 .cycle-note{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.5}
-
 /* HEADER */
 .app-header{background:var(--primary);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;border-bottom:1.5px solid var(--gold)}
 .hdr-r{display:flex;align-items:center;gap:6px}
 .ubadge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:2px;padding:5px 10px}
-.uav{width:26px;height:26px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--primary);flex-shrink:0}
+.uav{width:28px;height:28px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Oswald',sans-serif;color:var(--primary);flex-shrink:0}
 .uav.rose{background:var(--rose)}
 .unm{font-size:11px;color:rgba(255,255,255,0.7);max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hbtn{background:transparent;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.45);padding:5px 10px;border-radius:2px;font-size:9px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;transition:all .2s;text-transform:uppercase}
-.hbtn:hover{border-color:var(--gold);color:var(--gold)}
-.sync-dot{font-size:10px;color:rgba(255,255,255,0.2);transition:color .3s}
+.hbtn{background:transparent;border:1.5px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.45);padding:6px 12px;border-radius:2px;font-size:10px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sync-dot{font-size:10px;color:rgba(255,255,255,0.2)}
 .sync-dot.ing{color:var(--gold)}
 .sync-dot.ok{color:#6ad4a0}
-
 /* NAV */
 .main-nav{background:var(--primary);display:flex;border-top:1px solid rgba(255,255,255,0.07);overflow-x:auto;-webkit-overflow-scrolling:touch}
-.nav-item{padding:9px 14px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:10px;letter-spacing:2px;white-space:nowrap;border-bottom:2px solid transparent;font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase;transition:color .2s}
+.nav-item{padding:11px 14px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:10px;letter-spacing:2px;white-space:nowrap;border-bottom:2px solid transparent;font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase}
 .nav-item.active{color:var(--gold);border-bottom-color:var(--gold)}
 .nav-item.rnav.active{color:var(--peach);border-bottom-color:var(--peach)}
-
 /* CONTENT */
-.content{padding:14px;max-width:900px;margin:0 auto}
+.content{padding:12px;max-width:900px;margin:0 auto}
 .sec{display:none}.sec.active{display:block}
-
 /* METRIC CARDS */
-.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:9px;margin-bottom:12px}
+.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:12px}
 .mc{background:var(--card);border-radius:2px;padding:11px 13px;border:1px solid var(--border);position:relative;overflow:hidden}
 .mc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold)}
 .mc.blue::after{background:var(--blue)}.mc.green::after{background:var(--green)}.mc.purple::after{background:var(--purple)}.mc.rose::after{background:var(--rose)}
 .mc-l{font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase;font-weight:700}
-.mc-v{font-family:'Oswald',sans-serif;font-size:22px;color:var(--text);line-height:1;font-weight:700}
-.mc-u{font-size:10px;color:var(--muted);margin-left:2px}
+.mc-v{font-family:'Oswald',sans-serif;font-size:24px;color:var(--text);line-height:1;font-weight:700}
+.mc-u{font-size:11px;color:var(--muted);margin-left:2px}
 .mc-c{font-size:10px;margin-top:2px;font-weight:700}.mc-c.bad{color:#a03030}.mc-c.good{color:var(--green)}
 .mc-sub{font-size:10px;color:var(--muted);margin-top:2px}
-
-/* CARDS / CHARTS */
+/* CARDS */
 .card{background:var(--card);border-radius:2px;padding:14px;border:1px solid var(--border);margin-bottom:11px}
 .card-h{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
 .card-t{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:'Oswald',sans-serif}
@@ -100,10 +80,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .card-leg span{display:flex;align-items:center;gap:3px}
 .ld{width:8px;height:8px;border-radius:50%;display:inline-block}
 .pbrow{display:flex;gap:4px;flex-shrink:0}
-.pb{padding:3px 8px;border-radius:2px;border:1px solid var(--border);background:none;font-size:9px;cursor:pointer;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:1px;transition:all .2s}
+.pb{padding:5px 10px;border-radius:2px;border:1px solid var(--border);background:none;font-size:10px;cursor:pointer;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:700}
 .pb.active{background:var(--gold);color:var(--primary);border-color:var(--gold)}
-.cw{position:relative;height:190px}
-
+.cw{position:relative;height:180px}
 /* DARK CARD */
 .dcard{background:var(--primary);border-radius:2px;border:1px solid var(--gold);margin-bottom:11px;overflow:hidden}
 .dcard.rb{border-color:var(--rose)}
@@ -119,27 +98,23 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .dtag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:1px;letter-spacing:1px;white-space:nowrap;font-family:'Oswald',sans-serif;text-transform:uppercase}
 .dtag.meal{background:rgba(26,90,138,0.3);color:#6ab4f0;border:1px solid rgba(26,90,138,0.5)}
 .dtag.ex{background:rgba(42,122,75,0.3);color:#6ad4a0;border:1px solid rgba(42,122,75,0.5)}
-.dtag.sleep{background:rgba(90,48,128,0.3);color:#c0a0f0;border:1px solid rgba(90,48,128,0.5)}
-.dtag.period{background:rgba(176,48,96,0.3);color:var(--peach);border:1px solid rgba(176,48,96,0.5)}
+.dtag.slp{background:rgba(90,48,128,0.3);color:#c0a0f0;border:1px solid rgba(90,48,128,0.5)}
+.dtag.per{background:rgba(176,48,96,0.3);color:var(--peach);border:1px solid rgba(176,48,96,0.5)}
 .dtag.sym{background:rgba(176,48,96,0.2);color:var(--peach);border:1px solid rgba(176,48,96,0.4)}
 .dc{font-size:11px;color:rgba(255,255,255,0.75);line-height:1.5}
-
 /* TREND */
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
-@media(max-width:500px){.tg{grid-template-columns:1fr}}
 .tp{background:var(--card);border-radius:2px;border:1px solid var(--border);padding:12px}
 .th{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;font-family:'Oswald',sans-serif;margin-bottom:8px}
 .th.lose{color:var(--green)}.th.gain{color:var(--red)}
 .ti{padding:5px 0;border-bottom:1px solid var(--border);line-height:1.4}
 .ti:last-child{border-bottom:none}
-.ti-date{font-size:9px;color:var(--muted);font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.ti-date{font-size:9px;color:var(--muted);font-weight:700;font-family:'Oswald',sans-serif}
 .ti-kg{font-family:'Oswald',sans-serif;font-size:13px;font-weight:700}
 .ti-kg.lose{color:var(--green)}.ti-kg.gain{color:var(--red)}
-
 /* JOURNAL */
 .lh{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
-.add-btn{background:var(--primary);border:1.5px solid var(--gold);color:var(--gold);border-radius:2px;padding:7px 14px;font-size:9px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
-.add-btn:hover{background:var(--gold);color:var(--primary)}
+.add-btn{background:var(--primary);border:1.5px solid var(--gold);color:var(--gold);border-radius:2px;padding:10px 16px;font-size:10px;font-family:'Oswald',sans-serif;font-weight:700;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
 .dd{background:var(--card);border-radius:2px;border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
 .db{background:var(--primary);padding:7px 13px;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gold);font-family:'Oswald',sans-serif;text-transform:uppercase}
 .de{padding:9px 13px;border-bottom:1px solid var(--border);display:flex;gap:9px;align-items:flex-start}
@@ -152,19 +127,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .deb.period{background:rgba(176,48,96,0.12);color:var(--rose);border:1px solid rgba(176,48,96,0.3)}
 .deb.sym{background:rgba(176,48,96,0.08);color:var(--rose);border:1px solid rgba(176,48,96,0.2)}
 .dem{font-size:13px;font-weight:700;margin-bottom:2px}
-.des{font-size:11px;color:var(--muted);line-height:1.5}
+.des{font-size:12px;color:var(--muted);line-height:1.5}
 .det{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:1px;padding:1px 5px;font-size:10px;color:var(--muted);margin-top:3px;font-weight:700;margin-right:3px}
 .det.rose{border-color:rgba(176,48,96,0.3);color:var(--rose)}
 .det.purple{border-color:rgba(90,48,128,0.3);color:var(--purple)}
-
 /* CYCLE */
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.cal-nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:5px 12px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:13px;color:var(--muted);font-weight:700;transition:all .2s}
-.cal-nav-btn:hover{border-color:var(--rose);color:var(--rose)}
-.cal-month{font-size:14px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:1px}
+.cal-nav-btn{background:none;border:1px solid var(--border);border-radius:2px;padding:6px 14px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:14px;color:var(--muted);font-weight:700}
+.cal-month{font-size:14px;font-weight:700;font-family:'Oswald',sans-serif}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px}
 .cal-dow{text-align:center;font-size:9px;font-weight:700;color:var(--muted);padding:4px 0;font-family:'Oswald',sans-serif}
-.cal-day{background:var(--card);border:1px solid var(--border);border-radius:2px;min-height:48px;padding:3px;cursor:pointer}
+.cal-day{background:var(--card);border:1px solid var(--border);border-radius:2px;min-height:46px;padding:3px;cursor:pointer}
 .cal-day.other{opacity:.3}.cal-day.today{border-color:var(--gold)}
 .cal-day.pd{background:rgba(176,48,96,0.1);border-color:rgba(176,48,96,0.4)}
 .cal-day.ov{background:rgba(90,48,128,0.08);border-color:rgba(90,48,128,0.4)}
@@ -181,134 +154,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-
 .cb-l{font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:4px}
 .cb-v{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;color:var(--rose)}
 .cb-s{font-size:11px;color:var(--muted);margin-top:2px}
-
 /* MODAL */
-.modal-bg{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.65);z-index:300;display:flex;align-items:flex-end;justify-content:center;padding-bottom:env(safe-area-inset-bottom)}
-.modal-sheet{background:var(--card);width:100%;max-width:580px;border-radius:4px 4px 0 0;padding:18px 18px 32px;max-height:85vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.modal-bg{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,0.65);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.modal-sheet{background:var(--card);width:100%;max-width:580px;border-radius:4px 4px 0 0;padding:18px 18px 40px;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-t{font-size:12px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;margin-bottom:12px;border-bottom:2px solid var(--gold);padding-bottom:7px;color:var(--primary)}
 .modal-t.rose{border-color:var(--rose);color:var(--rose)}
 .mtabs{display:flex;flex-wrap:wrap;border:1px solid var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px}
-.mtab{flex:1;padding:8px 4px;text-align:center;font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted);border:none;background:none;transition:all .2s;min-width:55px}
+.mtab{flex:1;padding:10px 4px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted);border:none;background:none;min-width:55px}
 .mtab.active{background:var(--primary);color:var(--gold)}
 .mtab.ra{background:var(--rose);color:#fff}
 .msec{display:none}.msec.active{display:block}
-.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;margin-bottom:10px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
 .fg{display:flex;flex-direction:column;gap:3px}
 .fl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:2px}
-.fi{padding:8px 10px;border:1px solid var(--border);border-radius:2px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;width:100%;height:43px}
+.fi{padding:10px 10px;border:1px solid var(--border);border-radius:2px;font-size:16px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);outline:none;width:100%;height:44px;-webkit-appearance:none}
 .fi:focus{border-color:var(--gold)}
-textarea.fi{resize:vertical;min-height:56px;line-height:1.5}
-.sg{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-.sb{padding:5px 9px;border:1.5px solid var(--border);border-radius:2px;background:none;cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;font-weight:500;color:var(--muted);transition:all .2s}
+textarea.fi{resize:vertical;min-height:72px;height:auto;line-height:1.5}
+select.fi{height:44px}
+.sg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.sb{padding:9px 12px;border:1.5px solid var(--border);border-radius:2px;background:none;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;color:var(--muted);min-height:40px}
 .sb.on{border-color:var(--gold);color:var(--primary);background:rgba(200,168,75,0.12);font-weight:700}
 .sb.onr{border-color:var(--rose);color:var(--rose);background:rgba(176,48,96,0.08);font-weight:700}
 .sb.onp{border-color:var(--purple);color:var(--purple);background:rgba(90,48,128,0.08);font-weight:700}
 .cp{background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:7px 11px;margin:7px 0;display:flex;align-items:center;gap:6px}
 .cn{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700}
-.int-bar{display:flex;gap:5px;margin-top:3px}
-.int-dot{width:22px;height:6px;border-radius:1px;border:1px solid var(--border);cursor:pointer;transition:background .2s}
+.int-bar{display:flex;gap:6px;margin-top:3px}
+.int-dot{width:36px;height:10px;border-radius:2px;border:1px solid var(--border);cursor:pointer}
 .int-dot.on{background:var(--gold);border-color:var(--gold)}
-.int-lbl{font-size:10px;color:var(--muted);margin-top:2px}
-.mfooter{display:flex;gap:7px;margin-top:12px;border-top:1px solid var(--border);padding-top:12px}
-.btn-save{flex:1;background:var(--primary);color:var(--gold);border:1.5px solid var(--gold);padding:10px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;cursor:pointer;text-transform:uppercase;transition:all .2s}
-.btn-save:hover{background:var(--gold);color:var(--primary)}
+.int-lbl{font-size:10px;color:var(--muted);margin-top:4px}
+.mfooter{display:flex;gap:7px;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;position:sticky;bottom:0;background:var(--card)}
+.btn-save{flex:1;background:var(--primary);color:var(--gold);border:1.5px solid var(--gold);padding:14px;border-radius:2px;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
 .btn-save.rose{border-color:var(--rose);color:var(--rose)}
-.btn-save.rose:hover{background:var(--rose);color:#fff}
-.btn-save:disabled{opacity:.45;cursor:not-allowed}
-.btn-cancel{background:none;border:1px solid var(--border);padding:10px 14px;border-radius:2px;font-size:10px;cursor:pointer;font-family:'Oswald',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-
+.btn-cancel{background:none;border:1px solid var(--border);padding:14px 16px;border-radius:2px;font-size:11px;cursor:pointer;font-family:'Oswald',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
 /* TOAST */
 .toast{position:fixed;bottom:20px;right:16px;background:var(--primary);border:1px solid var(--gold);color:var(--gold);padding:9px 16px;border-radius:2px;font-size:10px;font-weight:700;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;font-family:'Oswald',sans-serif;letter-spacing:2px;text-transform:uppercase}
 .toast.show{opacity:1;transform:translateY(0)}
 .nd{text-align:center;padding:24px;color:var(--muted);font-size:12px}
 .slbl2{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'Oswald',sans-serif}
-
-/* ── MOBILE IMPROVEMENTS ── */
-@media(max-width:600px){
-  /* Larger tap targets */
-  .nav-item{padding:11px 12px;font-size:9px}
-  .add-btn{padding:10px 16px;font-size:10px}
-  .pb{padding:6px 10px;font-size:10px}
-  
-  /* Bigger form inputs */
-  .fi{padding:12px 12px;font-size:16px !important} /* 16px prevents iOS zoom */
-  .ainp{font-size:16px !important}
-  .sinp{font-size:16px !important}
-  .login-sel{font-size:16px !important}
-  select.fi{font-size:16px !important}
-  
-  /* Bigger selector buttons */
-  .sb{padding:9px 12px;font-size:13px;min-height:40px}
-  
-  /* Larger metric cards */
-  .mc-v{font-size:26px}
-  .mg{grid-template-columns:repeat(2,1fr)}
-  
-  /* Better modal on mobile */
-  .modal-sheet{padding:16px 16px 40px;max-height:88vh}
-  .modal-t{font-size:13px;margin-bottom:14px}
-  .mtab{padding:10px 4px;font-size:10px}
-  
-  /* Bigger save/cancel buttons */
-  .btn-save{padding:14px;font-size:11px;letter-spacing:1px}
-  .btn-cancel{padding:14px 16px;font-size:11px}
-  .mfooter{position:sticky;bottom:0;background:var(--card);padding-top:12px;margin-bottom:-20px}
-  
-  /* Better selector grid */
-  .sg{gap:6px}
-  
-  /* Intensity dots bigger */
-  .int-dot{width:36px;height:10px}
-  
-  /* Bigger auth inputs */
-  .auth-card{padding:22px 18px}
-  .auth-btn{padding:14px;font-size:13px}
-  
-  /* Setup screen */
-  .setup-card{padding:20px 16px}
-  .genbtn{padding:13px 8px;font-size:13px}
-  .start-btn{padding:14px;font-size:14px}
-  
-  /* Calendar days bigger */
-  .cal-day{min-height:44px}
-  .cal-num{font-size:12px}
-  
-  /* Journal entries more readable */
-  .dem{font-size:14px}
-  .des{font-size:12px}
-  
-  /* Header adjustments */
-  .app-header{height:52px}
-  .unm{display:none} /* hide name on small screens, just show avatar */
-  
-  /* Content padding */
-  .content{padding:10px}
-}
-
-/* Fix iOS input zoom - always */
-input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="time"], select, textarea {font-size:16px !important}
-input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;padding:8px 10px}
-
-/* Safe area for notched phones */
-.app-header{padding-left:max(16px, env(safe-area-inset-left));padding-right:max(16px, env(safe-area-inset-right))}
-.content{padding-bottom:max(14px, env(safe-area-inset-bottom))}
-
+@media(max-width:400px){.tg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<!-- LOADING -->
-<div id="loadingScreen" style="display:none">
-  <svg viewBox="0 0 220 44" width="180" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
-    <text x="2" y="28" font-family="'Black Ops One',cursive" fill="#fff" font-size="22" letter-spacing="2">BODY</text>
-    <rect x="74" y="8" width="1.5" height="24" fill="#c8a84b" opacity=".5"/>
-    <text x="80" y="28" font-family="'Black Ops One',cursive" fill="#c8a84b" font-size="22" letter-spacing="2">TRACK</text>
-    <rect x="0" y="42" width="220" height="1" fill="#c8a84b" opacity=".3"/>
-  </svg>
-  <div class="spinner"></div>
-  <div class="loading-txt">Loading...</div>
-</div>
 
 <!-- LOGIN -->
 <div class="auth-screen" id="loginScreen" style="display:flex">
@@ -325,9 +211,9 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
   </div>
   <div class="auth-card">
     <div class="auth-title">Sign In</div>
-    <div class="arow"><div class="albl">Email</div><input class="ainp" id="loginEmail" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email"></div>
+    <div class="arow"><div class="albl">Email</div><input class="ainp" id="loginEmail" type="email" placeholder="your@email.com" autocomplete="email"></div>
     <div class="arow"><div class="albl">Password</div><input class="ainp" id="loginPw" type="password" placeholder="Your password" autocomplete="current-password"></div>
-    <button class="auth-btn" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
+    <button class="auth-btn" id="loginBtn" onclick="doLogin()">SIGN IN</button>
     <div class="auth-err" id="loginErr"></div>
     <div class="auth-hr"></div>
     <div class="auth-link">No account? <a onclick="showAuth('signup')">Create one</a></div>
@@ -340,10 +226,10 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
 <div class="auth-screen" id="signupScreen">
   <div class="auth-card" style="margin-top:40px">
     <div class="auth-title">Create Account</div>
-    <div class="arow"><div class="albl">Email</div><input class="ainp" id="signupEmail" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email"></div>
+    <div class="arow"><div class="albl">Email</div><input class="ainp" id="signupEmail" type="email" placeholder="your@email.com" autocomplete="email"></div>
     <div class="arow"><div class="albl">Password (min 6 chars)</div><input class="ainp" id="signupPw" type="password" placeholder="Create a password" autocomplete="new-password"></div>
     <div class="arow"><div class="albl">Confirm Password</div><input class="ainp" id="signupPw2" type="password" placeholder="Repeat password" autocomplete="new-password"></div>
-    <button class="auth-btn" id="signupBtn" onclick="doSignup()">CREATE ACCOUNT →</button>
+    <button class="auth-btn" id="signupBtn" onclick="doSignup()">CREATE ACCOUNT</button>
     <div class="auth-err" id="signupErr"></div>
     <div class="auth-ok" id="signupOk"></div>
     <div class="auth-hr"></div>
@@ -355,12 +241,12 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
 <div class="auth-screen" id="forgotScreen">
   <div class="auth-card" style="margin-top:80px">
     <div class="auth-title">Reset Password</div>
-    <div class="arow"><div class="albl">Email</div><input class="ainp" id="forgotEmail" type="email" placeholder="your@email.com" inputmode="email"></div>
-    <button class="auth-btn" id="forgotBtn" onclick="doForgot()">SEND RESET LINK →</button>
+    <div class="arow"><div class="albl">Email</div><input class="ainp" id="forgotEmail" type="email" placeholder="your@email.com"></div>
+    <button class="auth-btn" id="forgotBtn" onclick="doForgot()">SEND RESET LINK</button>
     <div class="auth-err" id="forgotErr"></div>
     <div class="auth-ok" id="forgotOk"></div>
     <div class="auth-hr"></div>
-    <div class="auth-link"><a onclick="showAuth('login')">← Back to Sign In</a></div>
+    <div class="auth-link"><a onclick="showAuth('login')">Back to Sign In</a></div>
   </div>
 </div>
 
@@ -378,7 +264,7 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
   <div class="setup-card">
     <div class="setup-title">Your Profile</div>
     <div class="srow"><div class="slbl">Name</div><input class="sinp" id="sName" placeholder="e.g. Sarah" maxlength="20" autocomplete="off"></div>
-    <div class="srow"><div class="slbl">Age</div><input class="sinp" id="sAge" type="number" placeholder="e.g. 28" min="10" max="99" inputmode="numeric"></div>
+    <div class="srow"><div class="slbl">Age</div><input class="sinp" id="sAge" type="number" placeholder="28" min="10" max="99" inputmode="numeric"></div>
     <div class="srow">
       <div class="slbl">Biological Sex</div>
       <div class="gbrow">
@@ -391,16 +277,16 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
       <div class="slbl" style="color:rgba(232,160,144,0.8)">Cycle Tracking (optional)</div>
       <div class="srow" style="margin-bottom:0"><div class="slbl">Average cycle length (days)</div><input class="sinp" id="sCycleLen" type="number" value="28" min="20" max="45" inputmode="numeric"></div>
       <div class="srow" style="margin-bottom:0"><div class="slbl">Last period start date</div><input class="sinp" id="sLastPeriod" type="date" style="color-scheme:dark"></div>
-      <div class="cycle-note">You can skip this and enter periods manually. The app learns your cycle as you log more.</div>
+      <div class="cycle-note">You can skip this and enter periods manually later.</div>
     </div>
-    <button class="start-btn" id="startBtn" onclick="finishSetup()">START →</button>
+    <button class="start-btn" id="startBtn" onclick="finishSetup()">START</button>
   </div>
 </div>
 
 <!-- MAIN APP -->
 <div id="mainApp" style="display:none">
 <div class="app-header">
-  <svg viewBox="0 0 220 44" height="34" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 220 44" height="32" xmlns="http://www.w3.org/2000/svg">
     <rect x="0" y="0" width="220" height="2" fill="#c8a84b"/>
     <text x="2" y="28" font-family="'Black Ops One',cursive" fill="#fff" font-size="22" letter-spacing="2">BODY</text>
     <rect x="74" y="8" width="1.5" height="24" fill="#c8a84b" opacity=".5"/>
@@ -410,12 +296,12 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
   <div class="hdr-r">
     <div class="sync-dot" id="syncDot">●</div>
     <div class="ubadge"><div class="uav" id="uAv"></div><div class="unm" id="uNm"></div></div>
-    <button class="hbtn" onclick="doLogout()">Sign Out</button>
+    <button class="hbtn" onclick="doLogout()">Out</button>
   </div>
 </div>
 <div class="main-nav">
   <div class="nav-item active" onclick="swSec('dashboard',this)">Dashboard</div>
-  <div class="nav-item" onclick="swSec('body',this)">Measurements</div>
+  <div class="nav-item" onclick="swSec('body',this)">Measure</div>
   <div class="nav-item" onclick="swSec('journal',this)">Journal</div>
   <div class="nav-item rnav" id="cycleNav" style="display:none" onclick="swSec('cycle',this)">Cycle</div>
   <div class="nav-item" onclick="swSec('insight',this)">Insights</div>
@@ -444,13 +330,13 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
   <div class="sec" id="sec-body">
     <div class="card">
       <div class="card-t" style="margin-bottom:12px;padding-bottom:7px;border-bottom:2px solid var(--gold);display:inline-block">Body Measurements</div>
-      <div class="frow" style="grid-template-columns:1fr 1fr;gap:9px">
-        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate" style="color-scheme:light;width:100%"></div>
+      <div class="frow">
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate" style="color-scheme:light"></div>
         <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fi" id="bW" placeholder="60.0" inputmode="decimal"></div>
         <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fi" id="bF" placeholder="22.0" inputmode="decimal"></div>
-        <div class="fg"><label class="fl">Muscle Mass (kg)</label><input type="number" step="0.1" class="fi" id="bM" placeholder="45.0" inputmode="decimal"></div>
+        <div class="fg"><label class="fl">Muscle (kg)</label><input type="number" step="0.1" class="fi" id="bM" placeholder="45.0" inputmode="decimal"></div>
       </div>
-      <button class="btn-save" id="saveMeasBtn" onclick="saveBody()">Save Measurement</button>
+      <button class="btn-save" id="saveMeasBtn" onclick="saveBody()" style="width:100%">Save Measurement</button>
     </div>
     <div id="bodyLog" class="nd">No measurements recorded yet</div>
   </div>
@@ -459,9 +345,9 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
   <div class="sec" id="sec-journal">
     <div class="lh">
       <div style="font-size:10px;font-weight:700;letter-spacing:2px;font-family:'Oswald',sans-serif;text-transform:uppercase;color:var(--muted)">Daily Journal</div>
-      <button class="add-btn" id="addEntryBtn" onclick="openEntryModal()">+ Add Entry</button>
+      <button class="add-btn" onclick="openEntryModal()">+ Add Entry</button>
     </div>
-    <div id="journalList"><div class="nd">No entries yet. Tap "+ Add Entry" to start.</div></div>
+    <div id="journalList"><div class="nd">No entries yet.</div></div>
   </div>
 
   <!-- CYCLE -->
@@ -469,20 +355,19 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
     <div id="cycleBanner" class="cycle-banner" style="display:none"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div class="cal-nav" style="flex:1;margin-bottom:0">
-        <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
+        <button class="cal-nav-btn" onclick="prevMonth()">&#8249;</button>
         <div class="cal-month" id="calLabel"></div>
-        <button class="cal-nav-btn" onclick="nextMonth()">›</button>
+        <button class="cal-nav-btn" onclick="nextMonth()">&#8250;</button>
       </div>
-      <button class="add-btn" style="border-color:var(--rose);color:var(--rose);margin-left:10px" onclick="openPeriodModal()">+ Log Period</button>
+      <button class="add-btn" style="border-color:var(--rose);color:var(--rose);margin-left:10px" onclick="openPeriodModal()">+ Period</button>
     </div>
     <div class="cal-legend">
       <span><span class="ld" style="background:var(--rose);border-radius:2px;width:10px;height:10px"></span>Period</span>
       <span><span class="ld" style="background:var(--purple);border-radius:2px;width:10px;height:10px"></span>Ovulation</span>
       <span><span class="ld" style="background:var(--blue);border-radius:2px;width:10px;height:10px;opacity:.5"></span>Fertile</span>
-      <span><span class="ld" style="background:var(--peach);border-radius:2px;width:10px;height:10px"></span>Symptoms</span>
     </div>
     <div class="cal-grid" id="calGrid"></div>
-    <div id="cycleLog" class="nd">No cycle data yet. Tap "+ Log Period" to start.</div>
+    <div id="cycleLog" class="nd">No cycle data yet.</div>
   </div>
 
   <!-- INSIGHTS -->
@@ -490,7 +375,7 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
     <div class="card" style="margin-bottom:11px">
       <div class="card-h" style="margin-bottom:10px">
         <div class="card-t">Sleep Duration</div>
-        <div class="card-leg"><span><span class="ld" style="background:#5a3080"></span>Hours</span><span style="color:var(--green);font-size:10px">— 7h recommended</span></div>
+        <div class="card-leg"><span><span class="ld" style="background:#5a3080"></span>Hours</span></div>
       </div>
       <div class="cw"><canvas id="sleepChart"></canvas></div>
     </div>
@@ -504,7 +389,7 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
 <!-- ENTRY MODAL -->
 <div id="entryModal" style="display:none" class="modal-bg" onclick="if(event.target===this)closeEntryModal()">
   <div class="modal-sheet">
-    <div class="modal-t">+ Add Journal Entry</div>
+    <div class="modal-t">+ Add Entry</div>
     <div class="mtabs">
       <button class="mtab active" onclick="swTab('meal',this)">Meal</button>
       <button class="mtab" onclick="swTab('exercise',this)">Exercise</button>
@@ -516,8 +401,8 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
         <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="mDate" style="color-scheme:light"></div>
         <div class="fg"><label class="fl">Timing</label><select class="fi" id="mTiming"><option>Breakfast</option><option>Lunch</option><option selected>Dinner</option><option>Snack</option><option>Protein Shake</option></select></div>
       </div>
-      <div class="slbl2">Cuisine Type</div><div class="sg" id="genreGrid"></div>
-      <div class="slbl2" style="margin-top:8px">Portion Size</div><div class="sg" id="sizeGrid"></div>
+      <div class="slbl2">Cuisine</div><div class="sg" id="genreGrid"></div>
+      <div class="slbl2" style="margin-top:8px">Portion</div><div class="sg" id="sizeGrid"></div>
       <div class="cp"><span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:700">Est. Calories</span><span class="cn" id="calNum">---</span><span style="font-size:11px;color:var(--muted)">kcal</span></div>
       <div class="fg"><label class="fl">Notes</label><textarea class="fi" id="mNote" placeholder="e.g. Grilled chicken salad"></textarea></div>
     </div>
@@ -530,18 +415,18 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
       <div class="slbl2" style="margin-top:9px">Intensity</div>
       <div class="int-bar"><div class="int-dot on" onclick="setInt(1)"></div><div class="int-dot" onclick="setInt(2)"></div><div class="int-dot" onclick="setInt(3)"></div><div class="int-dot" onclick="setInt(4)"></div><div class="int-dot" onclick="setInt(5)"></div></div>
       <div class="int-lbl" id="intLbl">Moderate</div>
-      <div class="fg" style="margin-top:9px"><label class="fl">Notes</label><textarea class="fi" id="eMemo" placeholder="e.g. Bench press 50kg×10×3"></textarea></div>
+      <div class="fg" style="margin-top:9px"><label class="fl">Notes</label><textarea class="fi" id="eMemo" placeholder="e.g. Bench press 50kg x10x3"></textarea></div>
     </div>
     <div class="msec" id="ms-sleep">
       <div class="frow">
-        <div class="fg"><label class="fl">Date (night of)</label><input type="date" class="fi" id="slDate" style="color-scheme:light"></div>
+        <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="slDate" style="color-scheme:light"></div>
         <div class="fg"><label class="fl">Bedtime</label><input type="time" class="fi" id="slBed" value="23:00"></div>
         <div class="fg"><label class="fl">Wake up</label><input type="time" class="fi" id="slWake" value="07:00"></div>
       </div>
-      <div class="slbl2">Sleep Quality</div><div class="sg" id="sleepQGrid"></div>
-      <div class="cp" style="border-color:rgba(90,48,128,0.3)"><span style="font-size:9px;color:var(--muted);letter-spacing:1px;font-weight:700">Duration</span><span class="cn" id="slHrs" style="color:var(--purple)">---</span><span style="font-size:11px;color:var(--muted)">hours</span></div>
+      <div class="slbl2">Quality</div><div class="sg" id="sleepQGrid"></div>
+      <div class="cp" style="border-color:rgba(90,48,128,0.3)"><span style="font-size:9px;color:var(--muted);font-weight:700">Duration</span><span class="cn" id="slHrs" style="color:var(--purple)">---</span><span style="font-size:11px;color:var(--muted)">hours</span></div>
       <div class="slbl2">Night Wakings</div><div class="sg" id="wakeGrid"></div>
-      <div class="fg" style="margin-top:4px"><label class="fl">Notes</label><textarea class="fi" id="slNote" placeholder="e.g. Slept well, vivid dreams"></textarea></div>
+      <div class="fg" style="margin-top:4px"><label class="fl">Notes</label><textarea class="fi" id="slNote" placeholder="e.g. Slept well"></textarea></div>
     </div>
     <div class="msec" id="ms-symptom">
       <div class="frow"><div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="symDate" style="color-scheme:light"></div></div>
@@ -566,7 +451,7 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
       <div class="fg"><label class="fl">Start Date</label><input type="date" class="fi" id="pStart" style="color-scheme:light"></div>
       <div class="fg"><label class="fl">End Date (optional)</label><input type="date" class="fi" id="pEnd" style="color-scheme:light"></div>
     </div>
-    <div class="slbl2">Flow Intensity</div><div class="sg" id="pFlowGrid"></div>
+    <div class="slbl2">Flow</div><div class="sg" id="pFlowGrid"></div>
     <div class="slbl2" style="margin-top:8px">Symptoms</div><div class="sg" id="pSymGrid"></div>
     <div class="fg" style="margin-top:8px"><label class="fl">Notes</label><textarea class="fi" id="pNote"></textarea></div>
     <div class="mfooter">
@@ -579,619 +464,782 @@ input[type="date"]{font-size:14px !important;min-width:0;width:100%;height:43px;
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// Wait for supabase then run
-setTimeout(function() {
-// Polyfill Chart if not loaded
-if (typeof Chart === 'undefined') {
-  window.Chart = function(ctx, config) {
-    this.destroy = function(){};
-    var canvas = ctx.canvas || ctx;
-    var ct = canvas.getContext ? canvas.getContext('2d') : null;
-    if (ct) { ct.fillStyle='rgba(184,150,60,0.1)'; ct.fillRect(0,0,canvas.width,canvas.height); ct.fillStyle='#888'; ct.font='12px sans-serif'; ct.textAlign='center'; ct.fillText('Chart unavailable', canvas.width/2, canvas.height/2); }
-  };
-}
-window.onerror = function(msg, src, line, col, err) {
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f0f;color:#e07070;font-family:sans-serif;padding:30px;font-size:13px;line-height:1.8;z-index:99999;overflow:auto';
-  d.innerHTML = '<b style="font-size:16px">Error (show this to developer):</b><br><br>' + msg + '<br><br>Line: ' + line + '<br>File: ' + (src||'').split('/').pop() + (err ? '<br><br>' + (err.stack||'').substring(0,300) : '');
-  document.body.appendChild(d);
-  return false;
-};
+var SB_URL = 'https://tjbslsvekrtpamtpweqi.supabase.co';
+var SB_KEY = 'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS';
+var sb = supabase.createClient(SB_URL, SB_KEY);
 
-// ─── SUPABASE ─────────────────────────────────────────
-if (typeof supabase === 'undefined') {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.body.innerHTML = '<div style="background:#0f0f0f;color:#e07070;display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;padding:20px;flex-direction:column;gap:12px"><div style="font-size:18px;font-weight:bold">Failed to load</div><div style="font-size:13px;opacity:.7">Could not connect to Supabase library.<br>Please check your internet connection and refresh.</div></div>';
-  throw new Error('Supabase not loaded');
-}
-const SB_URL = 'https://tjbslsvekrtpamtpweqi.supabase.co';
-const SB_KEY = 'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS';
-const sb = supabase.createClient(SB_URL, SB_KEY);
+var currentUser = null, profile = null;
+var bodyData = [], entries = [], periods = [];
+var selGender = '', selGenre = 'American', selSize = 'Regular', selExType = 'Weights';
+var selSleepQ = 'Good', selWakeUp = 'None', selInt = 3;
+var selPhysSym = [], selMood = 'Neutral', selFlow = 'None', selEnergy = 'Normal';
+var selPFlow = 'Medium', selPSym = [];
+var activeTab = 'meal', curDays = 7, calYear, calMonth;
+var wChart = null, slChart = null;
 
-// ─── STATE ────────────────────────────────────────────
-let currentUser = null, profile = null;
-let bodyData = [], entries = [], periods = [];
-let selGender = '', selGenre = 'American', selSize = 'Regular', selExType = 'Weights';
-let selSleepQ = 'Good', selWakeUp = 'None', selInt = 3;
-let selPhysSym = [], selMood = 'Neutral', selFlow = 'None', selEnergy = 'Normal';
-let selPFlow = 'Medium', selPSym = [];
-let activeTab = 'meal', curDays = 7, calYear, calMonth;
-let wChart = null, slChart = null;
+var GENRES = ['American','Japanese','Chinese','Korean','Fast Food','Salad','Protein','Other'];
+var SIZES = ['Light','Regular','Large'];
+var EX_TYPES = ['Weights','Cardio','HIIT','Stretch','Yoga','Other'];
+var SLEEP_Q = ['Excellent','Good','OK','Poor','Very Poor'];
+var WAKE_UPS = ['None','Once','Twice','3+ times'];
+var PHYS_SYMS = ['Cramps','Bloating','Headache','Back Pain','Breast Tenderness','Nausea','Fatigue','Acne','Food Cravings','Spotting'];
+var MOODS = ['Happy','Calm','Neutral','Anxious','Irritable','Sad','Emotional'];
+var FLOWS = ['None','Spotting','Light','Medium','Heavy','Very Heavy'];
+var ENERGIES = ['High','Normal','Low','Exhausted'];
+var P_FLOWS = ['Spotting','Light','Medium','Heavy','Very Heavy'];
+var P_SYMS = ['Cramps','Bloating','Headache','Back Pain','Nausea','Fatigue','Breast Pain','Mood Swings'];
+var INT_LBLS = ['','Light','Moderate-Light','Moderate','Hard','Very Hard'];
+var CAL = {'American':[420,680,920],'Japanese':[350,580,820],'Chinese':[400,650,880],'Korean':[360,600,840],'Fast Food':[480,730,1020],'Salad':[180,320,480],'Protein':[140,240,340],'Other':[340,580,820]};
+var MEAL_EX = {'American':{'Light':'Sandwich + soup','Regular':'Burger or pasta','Large':'Steak dinner'},'Japanese':{'Light':'Rice ball + miso','Regular':'Set meal','Large':'Tonkatsu large'},'Chinese':{'Light':'Dumplings','Regular':'Fried rice or ramen','Large':'Set meal large'},'Korean':{'Light':'Kimchi & banchan','Regular':'Bibimbap or BBQ','Large':'Jjigae set'},'Fast Food':{'Light':'Single burger','Regular':'Burger + fries M','Large':'Double + fries L'},'Salad':{'Light':'Side salad','Regular':'Salad + soup + bread','Large':'Chicken salad set'},'Protein':{'Light':'1 shake','Regular':'Shake + banana','Large':'2 shakes + oats'},'Other':{'Light':'Light snack','Regular':'Regular meal','Large':'Large portion'}};
+var MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MONTHS_F = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DAYS_S = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-// ─── DATA ─────────────────────────────────────────────
-const GENRES    = ['American','Japanese','Chinese','Korean','Fast Food','Salad','Protein','Other'];
-const SIZES     = ['Light','Regular','Large'];
-const EX_TYPES  = ['Weights','Cardio','HIIT','Stretch','Yoga','Other'];
-const SLEEP_Q   = ['Excellent','Good','OK','Poor','Very Poor'];
-const WAKE_UPS  = ['None','Once','Twice','3+ times'];
-const PHYS_SYMS = ['Cramps','Bloating','Headache','Back Pain','Breast Tenderness','Nausea','Fatigue','Acne','Food Cravings','Spotting'];
-const MOODS     = ['Happy','Calm','Neutral','Anxious','Irritable','Sad','Emotional'];
-const FLOWS     = ['None','Spotting','Light','Medium','Heavy','Very Heavy'];
-const ENERGIES  = ['High','Normal','Low','Exhausted'];
-const P_FLOWS   = ['Spotting','Light','Medium','Heavy','Very Heavy'];
-const P_SYMS    = ['Cramps','Bloating','Headache','Back Pain','Nausea','Fatigue','Breast Pain','Mood Swings'];
-const INT_LBLS  = ['','Light','Moderate-Light','Moderate','Hard','Very Hard'];
-const CAL = {'American':[420,680,920],'Japanese':[350,580,820],'Chinese':[400,650,880],'Korean':[360,600,840],'Fast Food':[480,730,1020],'Salad':[180,320,480],'Protein':[140,240,340],'Other':[340,580,820]};
-const MEAL_EX = {'American':{'Light':'Sandwich + soup','Regular':'Burger or pasta','Large':'Steak dinner'},'Japanese':{'Light':'Rice ball + miso','Regular':'Set meal','Large':'Tonkatsu large'},'Chinese':{'Light':'Dumplings','Regular':'Fried rice or ramen','Large':'Set meal large'},'Korean':{'Light':'Kimchi & banchan','Regular':'Bibimbap or BBQ','Large':'Jjigae set'},'Fast Food':{'Light':'Single burger','Regular':'Burger + fries M','Large':'Double + fries L'},'Salad':{'Light':'Side salad','Regular':'Salad + soup + bread','Large':'Chicken salad set'},'Protein':{'Light':'1 shake','Regular':'Shake + banana','Large':'2 shakes + oats'},'Other':{'Light':'Light snack','Regular':'Regular meal','Large':'Large portion'}};
-const MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const MONTHS_F = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS_S   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-// ─── HELPERS ──────────────────────────────────────────
-const today  = () => new Date().toISOString().split('T')[0];
-const fmt    = d  => { const dt=new Date(d); return (dt.getMonth()+1)+'/'+(dt.getDate()); };
-const fmtF   = d  => { const dt=new Date(d); return MONTHS_S[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear()+' ('+DAYS_S[dt.getDay()]+')'; };
-const isoStr = d  => d.toISOString().split('T')[0];
-const daysUntil = d => { const n=new Date(); n.setHours(0,0,0,0); return Math.ceil((d-n)/86400000); };
-const dateStr   = d => MONTHS_S[d.getMonth()]+' '+d.getDate();
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmt(d) { var dt = new Date(d); return (dt.getMonth()+1)+'/'+(dt.getDate()); }
+function fmtF(d) { var dt = new Date(d); return MONTHS_S[dt.getMonth()]+' '+dt.getDate()+', '+dt.getFullYear()+' ('+DAYS_S[dt.getDay()]+')'; }
+function isoStr(d) { return d.toISOString().split('T')[0]; }
+function daysUntil(d) { var n = new Date(); n.setHours(0,0,0,0); return Math.ceil((d-n)/86400000); }
+function dateStr(d) { return MONTHS_S[d.getMonth()]+' '+d.getDate(); }
 
 function showToast(msg) {
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2400);
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2400);
 }
 function setSync(state) {
-  const el=document.getElementById('syncDot'); if(!el)return;
-  el.className='sync-dot'+(state==='ing'?' ing':state==='ok'?' ok':'');
+  var el = document.getElementById('syncDot');
+  if (!el) return;
+  el.className = 'sync-dot' + (state === 'ing' ? ' ing' : state === 'ok' ? ' ok' : '');
 }
 
-// ─── AUTH ─────────────────────────────────────────────
 function showAuth(name) {
-  ['login','signup','forgot'].forEach(n=>{ document.getElementById(n+'Screen').style.display='none'; });
-  document.getElementById(name+'Screen').style.display='flex';
-}
-
-async function doLogin() {
-  const email=document.getElementById('loginEmail').value.trim();
-  const pw=document.getElementById('loginPw').value;
-  const err=document.getElementById('loginErr');
-  const btn=document.getElementById('loginBtn');
-  err.textContent='';
-  if(!email||!pw){err.textContent='Please enter email and password';return;}
-  btn.disabled=true; btn.textContent='Signing in...';
-  const {error}=await sb.auth.signInWithPassword({email,password:pw});
-  btn.disabled=false; btn.textContent='SIGN IN →';
-  if(error){err.textContent=error.message;}
-  else{document.getElementById('loginPw').value='';}
-}
-
-async function doSignup() {
-  const email=document.getElementById('signupEmail').value.trim();
-  const pw=document.getElementById('signupPw').value;
-  const pw2=document.getElementById('signupPw2').value;
-  const err=document.getElementById('signupErr');
-  const ok=document.getElementById('signupOk');
-  const btn=document.getElementById('signupBtn');
-  err.textContent=''; ok.textContent='';
-  if(!email){err.textContent='Please enter your email';return;}
-  if(pw.length<6){err.textContent='Password must be at least 6 characters';return;}
-  if(pw!==pw2){err.textContent='Passwords do not match';return;}
-  btn.disabled=true; btn.textContent='Creating...';
-  const {error}=await sb.auth.signUp({email,password:pw});
-  btn.disabled=false; btn.textContent='CREATE ACCOUNT →';
-  if(error){err.textContent=error.message;}
-  else{ok.textContent='Account created! Check your email to confirm, then sign in.';}
-}
-
-async function doForgot() {
-  const email=document.getElementById('forgotEmail').value.trim();
-  const err=document.getElementById('forgotErr');
-  const ok=document.getElementById('forgotOk');
-  const btn=document.getElementById('forgotBtn');
-  err.textContent=''; ok.textContent='';
-  if(!email){err.textContent='Please enter your email';return;}
-  btn.disabled=true; btn.textContent='Sending...';
-  const {error}=await sb.auth.resetPasswordForEmail(email);
-  btn.disabled=false; btn.textContent='SEND RESET LINK →';
-  if(error){err.textContent=error.message;}
-  else{ok.textContent='Reset link sent! Check your email.';}
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  currentUser=null; profile=null; bodyData=[]; entries=[]; periods=[];
-  document.getElementById('mainApp').style.display='none';
-  showAuth('login');
-}
-
-// Enter key on login password
-document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-
-// ─── AUTH STATE ───────────────────────────────────────
-// Login shown by default via HTML
-
-sb.auth.onAuthStateChange(async(event,session)=>{
-  try {
-  document.getElementById('loadingScreen').style.display='none';
-  if((session && session.user)){
-    currentUser=session.user;
-    ['login','signup','forgot'].forEach(n=>{document.getElementById(n+'Screen').style.display='none';});
-    await loadAll();
-    if(profile){
-      document.getElementById('setupScreen').style.display='none';
-      document.getElementById('mainApp').style.display='block';
-      initUI();
-    } else {
-      document.getElementById('setupScreen').style.display='flex';
-      document.getElementById('mainApp').style.display='none';
-    }
-  } else {
-    document.getElementById('mainApp').style.display='none';
-    document.getElementById('setupScreen').style.display='none';
-    showAuth('login');
+  var names = ['login','signup','forgot'];
+  for (var i = 0; i < names.length; i++) {
+    document.getElementById(names[i]+'Screen').style.display = 'none';
   }
-  } catch(err) {
-    console.error('Auth error:', err);
-    document.getElementById('loadingScreen').style.display='none';
+  document.getElementById(name+'Screen').style.display = 'flex';
+}
+
+function doLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw = document.getElementById('loginPw').value;
+  var err = document.getElementById('loginErr');
+  var btn = document.getElementById('loginBtn');
+  err.textContent = '';
+  if (!email || !pw) { err.textContent = 'Please enter email and password'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  sb.auth.signInWithPassword({email: email, password: pw}).then(function(result) {
+    btn.disabled = false; btn.textContent = 'SIGN IN';
+    if (result.error) { err.textContent = result.error.message; }
+    else { document.getElementById('loginPw').value = ''; }
+  });
+}
+
+function doSignup() {
+  var email = document.getElementById('signupEmail').value.trim();
+  var pw = document.getElementById('signupPw').value;
+  var pw2 = document.getElementById('signupPw2').value;
+  var err = document.getElementById('signupErr');
+  var ok = document.getElementById('signupOk');
+  var btn = document.getElementById('signupBtn');
+  err.textContent = ''; ok.textContent = '';
+  if (!email) { err.textContent = 'Please enter your email'; return; }
+  if (pw.length < 6) { err.textContent = 'Password must be at least 6 characters'; return; }
+  if (pw !== pw2) { err.textContent = 'Passwords do not match'; return; }
+  btn.disabled = true; btn.textContent = 'Creating...';
+  sb.auth.signUp({email: email, password: pw}).then(function(result) {
+    btn.disabled = false; btn.textContent = 'CREATE ACCOUNT';
+    if (result.error) { err.textContent = result.error.message; }
+    else { ok.textContent = 'Account created! Check your email to confirm, then sign in.'; }
+  });
+}
+
+function doForgot() {
+  var email = document.getElementById('forgotEmail').value.trim();
+  var err = document.getElementById('forgotErr');
+  var ok = document.getElementById('forgotOk');
+  var btn = document.getElementById('forgotBtn');
+  err.textContent = ''; ok.textContent = '';
+  if (!email) { err.textContent = 'Please enter your email'; return; }
+  btn.disabled = true; btn.textContent = 'Sending...';
+  sb.auth.resetPasswordForEmail(email).then(function(result) {
+    btn.disabled = false; btn.textContent = 'SEND RESET LINK';
+    if (result.error) { err.textContent = result.error.message; }
+    else { ok.textContent = 'Reset link sent! Check your email.'; }
+  });
+}
+
+function doLogout() {
+  sb.auth.signOut().then(function() {
+    currentUser = null; profile = null; bodyData = []; entries = []; periods = [];
+    document.getElementById('mainApp').style.display = 'none';
+    showAuth('login');
+  });
+}
+
+document.getElementById('loginPw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+sb.auth.onAuthStateChange(function(event, session) {
+  if (session && session.user) {
+    currentUser = session.user;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('signupScreen').style.display = 'none';
+    document.getElementById('forgotScreen').style.display = 'none';
+    loadAll().then(function() {
+      if (profile) {
+        document.getElementById('setupScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        initUI();
+      } else {
+        document.getElementById('setupScreen').style.display = 'flex';
+        document.getElementById('mainApp').style.display = 'none';
+      }
+    });
+  } else {
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('setupScreen').style.display = 'none';
     showAuth('login');
   }
 });
 
-// ─── LOAD DATA ────────────────────────────────────────
-async function loadAll() {
-  try {
-  const uid=currentUser.id;
-  const [p,m,e,per]=await Promise.all([
-    sb.from('profiles').select('*').eq('id',uid).single(),
-    sb.from('measurements').select('*').eq('user_id',uid).order('date'),
-    sb.from('entries').select('*').eq('user_id',uid).order('date'),
-    sb.from('periods').select('*').eq('user_id',uid).order('start_date')
-  ]);
-  profile  = p.data || null;
-  bodyData = m.data || [];
-  entries  = (e.data||[]).map(r=>({...r.data, date:r.date, _id:r.id, type:r.type}));
-  periods  = (per.data||[]).map(r=>({date:r.start_date, endDate:r.end_date, flow:r.flow, symptoms:r.symptoms||[], note:r.note, _id:r.id}));
-  } catch(err) { console.error('loadAll error:', err); }
-}
-
-// ─── SETUP ────────────────────────────────────────────
-async function finishSetup() {
-  const name=document.getElementById('sName').value.trim();
-  if(!name){alert('Please enter your name');return;}
-  if(!selGender){alert('Please select your biological sex');return;}
-  const btn=document.getElementById('startBtn');
-  btn.disabled=true; btn.textContent='Saving...';
-  const isFemale=selGender==='Female';
-  const {error}=await sb.from('profiles').upsert({
-    id:currentUser.id, name,
-    age:parseInt(document.getElementById('sAge').value)||null,
-    gender:selGender,
-    cycle_len:isFemale?(parseInt(document.getElementById('sCycleLen').value)||28):null,
-    last_period:isFemale?(document.getElementById('sLastPeriod').value||null):null
+function loadAll() {
+  var uid = currentUser.id;
+  return Promise.all([
+    sb.from('profiles').select('*').eq('id', uid).single(),
+    sb.from('measurements').select('*').eq('user_id', uid).order('date'),
+    sb.from('entries').select('*').eq('user_id', uid).order('date'),
+    sb.from('periods').select('*').eq('user_id', uid).order('start_date')
+  ]).then(function(results) {
+    profile = results[0].data || null;
+    bodyData = results[1].data || [];
+    entries = (results[2].data || []).map(function(r) {
+      var obj = r.data || {};
+      obj.date = r.date; obj._id = r.id; obj.type = r.type;
+      return obj;
+    });
+    periods = (results[3].data || []).map(function(r) {
+      return {date: r.start_date, endDate: r.end_date, flow: r.flow, symptoms: r.symptoms || [], note: r.note, _id: r.id};
+    });
   });
-  btn.disabled=false; btn.textContent='START →';
-  if(error){alert('Error: '+error.message);return;}
-  await loadAll();
-  document.getElementById('setupScreen').style.display='none';
-  document.getElementById('mainApp').style.display='block';
-  initUI();
 }
 
-// ─── SAVE FUNCTIONS ───────────────────────────────────
-async function saveBody() {
-  const date=document.getElementById('bDate').value;
-  const weight=parseFloat(document.getElementById('bW').value);
-  if(!date||!weight){alert('Please enter date and weight');return;}
-  const btn=document.getElementById('saveMeasBtn');
-  btn.disabled=true; setSync('ing');
-  const bf=parseFloat(document.getElementById('bF').value)||null;const mu=parseFloat(document.getElementById('bM').value)||null;const {data,error}=await sb.from('measurements').insert({user_id:currentUser.id,date,weight,body_fat:bf,muscle:mu}).select().single();
-  btn.disabled=false;
-  if(error){setSync('');showToast('Error saving');return;}
-  bodyData.push(data); bodyData.sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('bW').value='';document.getElementById('bF').value='';document.getElementById('bM').value='';
-  setSync('ok'); setTimeout(()=>setSync(''),2000);
-  showToast('✓ Measurement saved');
-  renderBodyLog(); renderDash(); renderInsight();
+function finishSetup() {
+  var name = document.getElementById('sName').value.trim();
+  if (!name) { alert('Please enter your name'); return; }
+  if (!selGender) { alert('Please select your biological sex'); return; }
+  var btn = document.getElementById('startBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  var isFemale = selGender === 'Female';
+  sb.from('profiles').upsert({
+    id: currentUser.id, name: name,
+    age: parseInt(document.getElementById('sAge').value) || null,
+    gender: selGender,
+    cycle_len: isFemale ? (parseInt(document.getElementById('sCycleLen').value) || 28) : null,
+    last_period: isFemale ? (document.getElementById('sLastPeriod').value || null) : null
+  }).then(function(result) {
+    btn.disabled = false; btn.textContent = 'START';
+    if (result.error) { alert('Error: ' + result.error.message); return; }
+    loadAll().then(function() {
+      document.getElementById('setupScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      initUI();
+    });
+  });
 }
 
-async function savePeriod() {
-  const startDate=document.getElementById('pStart').value;
-  if(!startDate){alert('Please select a start date');return;}
-  const btn=document.getElementById('savePeriodBtn');
-  btn.disabled=true; setSync('ing');
-  const {data,error}=await sb.from('periods').insert({
-    user_id:currentUser.id, start_date:startDate,
-    end_date:document.getElementById('pEnd').value||null,
-    flow:selPFlow, symptoms:selPSym,
-    note:document.getElementById('pNote').value
-  }).select().single();
-  btn.disabled=false;
-  if(error){setSync('');showToast('Error saving');return;}
-  periods.push({date:data.start_date,endDate:data.end_date,flow:data.flow,symptoms:data.symptoms||[],note:data.note,_id:data.id});
-  periods.sort((a,b)=>a.date.localeCompare(b.date));
-  setSync('ok'); setTimeout(()=>setSync(''),2000);
-  closePeriodModal(); showToast('✓ Period logged');
-  renderCycle(); renderDash();
+function saveBody() {
+  var date = document.getElementById('bDate').value;
+  var weight = parseFloat(document.getElementById('bW').value);
+  if (!date || !weight) { alert('Please enter date and weight'); return; }
+  var bf = parseFloat(document.getElementById('bF').value) || null;
+  var mu = parseFloat(document.getElementById('bM').value) || null;
+  var btn = document.getElementById('saveMeasBtn');
+  btn.disabled = true; setSync('ing');
+  sb.from('measurements').insert({user_id: currentUser.id, date: date, weight: weight, body_fat: bf, muscle: mu}).select().single().then(function(result) {
+    btn.disabled = false;
+    if (result.error) { setSync(''); showToast('Error saving'); return; }
+    bodyData.push(result.data);
+    bodyData.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    document.getElementById('bW').value = '';
+    document.getElementById('bF').value = '';
+    document.getElementById('bM').value = '';
+    setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+    showToast('Measurement saved');
+    renderBodyLog(); renderDash(); renderInsight();
+  });
 }
 
-async function saveEntry() {
-  let date,type,entryData;
-  if(activeTab==='meal'){
-    date=document.getElementById('mDate').value; type='meal';
-    entryData={timing:document.getElementById('mTiming').value,genre:selGenre,size:selSize,calories:CAL[selGenre][SIZES.indexOf(selSize)],note:document.getElementById('mNote').value||(MEAL_EX[selGenre] && MEAL_EX[selGenre][selSize])||''};
-    document.getElementById('mNote').value='';
-  } else if(activeTab==='exercise'){
-    date=document.getElementById('eDate').value; type='exercise';
-    entryData={exType:selExType,duration:parseInt(document.getElementById('eDur').value)||null,intensity:selInt,memo:document.getElementById('eMemo').value};
-    document.getElementById('eMemo').value=''; document.getElementById('eDur').value='';
-  } else if(activeTab==='sleep'){
-    date=document.getElementById('slDate').value; type='sleep';
-    const hrs=calcSleepHrs();
-    if(!hrs){alert('Please enter bedtime and wake time');return;}
-    entryData={bedTime:document.getElementById('slBed').value,wakeTime:document.getElementById('slWake').value,hours:hrs,quality:selSleepQ,wakeUp:selWakeUp,note:document.getElementById('slNote').value};
-    document.getElementById('slNote').value='';
+function savePeriod() {
+  var startDate = document.getElementById('pStart').value;
+  if (!startDate) { alert('Please select a start date'); return; }
+  var btn = document.getElementById('savePeriodBtn');
+  btn.disabled = true; setSync('ing');
+  sb.from('periods').insert({
+    user_id: currentUser.id, start_date: startDate,
+    end_date: document.getElementById('pEnd').value || null,
+    flow: selPFlow, symptoms: selPSym,
+    note: document.getElementById('pNote').value
+  }).select().single().then(function(result) {
+    btn.disabled = false;
+    if (result.error) { setSync(''); showToast('Error saving'); return; }
+    var r = result.data;
+    periods.push({date: r.start_date, endDate: r.end_date, flow: r.flow, symptoms: r.symptoms || [], note: r.note, _id: r.id});
+    periods.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+    closePeriodModal(); showToast('Period logged');
+    renderCycle(); renderDash();
+  });
+}
+
+function saveEntry() {
+  var date, type, entryData;
+  if (activeTab === 'meal') {
+    date = document.getElementById('mDate').value; type = 'meal';
+    var mex = MEAL_EX[selGenre] ? (MEAL_EX[selGenre][selSize] || '') : '';
+    entryData = {timing: document.getElementById('mTiming').value, genre: selGenre, size: selSize, calories: CAL[selGenre][SIZES.indexOf(selSize)], note: document.getElementById('mNote').value || mex};
+    document.getElementById('mNote').value = '';
+  } else if (activeTab === 'exercise') {
+    date = document.getElementById('eDate').value; type = 'exercise';
+    entryData = {exType: selExType, duration: parseInt(document.getElementById('eDur').value) || null, intensity: selInt, memo: document.getElementById('eMemo').value};
+    document.getElementById('eMemo').value = ''; document.getElementById('eDur').value = '';
+  } else if (activeTab === 'sleep') {
+    date = document.getElementById('slDate').value; type = 'sleep';
+    var hrs = calcSleepHrs();
+    if (!hrs) { alert('Please enter bedtime and wake time'); return; }
+    entryData = {bedTime: document.getElementById('slBed').value, wakeTime: document.getElementById('slWake').value, hours: hrs, quality: selSleepQ, wakeUp: selWakeUp, note: document.getElementById('slNote').value};
+    document.getElementById('slNote').value = '';
   } else {
-    date=document.getElementById('symDate').value; type='symptom';
-    entryData={physSyms:[...selPhysSym],mood:selMood,flow:selFlow,energy:selEnergy,note:document.getElementById('symNote').value};
-    document.getElementById('symNote').value='';
-    selPhysSym=[]; buildMulti('physSymGrid',PHYS_SYMS,selPhysSym,'onr');
+    date = document.getElementById('symDate').value; type = 'symptom';
+    var syms = selPhysSym.slice();
+    entryData = {physSyms: syms, mood: selMood, flow: selFlow, energy: selEnergy, note: document.getElementById('symNote').value};
+    document.getElementById('symNote').value = '';
+    selPhysSym = []; buildMulti('physSymGrid', PHYS_SYMS, selPhysSym, 'onr');
   }
-  if(!date){alert('Please enter a date');return;}
-  const btn=document.getElementById('saveEntryBtn');
-  btn.disabled=true; setSync('ing');
-  const {data,error}=await sb.from('entries').insert({user_id:currentUser.id,date,type,data:entryData}).select().single();
-  btn.disabled=false;
-  if(error){setSync('');showToast('Error saving');return;}
-  entries.push({...entryData,date,type,_id:data.id});
-  entries.sort((a,b)=>a.date.localeCompare(b.date));
-  setSync('ok'); setTimeout(()=>setSync(''),2000);
-  closeEntryModal(); showToast('✓ Entry saved');
-  renderJournal(); renderDash(); renderInsight();
-  if((profile && profile.gender==='Female')) renderCycle();
+  if (!date) { alert('Please enter a date'); return; }
+  var btn = document.getElementById('saveEntryBtn');
+  btn.disabled = true; setSync('ing');
+  sb.from('entries').insert({user_id: currentUser.id, date: date, type: type, data: entryData}).select().single().then(function(result) {
+    btn.disabled = false;
+    if (result.error) { setSync(''); showToast('Error saving'); return; }
+    var obj = entryData;
+    obj.date = date; obj.type = type; obj._id = result.data.id;
+    entries.push(obj);
+    entries.sort(function(a,b) { return a.date.localeCompare(b.date); });
+    setSync('ok'); setTimeout(function() { setSync(''); }, 2000);
+    closeEntryModal(); showToast('Entry saved');
+    renderJournal(); renderDash(); renderInsight();
+    if (profile && profile.gender === 'Female') renderCycle();
+  });
 }
 
-// ─── UI INIT ──────────────────────────────────────────
 function initUI() {
-  const isFemale=(profile && profile.gender==='Female');
-  const av=document.getElementById('uAv');
-  av.textContent=((profile && profile.name||'U')).slice(0,2).toUpperCase();
-  if(isFemale)av.classList.add('rose');
-  document.getElementById('uNm').textContent=(profile && profile.name||'');
-  if(isFemale){
-    document.getElementById('cycleNav').style.display='block';
-    document.getElementById('symTab').style.display='block';
-    document.getElementById('wChartLeg').innerHTML+='<span><span class="ld" style="background:#b03060"></span>Period day</span>';
+  var isFemale = profile && profile.gender === 'Female';
+  var av = document.getElementById('uAv');
+  av.textContent = (profile && profile.name ? profile.name : 'U').slice(0,2).toUpperCase();
+  if (isFemale) av.classList.add('rose');
+  document.getElementById('uNm').textContent = profile && profile.name ? profile.name : '';
+  if (isFemale) {
+    document.getElementById('cycleNav').style.display = 'block';
+    document.getElementById('symTab').style.display = 'block';
+    document.getElementById('wChartLeg').innerHTML += '<span><span class="ld" style="background:#b03060"></span>Period</span>';
   }
-  document.getElementById('bDate').value=today();
-  const now=new Date(); calYear=now.getFullYear(); calMonth=now.getMonth();
+  document.getElementById('bDate').value = today();
+  var now = new Date(); calYear = now.getFullYear(); calMonth = now.getMonth();
   initSel(); updateMealUI(); setInt(3);
-  document.getElementById('slBed').addEventListener('change',updateSlCalc);
-  document.getElementById('slWake').addEventListener('change',updateSlCalc);
+  document.getElementById('slBed').addEventListener('change', updateSlCalc);
+  document.getElementById('slWake').addEventListener('change', updateSlCalc);
   renderDash(); renderJournal(); renderBodyLog(); renderInsight();
-  if(isFemale) renderCycle();
+  if (isFemale) renderCycle();
 }
 
-// ─── SELECTORS ────────────────────────────────────────
-function buildSingle(cid,items,gV,sV,cls,cb){
-  const con=document.getElementById(cid); if(!con)return; con.innerHTML='';
-  items.forEach(item=>{
-    const b=document.createElement('button');
-    b.className='sb'+(gV()===item?' '+cls:'');
-    b.textContent=item;
-    b.onclick=()=>{sV(item);con.querySelectorAll('.sb').forEach((x,i)=>x.className='sb'+(items[i]===gV()?' '+cls:''));if(cb)cb();};
-    con.appendChild(b);
-  });
-}
-function buildMulti(cid,items,arr,cls){
-  const con=document.getElementById(cid); if(!con)return; con.innerHTML='';
-  items.forEach(item=>{
-    const b=document.createElement('button');
-    b.className='sb'+(arr.includes(item)?' '+cls:'');
-    b.textContent=item;
-    b.onclick=()=>{const i=arr.indexOf(item);if(i>=0){arr.splice(i,1);b.className='sb';}else{arr.push(item);b.className='sb '+cls;}};
-    con.appendChild(b);
-  });
-}
-function initSel(){
-  buildSingle('genreGrid',GENRES,()=>selGenre,v=>{selGenre=v;},'on',updateMealUI);
-  buildSingle('sizeGrid',SIZES,()=>selSize,v=>{selSize=v;},'on',updateMealUI);
-  buildSingle('exTypeGrid',EX_TYPES,()=>selExType,v=>{selExType=v;},'on',null);
-  buildSingle('sleepQGrid',SLEEP_Q,()=>selSleepQ,v=>{selSleepQ=v;},'onp',null);
-  buildSingle('wakeGrid',WAKE_UPS,()=>selWakeUp,v=>{selWakeUp=v;},'onp',null);
-  buildSingle('moodGrid',MOODS,()=>selMood,v=>{selMood=v;},'onr',null);
-  buildSingle('flowGrid',FLOWS,()=>selFlow,v=>{selFlow=v;},'onr',null);
-  buildSingle('energyGrid',ENERGIES,()=>selEnergy,v=>{selEnergy=v;},'onr',null);
-  buildSingle('pFlowGrid',P_FLOWS,()=>selPFlow,v=>{selPFlow=v;},'onr',null);
-  buildMulti('physSymGrid',PHYS_SYMS,selPhysSym,'onr');
-  buildMulti('pSymGrid',P_SYMS,selPSym,'onr');
-}
-function updateMealUI(){
-  document.getElementById('calNum').textContent=CAL[selGenre][SIZES.indexOf(selSize)];
-  document.getElementById('mNote').placeholder='e.g. '+((MEAL_EX[selGenre] && MEAL_EX[selGenre][selSize])||'');
-}
-function setInt(v){selInt=v;document.querySelectorAll('.int-dot').forEach((d,i)=>d.classList.toggle('on',i<v));document.getElementById('intLbl').textContent=INT_LBLS[v];}
-function calcSleepHrs(){const bed=document.getElementById('slBed').value,wake=document.getElementById('slWake').value;if(!bed||!wake)return null;const[bh,bm]=bed.split(':').map(Number),[wh,wm]=wake.split(':').map(Number);let m=(wh*60+wm)-(bh*60+bm);if(m<0)m+=1440;return Math.round(m/6)/10;}
-function updateSlCalc(){const h=calcSleepHrs();document.getElementById('slHrs').textContent=h?h.toFixed(1):'---';}
-function pickG(g){
-  selGender=g;
-  document.getElementById('btnM').className='genbtn'+(g==='Male'?' am':'');
-  document.getElementById('btnF').className='genbtn'+(g==='Female'?' af':'');
-  document.getElementById('btnO').className='genbtn'+(g==='Other'?' ao':'');
-  document.getElementById('cycleFields').className='cycle-fields'+(g==='Female'?' show':'');
+function buildSingle(cid, items, gV, sV, cls, cb) {
+  var con = document.getElementById(cid); if (!con) return; con.innerHTML = '';
+  for (var i = 0; i < items.length; i++) {
+    (function(item) {
+      var b = document.createElement('button');
+      b.className = 'sb' + (gV() === item ? ' '+cls : '');
+      b.textContent = item;
+      b.onclick = function() {
+        sV(item);
+        var btns = con.querySelectorAll('.sb');
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].className = 'sb' + (items[j] === gV() ? ' '+cls : '');
+        }
+        if (cb) cb();
+      };
+      con.appendChild(b);
+    })(items[i]);
+  }
 }
 
-// ─── SECTION / TAB SWITCHING ──────────────────────────
-function swSec(id,el){
-  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+function buildMulti(cid, items, arr, cls) {
+  var con = document.getElementById(cid); if (!con) return; con.innerHTML = '';
+  for (var i = 0; i < items.length; i++) {
+    (function(item) {
+      var b = document.createElement('button');
+      b.className = 'sb' + (arr.indexOf(item) >= 0 ? ' '+cls : '');
+      b.textContent = item;
+      b.onclick = function() {
+        var idx = arr.indexOf(item);
+        if (idx >= 0) { arr.splice(idx,1); b.className = 'sb'; }
+        else { arr.push(item); b.className = 'sb '+cls; }
+      };
+      con.appendChild(b);
+    })(items[i]);
+  }
+}
+
+function initSel() {
+  buildSingle('genreGrid', GENRES, function(){return selGenre;}, function(v){selGenre=v;}, 'on', updateMealUI);
+  buildSingle('sizeGrid', SIZES, function(){return selSize;}, function(v){selSize=v;}, 'on', updateMealUI);
+  buildSingle('exTypeGrid', EX_TYPES, function(){return selExType;}, function(v){selExType=v;}, 'on', null);
+  buildSingle('sleepQGrid', SLEEP_Q, function(){return selSleepQ;}, function(v){selSleepQ=v;}, 'onp', null);
+  buildSingle('wakeGrid', WAKE_UPS, function(){return selWakeUp;}, function(v){selWakeUp=v;}, 'onp', null);
+  buildSingle('moodGrid', MOODS, function(){return selMood;}, function(v){selMood=v;}, 'onr', null);
+  buildSingle('flowGrid', FLOWS, function(){return selFlow;}, function(v){selFlow=v;}, 'onr', null);
+  buildSingle('energyGrid', ENERGIES, function(){return selEnergy;}, function(v){selEnergy=v;}, 'onr', null);
+  buildSingle('pFlowGrid', P_FLOWS, function(){return selPFlow;}, function(v){selPFlow=v;}, 'onr', null);
+  buildMulti('physSymGrid', PHYS_SYMS, selPhysSym, 'onr');
+  buildMulti('pSymGrid', P_SYMS, selPSym, 'onr');
+}
+
+function updateMealUI() {
+  document.getElementById('calNum').textContent = CAL[selGenre][SIZES.indexOf(selSize)];
+  var mex = MEAL_EX[selGenre] ? (MEAL_EX[selGenre][selSize] || '') : '';
+  document.getElementById('mNote').placeholder = 'e.g. ' + mex;
+}
+
+function setInt(v) {
+  selInt = v;
+  var dots = document.querySelectorAll('.int-dot');
+  for (var i = 0; i < dots.length; i++) { dots[i].classList.toggle('on', i < v); }
+  document.getElementById('intLbl').textContent = INT_LBLS[v];
+}
+
+function calcSleepHrs() {
+  var bed = document.getElementById('slBed').value, wake = document.getElementById('slWake').value;
+  if (!bed || !wake) return null;
+  var bh = parseInt(bed.split(':')[0]), bm = parseInt(bed.split(':')[1]);
+  var wh = parseInt(wake.split(':')[0]), wm = parseInt(wake.split(':')[1]);
+  var mins = (wh*60+wm) - (bh*60+bm);
+  if (mins < 0) mins += 1440;
+  return Math.round(mins/6)/10;
+}
+
+function updateSlCalc() {
+  var h = calcSleepHrs();
+  document.getElementById('slHrs').textContent = h ? h.toFixed(1) : '---';
+}
+
+function pickG(g) {
+  selGender = g;
+  document.getElementById('btnM').className = 'genbtn' + (g==='Male' ? ' am' : '');
+  document.getElementById('btnF').className = 'genbtn' + (g==='Female' ? ' af' : '');
+  document.getElementById('btnO').className = 'genbtn' + (g==='Other' ? ' ao' : '');
+  document.getElementById('cycleFields').className = 'cycle-fields' + (g==='Female' ? ' show' : '');
+}
+
+function swSec(id, el) {
+  var secs = document.querySelectorAll('.sec');
+  for (var i = 0; i < secs.length; i++) secs[i].classList.remove('active');
+  var navs = document.querySelectorAll('.nav-item');
+  for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
   document.getElementById('sec-'+id).classList.add('active'); el.classList.add('active');
-  if(id==='dashboard')renderDash();
-  if(id==='journal')renderJournal();
-  if(id==='body')renderBodyLog();
-  if(id==='cycle')renderCycle();
-  if(id==='insight')renderInsight();
+  if (id === 'dashboard') renderDash();
+  if (id === 'journal') renderJournal();
+  if (id === 'body') renderBodyLog();
+  if (id === 'cycle') renderCycle();
+  if (id === 'insight') renderInsight();
 }
-function swTab(tab,btn){
-  activeTab=tab;
-  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active','ra'));
-  document.querySelectorAll('.msec').forEach(s=>s.classList.remove('active'));
-  btn.classList.add('active'); if(tab==='symptom')btn.classList.add('ra');
-  document.getElementById('ms-'+tab).classList.add('active');
-  document.getElementById('saveEntryBtn').className='btn-save'+(tab==='symptom'?' rose':'');
-}
-function openEntryModal(){
-  const t=today(); ['mDate','eDate','slDate','symDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=t;});
-  updateMealUI(); updateSlCalc();
-  document.getElementById('entryModal').style.display='flex';
-}
-function closeEntryModal(){document.getElementById('entryModal').style.display='none';}
-function openPeriodModal(){
-  document.getElementById('pStart').value=today();
-  document.getElementById('pEnd').value=''; document.getElementById('pNote').value='';
-  selPFlow='Medium'; selPSym=[];
-  buildSingle('pFlowGrid',P_FLOWS,()=>selPFlow,v=>{selPFlow=v;},'onr',null);
-  buildMulti('pSymGrid',P_SYMS,selPSym,'onr');
-  document.getElementById('periodModal').style.display='flex';
-}
-function closePeriodModal(){document.getElementById('periodModal').style.display='none';}
 
-// ─── CYCLE CALC ───────────────────────────────────────
-function getAvgCycleLen(){
-  const s=[...periods].sort((a,b)=>a.date.localeCompare(b.date));
-  if(s.length>=2){const diffs=[];for(let i=1;i<s.length;i++){const d=Math.round((new Date(s[i].date)-new Date(s[i-1].date))/86400000);if(d>=15&&d<=60)diffs.push(d);}if(diffs.length>=1)return Math.round(diffs.reduce((a,v)=>a+v,0)/diffs.length);}
-  return (profile && profile.cycle_len||28);
+function swTab(tab, btn) {
+  activeTab = tab;
+  var tabs = document.querySelectorAll('.mtab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active','ra');
+  var msecs = document.querySelectorAll('.msec');
+  for (var i = 0; i < msecs.length; i++) msecs[i].classList.remove('active');
+  btn.classList.add('active'); if (tab === 'symptom') btn.classList.add('ra');
+  document.getElementById('ms-'+tab).classList.add('active');
+  document.getElementById('saveEntryBtn').className = 'btn-save' + (tab === 'symptom' ? ' rose' : '');
 }
-function getLastPeriodDate(){
-  if(periods.length>0){const s=[...periods].sort((a,b)=>b.date.localeCompare(a.date));return new Date(s[0].date);}
-  if((profile && profile.last_period))return new Date(profile.last_period);
+
+function openEntryModal() {
+  var t = today();
+  var ids = ['mDate','eDate','slDate','symDate'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]); if (el) el.value = t;
+  }
+  updateMealUI(); updateSlCalc();
+  document.getElementById('entryModal').style.display = 'flex';
+}
+function closeEntryModal() { document.getElementById('entryModal').style.display = 'none'; }
+function openPeriodModal() {
+  document.getElementById('pStart').value = today();
+  document.getElementById('pEnd').value = ''; document.getElementById('pNote').value = '';
+  selPFlow = 'Medium'; selPSym = [];
+  buildSingle('pFlowGrid', P_FLOWS, function(){return selPFlow;}, function(v){selPFlow=v;}, 'onr', null);
+  buildMulti('pSymGrid', P_SYMS, selPSym, 'onr');
+  document.getElementById('periodModal').style.display = 'flex';
+}
+function closePeriodModal() { document.getElementById('periodModal').style.display = 'none'; }
+
+function getAvgCycleLen() {
+  var sorted = periods.slice().sort(function(a,b) { return a.date.localeCompare(b.date); });
+  if (sorted.length >= 2) {
+    var diffs = [];
+    for (var i = 1; i < sorted.length; i++) {
+      var d = Math.round((new Date(sorted[i].date) - new Date(sorted[i-1].date)) / 86400000);
+      if (d >= 15 && d <= 60) diffs.push(d);
+    }
+    if (diffs.length >= 1) {
+      var sum = 0; for (var i = 0; i < diffs.length; i++) sum += diffs[i];
+      return Math.round(sum / diffs.length);
+    }
+  }
+  return (profile && profile.cycle_len) ? profile.cycle_len : 28;
+}
+
+function getLastPeriodDate() {
+  if (periods.length > 0) {
+    var sorted = periods.slice().sort(function(a,b) { return b.date.localeCompare(a.date); });
+    return new Date(sorted[0].date);
+  }
+  if (profile && profile.last_period) return new Date(profile.last_period);
   return null;
 }
-function getCycleDates(){
-  const last=getLastPeriodDate(); if(!last)return {};
-  const len=getAvgCycleLen();
-  const next=new Date(last); next.setDate(next.getDate()+len);
-  const ovul=new Date(next); ovul.setDate(ovul.getDate()-14);
-  const fs=new Date(ovul); fs.setDate(fs.getDate()-5);
-  const fe=new Date(ovul); fe.setDate(fe.getDate()+1);
-  return {next,ovul,fertStart:fs,fertEnd:fe,last,len};
+
+function getCycleDates() {
+  var last = getLastPeriodDate(); if (!last) return {};
+  var len = getAvgCycleLen();
+  var next = new Date(last); next.setDate(next.getDate()+len);
+  var ovul = new Date(next); ovul.setDate(ovul.getDate()-14);
+  var fs = new Date(ovul); fs.setDate(fs.getDate()-5);
+  var fe = new Date(ovul); fe.setDate(fe.getDate()+1);
+  return {next:next, ovul:ovul, fertStart:fs, fertEnd:fe, last:last, len:len};
 }
 
-// ─── RENDERS ──────────────────────────────────────────
-function renderBodyLog(){
-  const el=document.getElementById('bodyLog');
-  if(!bodyData.length){el.innerHTML='<div class="nd">No measurements recorded yet</div>';return;}
-  el.innerHTML=[...bodyData].reverse().map(r=>`<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight ${r.weight}kg</div><div class="des">${[r.body_fat?'Body Fat '+r.body_fat+'%':null,r.muscle?'Muscle '+r.muscle+'kg':null].filter(Boolean).join(' · ')||''}</div></div></div></div>`).join('');
+function renderBodyLog() {
+  var el = document.getElementById('bodyLog');
+  if (!bodyData.length) { el.innerHTML = '<div class="nd">No measurements recorded yet</div>'; return; }
+  var html = '';
+  var rev = bodyData.slice().reverse();
+  for (var i = 0; i < rev.length; i++) {
+    var r = rev[i];
+    var sub = [];
+    if (r.body_fat) sub.push('Fat '+r.body_fat+'%');
+    if (r.muscle) sub.push('Muscle '+r.muscle+'kg');
+    html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb body">Measure</div><div><div class="dem">Weight '+r.weight+'kg</div><div class="des">'+sub.join(' · ')+'</div></div></div></div>';
+  }
+  el.innerHTML = html;
 }
 
-function renderJournal(){
-  const el=document.getElementById('journalList');
-  const dates=[...new Set(entries.map(e=>e.date))].sort().reverse();
-  if(!dates.length){el.innerHTML='<div class="nd">No entries yet. Tap "+ Add Entry" to start.</div>';return;}
-  el.innerHTML=dates.map(date=>{
-    const bOn=bodyData.filter(b=>b.date===date);
-    const ents=entries.filter(e=>e.date===date);
-    let h=`<div class="dd"><div class="db">${fmtF(date)}`;
-    if(bOn.length)h+=` &nbsp;·&nbsp; <span style="color:rgba(232,201,106,0.85);font-size:10px">${bOn[bOn.length-1].weight}kg</span>`;
-    h+='</div>';
-    ents.forEach(e=>{
-      if(e.type==='meal') h+=`<div class="de"><div class="deb meal">${e.timing}</div><div><div class="dem">${e.genre} / ${e.size}</div><div class="des">${e.note||''}</div><span class="det">${e.calories} kcal</span></div></div>`;
-      else if(e.type==='exercise') h+=`<div class="de"><div class="deb ex">Exercise</div><div><div class="dem">${e.exType} ${'●'.repeat(e.intensity)}${'○'.repeat(5-e.intensity)}</div><div class="des">${e.duration?e.duration+' min · ':''}${e.memo||''}</div></div></div>`;
-      else if(e.type==='sleep') h+=`<div class="de"><div class="deb sleep">Sleep</div><div><div class="dem">${e.hours?e.hours.toFixed(1)+' hours':'—'}</div><div class="des">${e.bedTime}–${e.wakeTime} · ${e.quality} · Wakings: ${e.wakeUp}${e.note?' · '+e.note:''}</div></div></div>`;
-      else if(e.type==='symptom') h+=`<div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${e.mood} · Flow: ${e.flow} · Energy: ${e.energy}</div><div class="des">${(e.physSyms && e.physSyms.join(', '))||'No physical symptoms'}${e.note?' · '+e.note:''}</div></div></div>`;
-    });
-    return h+'</div>';
-  }).join('');
+function renderJournal() {
+  var el = document.getElementById('journalList');
+  var dateSet = {};
+  for (var i = 0; i < entries.length; i++) dateSet[entries[i].date] = true;
+  var dates = Object.keys(dateSet).sort().reverse();
+  if (!dates.length) { el.innerHTML = '<div class="nd">No entries yet. Tap "+ Add Entry" to start.</div>'; return; }
+  var html = '';
+  for (var di = 0; di < dates.length; di++) {
+    var date = dates[di];
+    var bOn = []; for (var i = 0; i < bodyData.length; i++) if (bodyData[i].date === date) bOn.push(bodyData[i]);
+    var ents = []; for (var i = 0; i < entries.length; i++) if (entries[i].date === date) ents.push(entries[i]);
+    html += '<div class="dd"><div class="db">'+fmtF(date);
+    if (bOn.length) html += ' &nbsp;·&nbsp; <span style="color:rgba(232,201,106,0.85);font-size:10px">'+bOn[bOn.length-1].weight+'kg</span>';
+    html += '</div>';
+    for (var i = 0; i < ents.length; i++) {
+      var e = ents[i];
+      if (e.type === 'meal') {
+        html += '<div class="de"><div class="deb meal">'+e.timing+'</div><div><div class="dem">'+e.genre+' / '+e.size+'</div><div class="des">'+(e.note||'')+'</div><span class="det">'+e.calories+' kcal</span></div></div>';
+      } else if (e.type === 'exercise') {
+        var dots = ''; for (var j = 0; j < e.intensity; j++) dots += '●'; for (var j = e.intensity; j < 5; j++) dots += '○';
+        html += '<div class="de"><div class="deb ex">Exercise</div><div><div class="dem">'+e.exType+' '+dots+'</div><div class="des">'+(e.duration ? e.duration+' min · ' : '')+(e.memo||'')+'</div></div></div>';
+      } else if (e.type === 'sleep') {
+        html += '<div class="de"><div class="deb sleep">Sleep</div><div><div class="dem">'+(e.hours ? e.hours.toFixed(1)+' hours' : '—')+'</div><div class="des">'+e.bedTime+'–'+e.wakeTime+' · '+e.quality+' · Wakings: '+e.wakeUp+(e.note ? ' · '+e.note : '')+'</div></div></div>';
+      } else if (e.type === 'symptom') {
+        var symsText = (e.physSyms && e.physSyms.length) ? e.physSyms.join(', ') : 'No physical symptoms';
+        html += '<div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: '+e.mood+' · Flow: '+e.flow+' · Energy: '+e.energy+'</div><div class="des">'+symsText+(e.note ? ' · '+e.note : '')+'</div></div></div>';
+      }
+    }
+    html += '</div>';
+  }
+  el.innerHTML = html;
 }
 
-function renderDash(){
-  const isFemale=(profile && profile.gender==='Female');
-  const cd=isFemale?getCycleDates():{};
-  const lat=bodyData[bodyData.length-1],prev=bodyData[bodyData.length-2];
-  const slEnts=entries.filter(e=>e.type==='sleep').sort((a,b)=>b.date.localeCompare(a.date));
-  const latSl=slEnts[0];
-  function chg(a,b,k,lg){if(!a||!b||!a[k]||!b[k])return '';const d=(a[k]-b[k]).toFixed(1);return `<div class="mc-c ${(d>0)===lg?'bad':'good'}">${d>0?'+':''}${d} prev</div>`;}
-  const slC=latSl?(latSl.hours>=7?'#2a7a4b':latSl.hours>=5?'#b8963c':'#8a1a1a'):'#888';
-  let cycleCard='';
-  if(isFemale&&cd.next){const dp=daysUntil(cd.next);cycleCard=`<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">${dateStr(cd.next)}</div><div class="mc-sub">${dp>=0?'In '+dp+' days':'Overdue '+Math.abs(dp)+'d'}</div></div>`;}
-  document.getElementById('metricGrid').innerHTML=`
-    <div class="mc"><div class="mc-l">Weight</div><div class="mc-v">${lat?lat.weight.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'weight',true)}</div>
-    <div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">${(lat && lat.body_fat)?lat.body_fat.toFixed(1):'--'}<span class="mc-u">%</span></div>${chg(lat,prev,'body_fat',true)}</div>
-    <div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">${(lat && lat.muscle)?lat.muscle.toFixed(1):'--'}<span class="mc-u">kg</span></div>${chg(lat,prev,'muscle',false)}</div>
-    <div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:${slC};font-size:20px">${latSl?latSl.hours.toFixed(1):'--'}<span class="mc-u">h</span></div><div class="mc-sub">${latSl?latSl.quality:''}</div></div>
-    ${cycleCard}`;
+function renderDash() {
+  var isFemale = profile && profile.gender === 'Female';
+  var cd = isFemale ? getCycleDates() : {};
+  var lat = bodyData[bodyData.length-1], prev = bodyData[bodyData.length-2];
+  var slEnts = []; for (var i = 0; i < entries.length; i++) if (entries[i].type === 'sleep') slEnts.push(entries[i]);
+  slEnts.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  var latSl = slEnts[0];
+
+  function chg(a, b, k, lg) {
+    if (!a || !b || !a[k] || !b[k]) return '';
+    var d = (a[k] - b[k]).toFixed(1);
+    var cl = (d > 0) === lg ? 'bad' : 'good';
+    return '<div class="mc-c '+cl+'">'+(d > 0 ? '+' : '')+d+' prev</div>';
+  }
+
+  var slC = latSl ? (latSl.hours >= 7 ? '#2a7a4b' : latSl.hours >= 5 ? '#b8963c' : '#8a1a1a') : '#888';
+  var cycleCard = '';
+  if (isFemale && cd.next) {
+    var dp = daysUntil(cd.next);
+    cycleCard = '<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">'+dateStr(cd.next)+'</div><div class="mc-sub">'+(dp >= 0 ? 'In '+dp+' days' : 'Overdue '+Math.abs(dp)+'d')+'</div></div>';
+  }
+
+  var latBF = lat && lat.body_fat ? lat.body_fat : null;
+  var latMu = lat && lat.muscle ? lat.muscle : null;
+
+  document.getElementById('metricGrid').innerHTML =
+    '<div class="mc"><div class="mc-l">Weight</div><div class="mc-v">'+(lat ? lat.weight.toFixed(1) : '--')+'<span class="mc-u">kg</span></div>'+chg(lat,prev,'weight',true)+'</div>' +
+    '<div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">'+(latBF ? latBF.toFixed(1) : '--')+'<span class="mc-u">%</span></div>'+chg(lat,prev,'body_fat',true)+'</div>' +
+    '<div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">'+(latMu ? latMu.toFixed(1) : '--')+'<span class="mc-u">kg</span></div>'+chg(lat,prev,'muscle',false)+'</div>' +
+    '<div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:'+slC+';font-size:20px">'+(latSl ? latSl.hours.toFixed(1) : '--')+'<span class="mc-u">h</span></div><div class="mc-sub">'+(latSl ? latSl.quality : '')+'</div></div>' +
+    cycleCard;
+
   renderWChart(curDays); renderHL();
-  if(isFemale) renderCycleStatus();
+  if (isFemale) renderCycleStatus();
 }
 
-function setPer(d,btn){curDays=d;document.querySelectorAll('.pb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWChart(d);}
-
-function renderWChart(days){
-  const isFemale=(profile && profile.gender==='Female');
-  const cut=new Date(); cut.setDate(cut.getDate()-days);
-  const fil=bodyData.filter(r=>r.date>=cut.toISOString().split('T')[0]);
-  const badSl=new Set(entries.filter(e=>e.type==='sleep'&&e.hours<5).map(e=>e.date));
-  const pdates=new Set();
-  if(isFemale)periods.forEach(p=>{const s=new Date(p.date),e=p.endDate?new Date(p.endDate):new Date(p.date);for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1))pdates.add(isoStr(new Date(d)));});
-  const ptC=fil.map(r=>badSl.has(r.date)?'#5a3080':pdates.has(r.date)?'#b03060':'#b8963c');
-  if(wChart)wChart.destroy();
-  const ctx=document.getElementById('wChart').getContext('2d');
-  wChart=new Chart(ctx,{type:'line',data:{labels:fil.map(r=>fmt(r.date)),datasets:[{label:'Weight(kg)',data:fil.map(r=>r.weight),borderColor:'#888780',backgroundColor:'rgba(184,150,60,0.06)',borderWidth:2,pointBackgroundColor:ptC,pointBorderColor:ptC,pointRadius:6,tension:0.35,fill:true}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const r=fil[c.dataIndex];let x=badSl.has(r.date)?' 🌙':pdates.has(r.date)?' 🌸':'';return c.parsed.y.toFixed(1)+'kg'+x;}}}},scales:{y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v.toFixed(1)+'kg'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+function setPer(d, btn) {
+  curDays = d;
+  var pbs = document.querySelectorAll('.pb');
+  for (var i = 0; i < pbs.length; i++) pbs[i].classList.remove('active');
+  btn.classList.add('active'); renderWChart(d);
 }
 
-function renderHL(){
-  const el=document.getElementById('hlCard');
-  if(bodyData.length<2){el.innerHTML='';return;}
-  let mx=0,mxi=1;
-  for(let i=1;i<bodyData.length;i++){const d=Math.abs(bodyData[i].weight-bodyData[i-1].weight);if(d>mx){mx=d;mxi=i;}}
-  const dt=bodyData[mxi].date,dp=bodyData[mxi-1].date,diff=(bodyData[mxi].weight-bodyData[mxi-1].weight).toFixed(1);
-  const mH=entries.filter(e=>e.date===dt&&e.type==='meal').map(m=>`<div class="drow"><span class="dtag meal">${m.timing}</span><span class="dc">${m.genre}/${m.size} ${m.note} (${m.calories}kcal)</span></div>`).join('');
-  const eH=entries.filter(e=>e.date===dt&&e.type==='exercise').map(e=>`<div class="drow"><span class="dtag ex">${e.exType}</span><span class="dc">${e.duration?e.duration+' min · ':''}${'●'.repeat(e.intensity)}</span></div>`).join('');
-  const slH=entries.filter(e=>e.date===dt&&e.type==='sleep').map(s=>`<div class="drow"><span class="dtag sleep">Sleep</span><span class="dc">${s.hours?s.hours.toFixed(1)+'h':''} / ${s.quality}</span></div>`).join('');
-  const syH=entries.filter(e=>e.date===dt&&e.type==='symptom').map(s=>`<div class="drow"><span class="dtag sym">Symptoms</span><span class="dc">Mood: ${s.mood} · Flow: ${s.flow}</span></div>`).join('');
-  const body=mH+eH+slH+syH||`<div style="font-size:11px;color:rgba(255,255,255,0.25)">No entries for this day</div>`;
-  el.innerHTML=`<div class="dcard"><div class="dcard-h"><div class="dcard-ico">${diff<0?'↓':'↑'}</div><div><div class="dcard-t">Biggest Change: ${fmt(dp)} → ${fmt(dt)}</div><div class="dcard-s">Weight ${diff>0?'+':''}${diff}kg</div></div></div><div class="dcard-b">${body}</div></div>`;
+function renderWChart(days) {
+  var isFemale = profile && profile.gender === 'Female';
+  var cut = new Date(); cut.setDate(cut.getDate()-days);
+  var cutS = cut.toISOString().split('T')[0];
+  var fil = []; for (var i = 0; i < bodyData.length; i++) if (bodyData[i].date >= cutS) fil.push(bodyData[i]);
+  var badSl = {};
+  for (var i = 0; i < entries.length; i++) if (entries[i].type === 'sleep' && entries[i].hours < 5) badSl[entries[i].date] = true;
+  var pdates = {};
+  if (isFemale) {
+    for (var i = 0; i < periods.length; i++) {
+      var p = periods[i];
+      var s = new Date(p.date), e = p.endDate ? new Date(p.endDate) : new Date(p.date);
+      for (var d = new Date(s); d <= e; d.setDate(d.getDate()+1)) pdates[isoStr(new Date(d))] = true;
+    }
+  }
+  var ptC = fil.map(function(r) { return badSl[r.date] ? '#5a3080' : pdates[r.date] ? '#b03060' : '#b8963c'; });
+  if (wChart) wChart.destroy();
+  var ctx = document.getElementById('wChart').getContext('2d');
+  wChart = new Chart(ctx, {type:'line', data:{labels:fil.map(function(r){return fmt(r.date);}), datasets:[{label:'Weight(kg)', data:fil.map(function(r){return r.weight;}), borderColor:'#888780', backgroundColor:'rgba(184,150,60,0.06)', borderWidth:2, pointBackgroundColor:ptC, pointBorderColor:ptC, pointRadius:6, tension:0.35, fill:true}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:10}, callback:function(v){return v.toFixed(1)+'kg';}}}, x:{grid:{display:false}, ticks:{font:{size:10}}}}}});
 }
 
-function renderCycleStatus(){
-  const el=document.getElementById('cycleStatusDash'); const cd=getCycleDates();
-  if(!cd.next){el.innerHTML='';return;}
-  const dp=daysUntil(cd.next),do_=daysUntil(cd.ovul);
-  const inF=do_>=-1&&do_<=5;
-  const avgLen=getAvgCycleLen();
-  const dl=periods.length>=2?`avg of ${periods.length} periods`:'manual entry';
-  el.innerHTML=`<div class="dcard rb"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Status</div><div class="dcard-s">${avgLen}-day avg · ${dl}</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Next Period</span><span class="dc">${dateStr(cd.next)} — in <b style="color:var(--peach)">${Math.abs(dp)} day${Math.abs(dp)!==1?'s':''}</b>${dp<0?' (overdue)':''}</span></div><div class="drow"><span class="dtag period" style="background:rgba(90,48,128,0.3);color:#c0a0f0;border-color:rgba(90,48,128,0.5)">Ovulation</span><span class="dc">${dateStr(cd.ovul)} — in <b style="color:#c0a0f0">${Math.abs(do_)} days</b></span></div><div class="drow"><span class="dtag period" style="background:rgba(26,90,138,0.3);color:#6ab4f0;border-color:rgba(26,90,138,0.5)">Fertile Window</span><span class="dc">${dateStr(cd.fertStart)} – ${dateStr(cd.fertEnd)}${inF?' <b style="color:#6ab4f0"> ← you are here</b>':''}</span></div></div></div>`;
+function renderHL() {
+  var el = document.getElementById('hlCard');
+  if (bodyData.length < 2) { el.innerHTML = ''; return; }
+  var mx = 0, mxi = 1;
+  for (var i = 1; i < bodyData.length; i++) {
+    var d = Math.abs(bodyData[i].weight - bodyData[i-1].weight);
+    if (d > mx) { mx = d; mxi = i; }
+  }
+  var dt = bodyData[mxi].date, dp = bodyData[mxi-1].date;
+  var diff = (bodyData[mxi].weight - bodyData[mxi-1].weight).toFixed(1);
+  var mH = '', eH = '', slH = '', syH = '';
+  for (var i = 0; i < entries.length; i++) {
+    var e = entries[i];
+    if (e.date !== dt) continue;
+    if (e.type === 'meal') mH += '<div class="drow"><span class="dtag meal">'+e.timing+'</span><span class="dc">'+e.genre+'/'+e.size+' '+e.note+' ('+e.calories+'kcal)</span></div>';
+    else if (e.type === 'exercise') eH += '<div class="drow"><span class="dtag ex">'+e.exType+'</span><span class="dc">'+(e.duration ? e.duration+' min · ' : '')+'Int '+e.intensity+'</span></div>';
+    else if (e.type === 'sleep') slH += '<div class="drow"><span class="dtag slp">Sleep</span><span class="dc">'+(e.hours ? e.hours.toFixed(1)+'h' : '')+' / '+e.quality+'</span></div>';
+    else if (e.type === 'symptom') syH += '<div class="drow"><span class="dtag sym">Symptoms</span><span class="dc">Mood: '+e.mood+' · Flow: '+e.flow+'</span></div>';
+  }
+  var body = mH+eH+slH+syH || '<div style="font-size:11px;color:rgba(255,255,255,0.25)">No entries for this day</div>';
+  el.innerHTML = '<div class="dcard"><div class="dcard-h"><div class="dcard-ico">'+(diff<0?'↓':'↑')+'</div><div><div class="dcard-t">Biggest Change: '+fmt(dp)+' → '+fmt(dt)+'</div><div class="dcard-s">Weight '+(diff>0?'+':'')+diff+'kg</div></div></div><div class="dcard-b">'+body+'</div></div>';
 }
 
-function prevMonth(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCycle();}
-function nextMonth(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCycle();}
+function renderCycleStatus() {
+  var el = document.getElementById('cycleStatusDash');
+  var cd = getCycleDates();
+  if (!cd.next) { el.innerHTML = ''; return; }
+  var dp = daysUntil(cd.next), dov = daysUntil(cd.ovul);
+  var inF = dov >= -1 && dov <= 5;
+  var avgLen = getAvgCycleLen();
+  var dl = periods.length >= 2 ? 'avg of '+periods.length+' periods' : 'manual entry';
+  el.innerHTML = '<div class="dcard rb"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Status</div><div class="dcard-s">'+avgLen+'-day avg · '+dl+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Next Period</span><span class="dc">'+dateStr(cd.next)+' — in <b style="color:var(--peach)">'+Math.abs(dp)+' days</b>'+(dp<0?' (overdue)':'')+'</span></div><div class="drow"><span class="dtag per" style="background:rgba(90,48,128,0.3);color:#c0a0f0;border-color:rgba(90,48,128,0.5)">Ovulation</span><span class="dc">'+dateStr(cd.ovul)+' — in <b style="color:#c0a0f0">'+Math.abs(dov)+' days</b></span></div><div class="drow"><span class="dtag per" style="background:rgba(26,90,138,0.3);color:#6ab4f0;border-color:rgba(26,90,138,0.5)">Fertile</span><span class="dc">'+dateStr(cd.fertStart)+' – '+dateStr(cd.fertEnd)+(inF?' <b style="color:#6ab4f0"> ← you are here</b>':'')+'</span></div></div></div>';
+}
 
-function renderCycle(){
-  document.getElementById('calLabel').textContent=MONTHS_F[calMonth]+' '+calYear;
-  const cd=getCycleDates();
-  const pdates=new Set(); periods.forEach(p=>{const s=new Date(p.date),e=p.endDate?new Date(p.endDate):new Date(p.date);for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1))pdates.add(isoStr(new Date(d)));});
-  const ovDay=cd.ovul?isoStr(cd.ovul):null;
-  const fdates=new Set(); if(cd.fertStart&&cd.fertEnd){for(let d=new Date(cd.fertStart);d<=cd.fertEnd;d.setDate(d.getDate()+1))fdates.add(isoStr(new Date(d)));}
-  const symD=new Set(entries.filter(e=>e.type==='symptom').map(e=>e.date));
-  const wD=new Set(bodyData.map(b=>b.date));
-  const slD=new Set(entries.filter(e=>e.type==='sleep').map(e=>e.date));
-  const todayStr=today(),fd=new Date(calYear,calMonth,1),ld=new Date(calYear,calMonth+1,0);
-  const grid=document.getElementById('calGrid'); grid.innerHTML='';
-  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
-  for(let i=0;i<fd.getDay();i++){const el=document.createElement('div');el.className='cal-day other';grid.appendChild(el);}
-  for(let day=1;day<=ld.getDate();day++){
-    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-    const el=document.createElement('div');
-    let cls='cal-day'; if(ds===todayStr)cls+=' today'; if(pdates.has(ds))cls+=' pd'; else if(ds===ovDay)cls+=' ov'; else if(fdates.has(ds))cls+=' ft';
-    el.className=cls;
-    el.innerHTML=`<div class="cal-num">${day}</div><div class="cal-dots">${pdates.has(ds)?'<div class="dot p"></div>':''}${ds===ovDay?'<div class="dot o"></div>':''}${fdates.has(ds)&&ds!==ovDay?'<div class="dot f"></div>':''}${symD.has(ds)?'<div class="dot s"></div>':''}${wD.has(ds)?'<div class="dot w"></div>':''}${slD.has(ds)?'<div class="dot sl"></div>':''}</div>`;
+function prevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCycle(); }
+function nextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCycle(); }
+
+function renderCycle() {
+  document.getElementById('calLabel').textContent = MONTHS_F[calMonth]+' '+calYear;
+  var cd = getCycleDates();
+  var pdates = {};
+  for (var i = 0; i < periods.length; i++) {
+    var p = periods[i];
+    var s = new Date(p.date), e = p.endDate ? new Date(p.endDate) : new Date(p.date);
+    for (var d = new Date(s); d <= e; d.setDate(d.getDate()+1)) pdates[isoStr(new Date(d))] = true;
+  }
+  var ovDay = cd.ovul ? isoStr(cd.ovul) : null;
+  var fdates = {};
+  if (cd.fertStart && cd.fertEnd) {
+    for (var d = new Date(cd.fertStart); d <= cd.fertEnd; d.setDate(d.getDate()+1)) fdates[isoStr(new Date(d))] = true;
+  }
+  var symD = {}, wD = {}, slD = {};
+  for (var i = 0; i < entries.length; i++) { if (entries[i].type === 'symptom') symD[entries[i].date] = true; }
+  for (var i = 0; i < bodyData.length; i++) wD[bodyData[i].date] = true;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].type === 'sleep') slD[entries[i].date] = true; }
+  var todayStr = today();
+  var firstDay = new Date(calYear, calMonth, 1);
+  var lastDay = new Date(calYear, calMonth+1, 0);
+  var grid = document.getElementById('calGrid'); grid.innerHTML = '';
+  var dows = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  for (var i = 0; i < dows.length; i++) {
+    var el = document.createElement('div'); el.className = 'cal-dow'; el.textContent = dows[i]; grid.appendChild(el);
+  }
+  for (var i = 0; i < firstDay.getDay(); i++) {
+    var el = document.createElement('div'); el.className = 'cal-day other'; grid.appendChild(el);
+  }
+  for (var day = 1; day <= lastDay.getDate(); day++) {
+    var ds = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    var el = document.createElement('div');
+    var cls = 'cal-day';
+    if (ds === todayStr) cls += ' today';
+    if (pdates[ds]) cls += ' pd';
+    else if (ds === ovDay) cls += ' ov';
+    else if (fdates[ds]) cls += ' ft';
+    el.className = cls;
+    el.innerHTML = '<div class="cal-num">'+day+'</div><div class="cal-dots">'+(pdates[ds]?'<div class="dot p"></div>':'')+(ds===ovDay?'<div class="dot o"></div>':'')+(fdates[ds]&&ds!==ovDay?'<div class="dot f"></div>':'')+(symD[ds]?'<div class="dot s"></div>':'')+(wD[ds]?'<div class="dot w"></div>':'')+(slD[ds]?'<div class="dot sl"></div>':'')+'</div>';
     grid.appendChild(el);
   }
-  const banner=document.getElementById('cycleBanner');
-  if(cd.next){banner.style.display='grid';const al=getAvgCycleLen();const dl=periods.length>=2?`avg of ${periods.length} periods`:'manual';banner.innerHTML=`<div class="cb"><div class="cb-l">Next Period</div><div class="cb-v">${dateStr(cd.next)}</div><div class="cb-s">In ${Math.abs(daysUntil(cd.next))} days · ${dl}</div></div><div class="cb"><div class="cb-l">Ovulation Est.</div><div class="cb-v" style="color:var(--purple)">${dateStr(cd.ovul)}</div><div class="cb-s">Fertile: ${dateStr(cd.fertStart)}–${dateStr(cd.fertEnd)}</div></div>`;}
-  else banner.style.display='none';
+  var banner = document.getElementById('cycleBanner');
+  if (cd.next) {
+    banner.style.display = 'grid';
+    var al = getAvgCycleLen();
+    var dl = periods.length >= 2 ? 'avg of '+periods.length+' periods' : 'manual';
+    banner.innerHTML = '<div class="cb"><div class="cb-l">Next Period</div><div class="cb-v">'+dateStr(cd.next)+'</div><div class="cb-s">In '+Math.abs(daysUntil(cd.next))+' days · '+dl+'</div></div><div class="cb"><div class="cb-l">Ovulation Est.</div><div class="cb-v" style="color:var(--purple)">'+dateStr(cd.ovul)+'</div><div class="cb-s">Fertile: '+dateStr(cd.fertStart)+'–'+dateStr(cd.fertEnd)+'</div></div>';
+  } else {
+    banner.style.display = 'none';
+  }
   renderCycleLog();
 }
 
-function renderCycleLog(){
-  const el=document.getElementById('cycleLog');
-  const items=[...periods,...entries.filter(e=>e.type==='symptom')].sort((a,b)=>b.date.localeCompare(a.date));
-  if(!items.length){el.innerHTML='<div class="nd">No cycle data yet.</div>';return;}
-  el.innerHTML=items.slice(0,12).map(r=>{
-    if(!r.type||r.flow!==undefined&&!r.physSyms)return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Flow: ${r.flow}${r.endDate?' · Ends '+fmt(r.endDate):''}</div><div class="des">${(r.symptoms && r.symptoms.join(', '))||''}${r.note?' · '+r.note:''}</div></div></div></div>`;
-    return `<div class="dd"><div class="db">${fmtF(r.date)}</div><div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: ${r.mood} · Flow: ${r.flow} · Energy: ${r.energy}</div><div class="des">${(r.physSyms ? r.physSyms.join(', ') : 'No physical symptoms')}</div></div></div></div>`;
-  }).join('');
+function renderCycleLog() {
+  var el = document.getElementById('cycleLog');
+  var items = [];
+  for (var i = 0; i < periods.length; i++) items.push(periods[i]);
+  for (var i = 0; i < entries.length; i++) if (entries[i].type === 'symptom') items.push(entries[i]);
+  items.sort(function(a,b) { return b.date.localeCompare(a.date); });
+  if (!items.length) { el.innerHTML = '<div class="nd">No cycle data yet.</div>'; return; }
+  var html = '';
+  for (var i = 0; i < Math.min(items.length, 12); i++) {
+    var r = items[i];
+    if (!r.type || r.flow !== undefined) {
+      html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Flow: '+r.flow+(r.endDate?' · Ends '+fmt(r.endDate):'')+'</div><div class="des">'+(r.symptoms && r.symptoms.join ? r.symptoms.join(', ') : '')+(r.note?' · '+r.note:'')+'</div></div></div></div>';
+    } else {
+      var symsText = (r.physSyms && r.physSyms.length) ? r.physSyms.join(', ') : 'No physical symptoms';
+      html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: '+r.mood+' · Flow: '+r.flow+' · Energy: '+r.energy+'</div><div class="des">'+symsText+'</div></div></div></div>';
+    }
+  }
+  el.innerHTML = html;
 }
 
-function renderInsight(){
+function renderInsight() {
   renderSlChart();
-  if(bodyData.length<2){document.getElementById('trendGrid').innerHTML='<div class="tp" style="grid-column:1/-1"><div class="nd">Add 2+ measurements to see trends</div></div>';renderPattern();return;}
-  const lose=[],gain=[];
-  for(let i=1;i<bodyData.length;i++){
-    const d=bodyData[i].weight-bodyData[i-1].weight,ds=bodyData[i].date;
-    const obj={date:ds,diff:d,meals:entries.filter(e=>e.date===ds&&e.type==='meal'),ex:entries.filter(e=>e.date===ds&&e.type==='exercise'),sleeps:entries.filter(e=>e.date===ds&&e.type==='sleep'),syms:entries.filter(e=>e.date===ds&&e.type==='symptom')};
-    if(d<-0.05)lose.push(obj);else if(d>0.05)gain.push(obj);
+  if (bodyData.length < 2) {
+    document.getElementById('trendGrid').innerHTML = '<div class="tp" style="grid-column:1/-1"><div class="nd">Add 2+ measurements to see trends</div></div>';
+    renderPattern(); return;
   }
-  lose.sort((a,b)=>a.diff-b.diff); gain.sort((a,b)=>b.diff-a.diff);
-  function tList(arr,cls){
-    if(!arr.length)return '<div class="nd" style="padding:10px;font-size:12px">No data yet</div>';
-    return arr.slice(0,4).map(item=>{
-      const tags=[...item.meals.map(m=>`<span class="det">${m.genre}/${m.size}</span>`),...item.ex.map(e=>`<span class="det" style="color:var(--green)">${e.exType}</span>`),...item.sleeps.map(s=>`<span class="det purple">${s.hours?s.hours.toFixed(1)+'h':''}</span>`),...item.syms.map(s=>`<span class="det rose">Flow:${s.flow}</span>`)].join('');
-      return `<div class="ti"><div class="ti-date">${fmtF(item.date)}</div><div class="ti-kg ${cls}">${item.diff>0?'+':''}${item.diff.toFixed(1)}kg</div>${tags||'<span style="font-size:11px;color:var(--muted)">No entries</span>'}</div>`;
-    }).join('');
+  var lose = [], gain = [];
+  for (var i = 1; i < bodyData.length; i++) {
+    var d = bodyData[i].weight - bodyData[i-1].weight;
+    var ds = bodyData[i].date;
+    var meals = [], ex = [], sleeps = [], syms = [];
+    for (var j = 0; j < entries.length; j++) {
+      if (entries[j].date !== ds) continue;
+      if (entries[j].type === 'meal') meals.push(entries[j]);
+      else if (entries[j].type === 'exercise') ex.push(entries[j]);
+      else if (entries[j].type === 'sleep') sleeps.push(entries[j]);
+      else if (entries[j].type === 'symptom') syms.push(entries[j]);
+    }
+    var obj = {date:ds, diff:d, meals:meals, ex:ex, sleeps:sleeps, syms:syms};
+    if (d < -0.05) lose.push(obj);
+    else if (d > 0.05) gain.push(obj);
   }
-  document.getElementById('trendGrid').innerHTML=`<div class="tp"><div class="th lose">↓ Days Weight Dropped</div>${tList(lose,'lose')}</div><div class="tp"><div class="th gain">↑ Days Weight Increased</div>${tList(gain,'gain')}</div>`;
+  lose.sort(function(a,b){return a.diff-b.diff;}); gain.sort(function(a,b){return b.diff-a.diff;});
+  function tList(arr, cls) {
+    if (!arr.length) return '<div class="nd" style="padding:10px;font-size:12px">No data yet</div>';
+    var h = '';
+    for (var i = 0; i < Math.min(arr.length,4); i++) {
+      var item = arr[i];
+      var tags = '';
+      for (var j = 0; j < item.meals.length; j++) tags += '<span class="det">'+item.meals[j].genre+'/'+item.meals[j].size+'</span>';
+      for (var j = 0; j < item.ex.length; j++) tags += '<span class="det" style="color:var(--green)">'+item.ex[j].exType+'</span>';
+      for (var j = 0; j < item.sleeps.length; j++) tags += '<span class="det purple">'+(item.sleeps[j].hours ? item.sleeps[j].hours.toFixed(1)+'h' : '')+'</span>';
+      for (var j = 0; j < item.syms.length; j++) tags += '<span class="det rose">Flow:'+item.syms[j].flow+'</span>';
+      h += '<div class="ti"><div class="ti-date">'+fmtF(item.date)+'</div><div class="ti-kg '+cls+'">'+(item.diff>0?'+':'')+item.diff.toFixed(1)+'kg</div>'+(tags||'<span style="font-size:11px;color:var(--muted)">No entries</span>')+'</div>';
+    }
+    return h;
+  }
+  document.getElementById('trendGrid').innerHTML = '<div class="tp"><div class="th lose">↓ Days Weight Dropped</div>'+tList(lose,'lose')+'</div><div class="tp"><div class="th gain">↑ Days Weight Increased</div>'+tList(gain,'gain')+'</div>';
   renderPattern();
 }
 
-function renderSlChart(){
-  const sl=entries.filter(e=>e.type==='sleep').sort((a,b)=>a.date.localeCompare(b.date));
-  if(slChart)slChart.destroy();
-  const ctx=document.getElementById('sleepChart').getContext('2d');
-  const qC=sl.map(s=>({Excellent:'rgba(42,122,75,0.85)',Good:'rgba(90,48,128,0.85)',OK:'rgba(184,150,60,0.85)',Poor:'rgba(184,90,0,0.85)','Very Poor':'rgba(138,26,26,0.85)'}[s.quality]||'rgba(90,48,128,0.85)'));
-  slChart=new Chart(ctx,{type:'bar',data:{labels:sl.map(s=>fmt(s.date)),datasets:[{label:'Sleep(h)',data:sl.map(s=>s.hours||0),backgroundColor:qC,borderRadius:2,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const s=sl[c.dataIndex];return c.parsed.y.toFixed(1)+'h / '+s.quality;}}}},scales:{y:{min:0,max:12,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10},callback:v=>v+'h'}},x:{grid:{display:false},ticks:{font:{size:10}}}}}});
+function renderSlChart() {
+  var sl = []; for (var i = 0; i < entries.length; i++) if (entries[i].type === 'sleep') sl.push(entries[i]);
+  sl.sort(function(a,b){return a.date.localeCompare(b.date);});
+  if (slChart) slChart.destroy();
+  var ctx = document.getElementById('sleepChart').getContext('2d');
+  var qMap = {Excellent:'rgba(42,122,75,0.85)',Good:'rgba(90,48,128,0.85)',OK:'rgba(184,150,60,0.85)',Poor:'rgba(184,90,0,0.85)','Very Poor':'rgba(138,26,26,0.85)'};
+  var qC = sl.map(function(s) { return qMap[s.quality] || 'rgba(90,48,128,0.85)'; });
+  slChart = new Chart(ctx, {type:'bar', data:{labels:sl.map(function(s){return fmt(s.date);}), datasets:[{label:'Sleep(h)', data:sl.map(function(s){return s.hours||0;}), backgroundColor:qC, borderRadius:2, borderSkipped:false}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{min:0,max:12,grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:10},callback:function(v){return v+'h';}}}, x:{grid:{display:false}, ticks:{font:{size:10}}}}}});
 }
 
-function renderPattern(){
-  const el=document.getElementById('patternCard'); const isFemale=(profile && profile.gender==='Female'); let html='';
-  const slEnts=entries.filter(e=>e.type==='sleep');
-  if(slEnts.length>=3){
-    const avgH=(slEnts.reduce((s,e)=>s+(e.hours||0),0)/slEnts.length).toFixed(1);
-    const short=slEnts.filter(e=>e.hours<6).length;
-    const good=slEnts.filter(e=>e.hours>=7&&(e.quality==='Good'||e.quality==='Excellent')).length;
-    html+=`<div class="dcard" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico" style="font-size:9px">AI</div><div><div class="dcard-t">Sleep Pattern</div><div class="dcard-s">Your sleep trends</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag sleep">Average</span><span class="dc">Average sleep: <b style="color:${parseFloat(avgH)>=7?'#6ad4a0':parseFloat(avgH)>=5?'#b8963c':'#e07070'}">${avgH} hours</b> (recommended: 7–9h)</span></div><div class="drow"><span class="dtag sleep">Short Nights</span><span class="dc">Under 6 hours: <b style="color:${short>2?'#e07070':'#6ad4a0'}">${short}</b></span></div><div class="drow"><span class="dtag sleep">Good Nights</span><span class="dc">7h+ good quality: <b style="color:#6ad4a0">${good}</b></span></div></div></div>`;
+function renderPattern() {
+  var el = document.getElementById('patternCard');
+  var isFemale = profile && profile.gender === 'Female';
+  var html = '';
+  var slEnts = []; for (var i = 0; i < entries.length; i++) if (entries[i].type === 'sleep') slEnts.push(entries[i]);
+  if (slEnts.length >= 3) {
+    var sum = 0; for (var i = 0; i < slEnts.length; i++) sum += (slEnts[i].hours || 0);
+    var avgH = (sum / slEnts.length).toFixed(1);
+    var short = 0; for (var i = 0; i < slEnts.length; i++) if (slEnts[i].hours < 6) short++;
+    var good = 0; for (var i = 0; i < slEnts.length; i++) if (slEnts[i].hours >= 7 && (slEnts[i].quality === 'Good' || slEnts[i].quality === 'Excellent')) good++;
+    var avgColor = parseFloat(avgH) >= 7 ? '#6ad4a0' : parseFloat(avgH) >= 5 ? '#b8963c' : '#e07070';
+    html += '<div class="dcard" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico" style="font-size:9px">AI</div><div><div class="dcard-t">Sleep Pattern</div><div class="dcard-s">Your sleep trends</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag slp">Average</span><span class="dc">Average sleep: <b style="color:'+avgColor+'">'+avgH+' hours</b> (recommended: 7-9h)</span></div><div class="drow"><span class="dtag slp">Short</span><span class="dc">Under 6 hours: <b style="color:'+(short>2?'#e07070':'#6ad4a0')+'">'+short+'</b></span></div><div class="drow"><span class="dtag slp">Good</span><span class="dc">7h+ quality: <b style="color:#6ad4a0">'+good+'</b> nights</span></div></div></div>';
   }
-  if(isFemale){
-    const symEnts=entries.filter(e=>e.type==='symptom');
-    const avgCL=getAvgCycleLen(); const numP=periods.length;
-    if(numP>=2){
-      const s2=[...periods].sort((a,b)=>a.date.localeCompare(b.date));
-      const cl=[];for(let i=1;i<s2.length;i++){const d=Math.round((new Date(s2[i].date)-new Date(s2[i-1].date))/86400000);if(d>=15&&d<=60)cl.push(d);}
-      html+=`<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">From your logged periods</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">${avgCL} days</b>${cl.length?' (range: '+Math.min(...cl)+'–'+Math.max(...cl)+' days)':''} from ${numP} periods</span></div>${symEnts.length>=2?`<div class="drow"><span class="dtag period">Top Symptoms</span><span class="dc">${(()=>{const t={};symEnts.forEach(e=>(e.physSyms && e.physSyms.forEach(s=>{t[s]=(t[s]||0)+1;})));return Object.entries(t).sort((a,b)=>b[1]-a[1]).slice(0,3).map(s=>s[0]+' ('+s[1]+'×)').join(', ')||'Not enough data';})()}</span></div>`:''}</div></div>`;
-    } else if(numP===1){
-      html+=`<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">Keep logging to improve accuracy</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag period">Progress</span><span class="dc">1 period logged. Log <b style="color:var(--peach)">at least 2</b> to calculate your personal cycle length.</span></div></div></div>`;
+  if (isFemale) {
+    var avgCL = getAvgCycleLen(); var numP = periods.length;
+    if (numP >= 2) {
+      var sorted = periods.slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+      var cl = [];
+      for (var i = 1; i < sorted.length; i++) {
+        var d = Math.round((new Date(sorted[i].date)-new Date(sorted[i-1].date))/86400000);
+        if (d >= 15 && d <= 60) cl.push(d);
+      }
+      var clRange = cl.length ? ' (range: '+Math.min.apply(null,cl)+'–'+Math.max.apply(null,cl)+' days)' : '';
+      var symEnts = []; for (var i = 0; i < entries.length; i++) if (entries[i].type === 'symptom') symEnts.push(entries[i]);
+      var topSymsHtml = '';
+      if (symEnts.length >= 2) {
+        var t = {};
+        for (var i = 0; i < symEnts.length; i++) {
+          if (symEnts[i].physSyms) {
+            for (var j = 0; j < symEnts[i].physSyms.length; j++) {
+              var s = symEnts[i].physSyms[j]; t[s] = (t[s]||0)+1;
+            }
+          }
+        }
+        var tArr = Object.keys(t).map(function(k){return [k,t[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
+        topSymsHtml = '<div class="drow"><span class="dtag per">Symptoms</span><span class="dc">'+tArr.map(function(s){return s[0]+' ('+s[1]+'x)';}).join(', ')+'</span></div>';
+      }
+      html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">From your logged periods</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">'+avgCL+' days</b>'+clRange+' from '+numP+' periods</span></div>'+topSymsHtml+'</div></div>';
+    } else if (numP === 1) {
+      html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Progress</span><span class="dc">1 period logged. Log <b style="color:var(--peach)">at least 2</b> to calculate your cycle length.</span></div></div></div>';
     }
   }
-  el.innerHTML=html;
+  el.innerHTML = html;
 }
-
-// ── MOBILE KEYBOARD / SCROLL FIX ─────────────────────
-function fixModalScroll() {
-  const modal = document.querySelector('.modal-sheet');
-  if (!modal) return;
-  const inputs = modal.querySelectorAll('input, textarea, select');
-  inputs.forEach(inp => {
-    inp.addEventListener('focus', function() {
-      setTimeout(() => {
-        this.scrollIntoView({behavior:'smooth', block:'center'});
-      }, 350); // wait for keyboard to open
-    });
-  });
-}
-
-// Call after modal opens
-const _origOpenEntry = openEntryModal;
-openEntryModal = function() {
-  _origOpenEntry();
-  setTimeout(fixModalScroll, 100);
-};
-const _origOpenPeriod = openPeriodModal;
-openPeriodModal = function() {
-  _origOpenPeriod();
-  setTimeout(fixModalScroll, 100);
-};
-
-}, 500);
 </script>
 </body>
 </html>
