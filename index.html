@@ -745,6 +745,7 @@ document.getElementById('loginPw').addEventListener('keydown',e=>{if(e.key==='En
 // Login shown by default via HTML
 
 sb.auth.onAuthStateChange(async(event,session)=>{
+  try {
   document.getElementById('loadingScreen').style.display='none';
   if(session?.user){
     currentUser=session.user;
@@ -763,10 +764,16 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     document.getElementById('setupScreen').style.display='none';
     showAuth('login');
   }
+  } catch(err) {
+    console.error('Auth error:', err);
+    document.getElementById('loadingScreen').style.display='none';
+    showAuth('login');
+  }
 });
 
 // ─── LOAD DATA ────────────────────────────────────────
 async function loadAll() {
+  try {
   const uid=currentUser.id;
   const [p,m,e,per]=await Promise.all([
     sb.from('profiles').select('*').eq('id',uid).single(),
@@ -778,6 +785,7 @@ async function loadAll() {
   bodyData = m.data || [];
   entries  = (e.data||[]).map(r=>({...r.data, date:r.date, _id:r.id, type:r.type}));
   periods  = (per.data||[]).map(r=>({date:r.start_date, endDate:r.end_date, flow:r.flow, symptoms:r.symptoms||[], note:r.note, _id:r.id}));
+  } catch(err) { console.error('loadAll error:', err); }
 }
 
 // ─── SETUP ────────────────────────────────────────────
