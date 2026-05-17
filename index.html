@@ -333,8 +333,8 @@ select.fi{height:44px}
       <div class="frow">
         <div class="fg"><label class="fl">Date</label><input type="date" class="fi" id="bDate" style="color-scheme:light"></div>
         <div class="fg"><label class="fl">Weight (kg)</label><input type="number" step="0.1" class="fi" id="bW" placeholder="60.0" inputmode="decimal"></div>
-        <div class="fg"><label class="fl">Body Fat (%)</label><input type="number" step="0.1" class="fi" id="bF" placeholder="22.0" inputmode="decimal"></div>
-        <div class="fg"><label class="fl">Muscle (kg)</label><input type="number" step="0.1" class="fi" id="bM" placeholder="45.0" inputmode="decimal"></div>
+        <div class="fg"><label class="fl">Body Fat % <span style="color:var(--muted);font-size:8px;letter-spacing:0">(optional)</span></label><input type="number" step="0.1" class="fi" id="bF" placeholder="Leave blank if N/A" inputmode="decimal"></div>
+        <div class="fg"><label class="fl">Muscle kg <span style="color:var(--muted);font-size:8px;letter-spacing:0">(optional)</span></label><input type="number" step="0.1" class="fi" id="bM" placeholder="Leave blank if N/A" inputmode="decimal"></div>
       </div>
       <button class="btn-save" id="saveMeasBtn" onclick="saveBody()" style="width:100%">Save Measurement</button>
     </div>
