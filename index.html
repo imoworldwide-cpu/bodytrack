@@ -209,6 +209,9 @@ select.fi{border-color:var(--gold);background:rgba(184,150,60,0.06)}
 .unit-btn{padding:6px 16px;font-size:10px;font-weight:700;font-family:'Oswald',sans-serif;letter-spacing:2px;cursor:pointer;border:none;background:none;color:var(--muted);text-transform:uppercase;transition:all .2s}
 .unit-btn.active{background:var(--gold);color:var(--primary)}
 
+
+.lang-toggle{cursor:pointer}
+
 </style>
 </head>
 <body>
@@ -313,7 +316,8 @@ select.fi{border-color:var(--gold);background:rgba(184,150,60,0.06)}
   <div class="hdr-r">
     <div class="sync-dot" id="syncDot">●</div>
     <div class="ubadge"><div class="uav" id="uAv"></div><div class="unm" id="uNm"></div></div>
-    <button class="hbtn" onclick="doLogout()">Out</button>
+    <button class="hbtn" id="langBtn" onclick="toggleLang()">日本語</button>
+    <button class="hbtn" onclick="doLogout()" id="logoutBtn">Out</button>
   </div>
 </div>
 <div class="main-nav">
@@ -491,6 +495,580 @@ select.fi{border-color:var(--gold);background:rgba(184,150,60,0.06)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+
+var lang = 'en';
+
+var T = {
+  en: {
+    // Nav
+    dashboard: 'Dashboard', measure: 'Measure', journal: 'Journal',
+    cycle: 'Cycle', insights: 'Insights',
+    // Header
+    signout: 'Out',
+    // Auth
+    signin: 'SIGN IN', signinTitle: 'Sign In',
+    createAccount: 'CREATE ACCOUNT', createAccountTitle: 'Create Account',
+    sendReset: 'SEND RESET LINK', resetTitle: 'Reset Password',
+    emailLabel: 'Email', passwordLabel: 'Password',
+    confirmPw: 'Confirm Password', minPw: 'Password (min 6 chars)',
+    noAccount: 'No account?', createOne: 'Create one',
+    forgotPw: 'Forgot password?', backToSignin: 'Back to Sign In',
+    alreadyAccount: 'Already have an account?', signInLink: 'Sign in',
+    privateNote: 'Your data is private and encrypted.',
+    // Setup
+    yourProfile: 'Your Profile', nameLabel: 'Name', ageLabel: 'Age',
+    bioSex: 'Biological Sex', male: 'Male', female: 'Female', other: 'Other',
+    cycleTracking: 'Cycle Tracking (optional)', avgCycleLen: 'Average cycle length (days)',
+    lastPeriodDate: 'Last period start date', start: 'START',
+    cycleSkipNote: 'You can skip this and enter periods manually later.',
+    // Measurements
+    bodyMeasurements: 'Body Measurements', date: 'Date', timing: 'Timing',
+    morning: 'Morning', noon: 'Noon', night: 'Night',
+    weightKg: 'Weight (kg)', weightLbs: 'Weight (lbs)',
+    bodyFat: 'Body Fat %', muscle: 'Muscle (kg)', saveMeasurement: 'Save Measurement',
+    updateMeasurement: 'Update Measurement', noMeasurements: 'No measurements recorded yet',
+    // Journal
+    dailyJournal: 'Daily Journal', addEntry: '+ Add Entry', addEntryTitle: '+ Add Entry',
+    noEntries: 'No entries yet. Tap "+ Add Entry" to start.',
+    meal: 'Meal', exercise: 'Exercise', sleep: 'Sleep', symptoms: 'Symptoms',
+    cuisine: 'Cuisine', portion: 'Portion', alcohol: 'Alcohol', notes: 'Notes',
+    type: 'Type', duration: 'Duration (min)', intensity: 'Intensity',
+    date2: 'Date', timing2: 'Timing', quality: 'Quality', nightWakings: 'Night Wakings',
+    saveEntry: 'Save Entry', updateEntry: 'Update Entry', cancel: 'Cancel',
+    edit: 'Edit', delete: '✕',
+    // Cycle
+    logPeriod: '+ Period', startDate: 'Start Date', endDate: 'End Date (optional)',
+    flow: 'Flow', noCycleData: 'No cycle data yet.',
+    // Dashboard
+    weight: 'Weight', lastSleep: 'Last Sleep', nextPeriod: 'Next Period',
+    weightTrend: 'Weight Trend', biggestChange: 'Biggest Change',
+    cycleStatus: 'Cycle Status', avgCycle: 'avg of', periods: 'periods',
+    inDays: 'In', days: 'days', overdue: 'Overdue', manualEntry: 'manual entry',
+    nextPeriodLabel: 'Next Period', ovulation: 'Ovulation', fertile: 'Fertile Window',
+    youAreHere: 'you are here',
+    // Insights
+    sleepDuration: 'Sleep Duration', sleepPattern: 'Sleep Pattern',
+    avgSleep: 'Average sleep:', recommended: '(recommended: 7-9h)',
+    shortNights: 'Under 6 hours:', goodNights: '7h+ quality:',
+    cycleInsights: 'Cycle Insights', avgCycleLen2: 'Avg Cycle', topSymptoms: 'Symptoms',
+    fromPeriods: 'from', periodsLabel: 'periods',
+    daysDropped: '↓ Days Weight Dropped', daysIncreased: '↑ Days Weight Increased',
+    noEntries2: 'No entries', add2meas: 'Add 2+ measurements to see trends',
+    // Meal options
+    breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack', proteinShake: 'Protein Shake',
+    american: 'American', japanese: 'Japanese', chinese: 'Chinese', korean: 'Korean',
+    fastFood: 'Fast Food', salad: 'Salad', protein: 'Protein', other2: 'Other',
+    light: 'Light', regular: 'Regular', large: 'Large',
+    noAlcohol: 'None', beer: 'Beer', wine: 'Wine', spirits: 'Spirits', cocktail: 'Cocktail', multiple: 'Multiple',
+    estCal: 'Est. Calories',
+    // Sleep options
+    excellent: 'Excellent', good: 'Good', ok: 'OK', poor: 'Poor', veryPoor: 'Very Poor',
+    none: 'None', once: 'Once', twice: 'Twice', threePlus: '3+ times',
+    // Symptoms
+    cramps: 'Cramps', bloating: 'Bloating', headache: 'Headache', backPain: 'Back Pain',
+    breastTenderness: 'Breast Tenderness', nausea: 'Nausea', fatigue: 'Fatigue',
+    acne: 'Acne', foodCravings: 'Food Cravings', spotting: 'Spotting',
+    happy: 'Happy', calm: 'Calm', neutral: 'Neutral', anxious: 'Anxious',
+    irritable: 'Irritable', sad: 'Sad', emotional: 'Emotional',
+    high: 'High', normal: 'Normal', low: 'Low', exhausted: 'Exhausted',
+    mood: 'Mood', energy: 'Energy', flowLabel: 'Flow',
+    noPhysical: 'No physical symptoms',
+    // Period
+    logPeriodTitle: 'Log Period', savePeriod: 'Save Period',
+    periodsLogged: 'Log at least 2 to calculate your cycle length.',
+    // Misc
+    syncSaving: 'Saving...', saved: 'Saved', errorSaving: 'Error saving',
+    measureSaved: 'Measurement saved', measureUpdated: 'Measurement updated',
+    entrySaved: 'Entry saved', entryUpdated: 'Entry updated',
+    periodLogged: 'Period logged', entryDeleted: 'Entry deleted', measDeleted: 'Measurement deleted',
+    confirmDelete: 'Delete this entry?', confirmDeleteMeas: 'Delete this measurement?',
+    noPhysSym: 'No physical symptoms',
+    ovulationEst: 'Ovulation Est.',
+    nextPeriodCard: 'Next Period', inDaysCard: 'In',
+    rangeLabel: 'range:', fromLabel: 'from',
+    // Dashboard metric cards
+    weightCard: 'Weight', bodyFatCard: 'Body Fat', muscleCard: 'Muscle',
+    lastSleepCard: 'Last Sleep', nextPeriodCard2: 'Next Period',
+    prevLabel: 'prev', inDaysLabel: 'In', daysLabel: 'days', overdueLabel: 'Overdue',
+    weightTrendCard: 'Weight Trend', biggestChangeCard: 'Biggest Change',
+    cycleStatusCard: 'Cycle Status', avgOfLabel: 'avg of', periodsLabel2: 'periods',
+    manualLabel: 'manual entry', noEntriesDay: 'No entries for this day',
+    ovulationCard: 'Ovulation', fertileCard: 'Fertile Window', youAreHereLabel: '← you are here',
+    measurementsTitle: 'Body Measurements', timingDropLabel: 'Timing',
+    morningOpt: 'Morning', noonOpt: 'Noon', nightOpt: 'Night',
+    saveBtn: 'Save Measurement', updateBtn: 'Update Measurement',
+    noMeasurementsMsg: 'No measurements recorded yet',
+    dailyJournalTitle: 'Daily Journal', addEntryBtn2: '+ Add Entry',
+    noEntriesMsg: 'No entries yet. Tap "+ Add Entry" to start.',
+    cuisineSec: 'Cuisine', portionSec: 'Portion', alcoholSec: 'Alcohol', notesSec: 'Notes',
+    typeSec: 'Type', intensitySec: 'Intensity', qualitySec: 'Quality',
+    wakingsSec: 'Night Wakings', physSymSec: 'Physical Symptoms',
+    moodSec: 'Mood', flowSec: 'Flow', energySec: 'Energy',
+    periodFlowSec: 'Flow', periodSymSec: 'Symptoms',
+    sleepDurationTitle: 'Sleep Duration', sleepPatternTitle: 'Sleep Pattern',
+    yourSleepTrends: 'Your sleep trends',
+    avgSleepLabel: 'Average sleep:', recommendedLabel: '(recommended: 7-9h)',
+    shortNightsLabel: 'Under 6 hours:', goodNightsLabel: '7h+ quality:',
+    cycleInsightsTitle: 'Cycle Insights', fromPeriodsLabel: 'From your logged periods',
+    avgCycleCard: 'Avg Cycle', topSymptomsCard: 'Symptoms',
+    dropDaysTitle: '↓ Days Weight Dropped', gainDaysTitle: '↑ Days Weight Increased',
+    add2measMsg: 'Add 2+ measurements to see trends', noDataYet: 'No data yet',
+    logPeriodBtn: '+ Period', noCycleMsg: 'No cycle data yet.',
+    nextPeriodBanner: 'Next Period', ovulEstBanner: 'Ovulation Est.',
+    fertileBanner: 'Fertile:',
+    weightLabel: 'Weight', bodyFatLabel: 'Body Fat %', muscleLabel: 'Muscle (kg)',
+    dateLabel: 'Date', timingLabel: 'Timing',
+    saveMeasurementBtn: 'Save Measurement', updateMeasurementBtn: 'Update Measurement',
+    cuisineLabel: 'Cuisine', portionLabel: 'Portion', alcoholLabel: 'Alcohol',
+    notesLabel: 'Notes', typeLabel: 'Type', durationLabel: 'Duration (min)',
+    intensityLabel: 'Intensity', qualityLabel: 'Quality', nightWakingsLabel: 'Night Wakings',
+    physSymptomsLabel: 'Physical Symptoms', moodLabel: 'Mood', flowLabel2: 'Flow',
+    energyLabel: 'Energy', estCalLabel: 'Est. Calories',
+    startDateLabel: 'Start Date', endDateLabel: 'End Date (optional)',
+    periodFlowLabel: 'Flow', periodSymLabel: 'Symptoms'
+  },
+  ja: {
+    // Nav
+    dashboard: 'ダッシュボード', measure: '測定', journal: '日記',
+    cycle: 'サイクル', insights: 'インサイト',
+    // Header
+    signout: '退出',
+    // Auth
+    signin: 'サインイン', signinTitle: 'サインイン',
+    createAccount: 'アカウント作成', createAccountTitle: 'アカウント作成',
+    sendReset: 'リセットリンク送信', resetTitle: 'パスワードリセット',
+    emailLabel: 'メール', passwordLabel: 'パスワード',
+    confirmPw: 'パスワード確認', minPw: 'パスワード（6文字以上）',
+    noAccount: 'アカウントなし？', createOne: '作成する',
+    forgotPw: 'パスワードを忘れた？', backToSignin: 'サインインに戻る',
+    alreadyAccount: 'すでにアカウントあり？', signInLink: 'サインイン',
+    privateNote: 'データは非公開で暗号化されています。',
+    // Setup
+    yourProfile: 'プロフィール設定', nameLabel: '名前', ageLabel: '年齢',
+    bioSex: '生物学的性別', male: '男性', female: '女性', other: 'その他',
+    cycleTracking: 'サイクルトラッキング（任意）', avgCycleLen: '平均サイクル日数',
+    lastPeriodDate: '最後の生理開始日', start: 'スタート',
+    cycleSkipNote: 'スキップして後で手動入力することも可能です。',
+    // Measurements
+    bodyMeasurements: '身体測定', date: '日付', timing: 'タイミング',
+    morning: '朝', noon: '昼', night: '夜',
+    weightKg: '体重（kg）', weightLbs: '体重（lbs）',
+    bodyFat: '体脂肪率（%）', muscle: '筋肉量（kg）', saveMeasurement: '測定を保存',
+    updateMeasurement: '測定を更新', noMeasurements: '測定データなし',
+    // Journal
+    dailyJournal: '日記', addEntry: '+ 記録追加', addEntryTitle: '+ 記録追加',
+    noEntries: 'まだ記録がありません。「+ 記録追加」を押してください。',
+    meal: '食事', exercise: '運動', sleep: '睡眠', symptoms: '症状',
+    cuisine: '料理タイプ', portion: '量', alcohol: 'アルコール', notes: 'メモ',
+    type: 'タイプ', duration: '時間（分）', intensity: '強度',
+    date2: '日付', timing2: 'タイミング', quality: '質', nightWakings: '夜中の目覚め',
+    saveEntry: '記録を保存', updateEntry: '記録を更新', cancel: 'キャンセル',
+    edit: '編集', delete: '✕',
+    // Cycle
+    logPeriod: '+ 生理記録', startDate: '開始日', endDate: '終了日（任意）',
+    flow: '量', noCycleData: 'サイクルデータなし。',
+    // Dashboard
+    weight: '体重', lastSleep: '最後の睡眠', nextPeriod: '次の生理',
+    weightTrend: '体重推移', biggestChange: '最大変化',
+    cycleStatus: 'サイクル状態', avgCycle: '平均', periods: '回分',
+    inDays: 'あと', days: '日', overdue: '遅延', manualEntry: '手動入力',
+    nextPeriodLabel: '次の生理', ovulation: '排卵日', fertile: '排卵期',
+    youAreHere: '← 現在ここ',
+    // Insights
+    sleepDuration: '睡眠時間', sleepPattern: '睡眠パターン',
+    avgSleep: '平均睡眠：', recommended: '（推奨：7〜9時間）',
+    shortNights: '6時間未満：', goodNights: '7時間以上・良質：',
+    cycleInsights: 'サイクル分析', avgCycleLen2: '平均サイクル', topSymptoms: '主な症状',
+    fromPeriods: '', periodsLabel: '回分のデータより',
+    daysDropped: '↓ 体重が減った日', daysIncreased: '↑ 体重が増えた日',
+    noEntries2: '記録なし', add2meas: '2回以上の測定でトレンドを表示',
+    // Meal options
+    breakfast: '朝食', lunch: '昼食', dinner: '夕食', snack: 'スナック', proteinShake: 'プロテイン',
+    american: '洋食', japanese: '和食', chinese: '中華', korean: '韓国料理',
+    fastFood: 'ファストフード', salad: 'サラダ', protein: 'プロテイン', other2: 'その他',
+    light: '少なめ', regular: '普通', large: '多め',
+    noAlcohol: 'なし', beer: 'ビール', wine: 'ワイン', spirits: '焼酎/日本酒', cocktail: 'カクテル', multiple: '複数',
+    estCal: '推定カロリー',
+    // Sleep options
+    excellent: '最高', good: '良い', ok: '普通', poor: '悪い', veryPoor: 'とても悪い',
+    none: 'なし', once: '1回', twice: '2回', threePlus: '3回以上',
+    // Symptoms
+    cramps: '生理痛', bloating: 'むくみ', headache: '頭痛', backPain: '腰痛',
+    breastTenderness: '胸の張り', nausea: '吐き気', fatigue: '疲労感',
+    acne: 'ニキビ', foodCravings: '食欲増加', spotting: '不正出血',
+    happy: '幸せ', calm: '落ち着いた', neutral: '普通', anxious: '不安',
+    irritable: 'イライラ', sad: '悲しい', emotional: '感情的',
+    high: '高い', normal: '普通', low: '低い', exhausted: '疲れ果てた',
+    mood: '気分', energy: 'エネルギー', flowLabel: '出血量',
+    noPhysical: '身体症状なし',
+    // Period
+    logPeriodTitle: '生理記録', savePeriod: '生理を保存',
+    periodsLogged: '個人サイクルを計算するには2回以上記録してください。',
+    // Misc
+    syncSaving: '保存中...', saved: '保存完了', errorSaving: '保存エラー',
+    measureSaved: '測定を保存しました', measureUpdated: '測定を更新しました',
+    entrySaved: '記録を保存しました', entryUpdated: '記録を更新しました',
+    periodLogged: '生理を記録しました', entryDeleted: '記録を削除しました', measDeleted: '測定を削除しました',
+    confirmDelete: 'この記録を削除しますか？', confirmDeleteMeas: 'この測定を削除しますか？',
+    noPhysSym: '身体症状なし',
+    ovulationEst: '排卵日（推定）',
+    nextPeriodCard: '次の生理', inDaysCard: 'あと',
+    rangeLabel: '範囲：', fromLabel: '',
+    // Dashboard metric cards
+    weightCard: '体重', bodyFatCard: '体脂肪率', muscleCard: '筋肉量',
+    lastSleepCard: '最後の睡眠', nextPeriodCard2: '次の生理',
+    prevLabel: '前回比', inDaysLabel: 'あと', daysLabel: '日', overdueLabel: '遅延',
+    weightTrendCard: '体重推移', biggestChangeCard: '最大変化',
+    cycleStatusCard: 'サイクル状態', avgOfLabel: '平均', periodsLabel2: '回分',
+    manualLabel: '手動入力', noEntriesDay: 'この日の記録なし',
+    ovulationCard: '排卵日', fertileCard: '排卵期', youAreHereLabel: '← 現在ここ',
+    // Measurements section
+    measurementsTitle: '身体測定', timingDropLabel: 'タイミング',
+    morningOpt: '朝', noonOpt: '昼', nightOpt: '夜',
+    saveBtn: '測定を保存', updateBtn: '測定を更新',
+    noMeasurementsMsg: '測定データなし',
+    // Journal section
+    dailyJournalTitle: '日記', addEntryBtn2: '+ 記録追加',
+    noEntriesMsg: 'まだ記録がありません。「+ 記録追加」を押してください。',
+    // Modal section labels (slbl2)
+    cuisineSec: '料理タイプ', portionSec: '量', alcoholSec: 'アルコール', notesSec: 'メモ',
+    typeSec: 'タイプ', intensitySec: '強度', qualitySec: '質',
+    wakingsSec: '夜中の目覚め', physSymSec: '身体症状',
+    moodSec: '気分', flowSec: '出血量', energySec: 'エネルギー',
+    periodFlowSec: '出血量', periodSymSec: '症状',
+    // Insights
+    sleepDurationTitle: '睡眠時間', sleepPatternTitle: '睡眠パターン',
+    yourSleepTrends: '睡眠の傾向',
+    avgSleepLabel: '平均睡眠：', recommendedLabel: '（推奨：7〜9時間）',
+    shortNightsLabel: '6時間未満：', goodNightsLabel: '7時間以上・良質：',
+    cycleInsightsTitle: 'サイクル分析', fromPeriodsLabel: '記録されたデータより',
+    avgCycleCard: '平均サイクル', topSymptomsCard: '主な症状',
+    dropDaysTitle: '↓ 体重が減った日', gainDaysTitle: '↑ 体重が増えた日',
+    add2measMsg: '2回以上の測定でトレンドを表示', noDataYet: 'データなし',
+    // Cycle
+    logPeriodBtn: '+ 生理記録', noCycleMsg: 'サイクルデータなし。',
+    nextPeriodBanner: '次の生理', ovulEstBanner: '排卵日（推定）',
+    fertileBanner: '排卵期：',
+    // Form field labels
+    dateLabel: '日付', timingLabel: 'タイミング',
+    weightLabel: '体重', bodyFatLabel: '体脂肪率（%）', muscleLabel: '筋肉量（kg）',
+    saveMeasurementBtn: '測定を保存', updateMeasurementBtn: '測定を更新',
+    cuisineLabel: '料理タイプ', portionLabel: '量', alcoholLabel: 'アルコール',
+    notesLabel: 'メモ', typeLabel: 'タイプ', durationLabel: '時間（分）',
+    intensityLabel: '強度', qualityLabel: '質', nightWakingsLabel: '夜中の目覚め',
+    physSymptomsLabel: '身体症状', moodLabel: '気分', flowLabel2: '出血量',
+    energyLabel: 'エネルギー', estCalLabel: '推定カロリー', durationDisplay: '時間',
+    startDateLabel: '開始日', endDateLabel: '終了日（任意）',
+    periodFlowLabel: '量', periodSymLabel: '症状',
+  }
+};
+
+function t(key) {
+  return (T[lang] && T[lang][key]) ? T[lang][key] : (T['en'][key] || key);
+}
+
+function toggleLang() {
+  lang = lang === 'en' ? 'ja' : 'en';
+  document.getElementById('langBtn').textContent = lang === 'en' ? '日本語' : 'English';
+  applyLang();
+}
+
+function applyLang() {
+  var isFemale = profile && profile.gender === 'Female';
+
+  // ── NAV ──────────────────────────────────────────
+  var allNavs = document.querySelectorAll('.nav-item');
+  var navLabels = [t('dashboard'), t('measure'), t('journal')];
+  if (isFemale) navLabels.push(t('cycle'));
+  navLabels.push(t('insights'));
+  allNavs.forEach(function(n, i) { if (navLabels[i]) n.textContent = navLabels[i]; });
+
+  // ── HEADER ───────────────────────────────────────
+  document.getElementById('logoutBtn').textContent = t('signout');
+  document.getElementById('langBtn').textContent = lang === 'en' ? '日本語' : 'English';
+
+  // ── SECTION TITLES / LABELS ─────────────────────
+  function setText(id, key) { var el=document.getElementById(id); if(el) el.textContent=t(key); }
+  function setHTML(id, html) { var el=document.getElementById(id); if(el) el.innerHTML=html; }
+  function setAttr(id, attr, key) { var el=document.getElementById(id); if(el) el.setAttribute(attr, t(key)); }
+
+  // ── ALL FORM LABELS ─────────────────────────────
+  function setFl(id, text) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var fg = el.parentElement;
+    if (fg) { var lbl = fg.querySelector('.fl'); if (lbl) lbl.textContent = text; }
+  }
+
+  // Measurement form
+  setFl('bDate', t('dateLabel'));
+  setFl('bTiming', t('timingLabel'));
+  setFl('bW', weightUnit==='lbs' ? t('weightLbs') : t('weightLabel')+(lang==='ja'?' (kg)':' (kg)'));
+  setFl('bF', t('bodyFatLabel'));
+  setFl('bM', t('muscleLabel'));
+  var saveMeasBtn = document.getElementById('saveMeasBtn');
+  if (saveMeasBtn) saveMeasBtn.textContent = editingMeasId ? t('updateMeasurementBtn') : t('saveMeasurementBtn');
+
+  // Meal modal labels
+  setFl('mDate', t('dateLabel'));
+  setFl('mTiming', t('timingLabel'));
+  setFl('mNote', t('notesLabel'));
+  setSectionLabel('genreGrid', t('cuisineLabel'));
+  setSectionLabel('sizeGrid', t('portionLabel'));
+  setSectionLabel('alcoholGrid', t('alcoholLabel'));
+  setCalLabel(t('estCalLabel'));
+
+  // Exercise modal labels
+  setFl('eDate', t('dateLabel'));
+  setFl('eDur', t('durationLabel'));
+  setFl('eMemo', t('notesLabel'));
+  setSectionLabel('exTypeGrid', t('typeLabel'));
+  setSectionLabel('intLbl', t('intensityLabel'));
+
+  // Sleep modal labels
+  setFl('slDate', t('dateLabel'));
+  setFl('slBed', lang==='ja'?'就寝時間':'Bedtime');
+  setFl('slWake', lang==='ja'?'起床時間':'Wake up');
+  setFl('slNote', t('notesLabel'));
+  setSectionLabel('sleepQGrid', t('qualityLabel'));
+  setSectionLabel('wakeGrid', t('nightWakingsLabel'));
+
+  // Symptom modal labels
+  setFl('symDate', t('dateLabel'));
+  setFl('symNote', t('notesLabel'));
+  setSectionLabel('physSymGrid', t('physSymptomsLabel'));
+  setSectionLabel('moodGrid', t('moodLabel'));
+  setSectionLabel('flowGrid', t('flowLabel2'));
+  setSectionLabel('energyGrid', t('energyLabel'));
+
+  // Period modal labels
+  setFl('pStart', t('startDateLabel'));
+  setFl('pEnd', t('endDateLabel'));
+  setFl('pNote', t('notesLabel'));
+  setSectionLabel('pFlowGrid', t('periodFlowLabel'));
+  setSectionLabel('pSymGrid', t('periodSymLabel'));
+
+  // Measurement timing dropdown
+  var bTiming = document.getElementById('bTiming');
+  if (bTiming) {
+    var bSel = bTiming.value;
+    bTiming.innerHTML = '<option>'+t('morning')+'</option><option>'+t('noon')+'</option><option>'+t('night')+'</option>';
+    // try to restore selection
+    var bOpts = bTiming.options;
+    for (var i=0;i<bOpts.length;i++) { if (bOpts[i].value===bSel||i===0) { bTiming.selectedIndex=i; break; } }
+  }
+
+  // Journal buttons
+  var addBtns = document.querySelectorAll('.add-btn');
+  addBtns.forEach(function(btn) {
+    if (btn.textContent.indexOf('+') >= 0 && btn.onclick && btn.onclick.toString().indexOf('Period') < 0) {
+      btn.textContent = t('addEntry');
+    }
+  });
+
+  // Modal entry add button specifically
+  var addEntryBtn = document.querySelector('[onclick="openEntryModal()"]');
+  if (addEntryBtn) addEntryBtn.textContent = t('addEntry');
+
+  // Period button
+  var periodBtn = document.querySelector('[onclick="openPeriodModal()"]');
+  if (periodBtn) periodBtn.textContent = t('logPeriod');
+
+  // Modal tabs
+  var mtabs = document.querySelectorAll('.mtab');
+  var tabLabels = [t('meal'), t('exercise'), t('sleep')];
+  if (isFemale) tabLabels.push(t('symptoms'));
+  mtabs.forEach(function(tab, i) { if (tabLabels[i] !== undefined) tab.textContent = tabLabels[i]; });
+
+  // Modal title
+  var modalT = document.querySelector('.modal-t:not(.rose)');
+  if (modalT) modalT.textContent = t('addEntryTitle');
+
+  // Period modal title
+  var modalTRose = document.querySelector('.modal-t.rose');
+  if (modalTRose) modalTRose.textContent = t('logPeriodTitle');
+
+  // Save/cancel buttons in modals
+  var saveEntryBtn = document.getElementById('saveEntryBtn');
+  if (saveEntryBtn && saveEntryBtn.textContent !== t('updateEntry')) saveEntryBtn.textContent = t('saveEntry');
+  var savePeriodBtn = document.getElementById('savePeriodBtn');
+  if (savePeriodBtn) savePeriodBtn.textContent = t('savePeriod');
+  var cancelBtns = document.querySelectorAll('.btn-cancel');
+  cancelBtns.forEach(function(b) { b.textContent = t('cancel'); });
+
+  // Meal timing dropdown
+  var mTiming = document.getElementById('mTiming');
+  if (mTiming) {
+    var mSel = mTiming.selectedIndex;
+    mTiming.innerHTML = '<option>'+t('breakfast')+'</option><option>'+t('lunch')+'</option><option>'+t('dinner')+'</option><option>'+t('snack')+'</option><option>'+t('proteinShake')+'</option>';
+    mTiming.selectedIndex = mSel;
+  }
+
+  // ── REBUILD ALL SELECTOR BUTTONS ────────────────
+  // Cuisine
+  var GENRES_TR = [t('american'),t('japanese'),t('chinese'),t('korean'),t('fastFood'),t('salad'),t('protein'),t('other2')];
+  buildSingle('genreGrid', GENRES_TR, function(){return trGenre(selGenre);}, function(v,i){selGenre=GENRES[i];}, 'on', updateMealUI);
+
+  // Portion
+  var SIZES_TR = [t('light'),t('regular'),t('large')];
+  buildSingleIdx('sizeGrid', SIZES_TR, SIZES, function(){return selSize;}, function(v){selSize=v;}, 'on', updateMealUI);
+
+  // Alcohol
+  var ALC_TR = [t('noAlcohol'),t('beer'),t('wine'),t('spirits'),t('cocktail'),t('multiple')];
+  var ALC_EN = ['None','Beer','Wine','Spirits','Cocktail','Multiple'];
+  buildSingleIdx('alcoholGrid', ALC_TR, ALC_EN, function(){return selAlcohol;}, function(v){selAlcohol=v;}, 'on', null);
+
+  // Exercise type
+  var EX_TR = [lang==='ja'?'ウエイト':'Weights','Cardio','HIIT',lang==='ja'?'ストレッチ':'Stretch','Yoga',t('other2')];
+  var EX_EN = ['Weights','Cardio','HIIT','Stretch','Yoga','Other'];
+  buildSingleIdx('exTypeGrid', EX_TR, EX_EN, function(){return selExType;}, function(v){selExType=v;}, 'on', null);
+
+  // Sleep quality
+  var SQ_TR = [t('excellent'),t('good'),t('ok'),t('poor'),t('veryPoor')];
+  var SQ_EN = ['Excellent','Good','OK','Poor','Very Poor'];
+  buildSingleIdx('sleepQGrid', SQ_TR, SQ_EN, function(){return selSleepQ;}, function(v){selSleepQ=v;}, 'onp', null);
+
+  // Wake ups
+  var WU_TR = [t('none'),t('once'),t('twice'),t('threePlus')];
+  var WU_EN = ['None','Once','Twice','3+ times'];
+  buildSingleIdx('wakeGrid', WU_TR, WU_EN, function(){return selWakeUp;}, function(v){selWakeUp=v;}, 'onp', null);
+
+  // Mood
+  var MOOD_TR = [t('happy'),t('calm'),t('neutral'),t('anxious'),t('irritable'),t('sad'),t('emotional')];
+  var MOOD_EN = ['Happy','Calm','Neutral','Anxious','Irritable','Sad','Emotional'];
+  buildSingleIdx('moodGrid', MOOD_TR, MOOD_EN, function(){return selMood;}, function(v){selMood=v;}, 'onr', null);
+
+  // Flow
+  var FLOW_TR = [t('none'),'Spotting',t('light'),lang==='ja'?'中':'Medium',lang==='ja'?'多め':'Heavy',lang==='ja'?'非常に多い':'Very Heavy'];
+  var FLOW_EN = ['None','Spotting','Light','Medium','Heavy','Very Heavy'];
+  buildSingleIdx('flowGrid', FLOW_TR, FLOW_EN, function(){return selFlow;}, function(v){selFlow=v;}, 'onr', null);
+
+  // Energy
+  var EN_TR = [t('high'),t('normal'),t('low'),t('exhausted')];
+  var EN_EN = ['High','Normal','Low','Exhausted'];
+  buildSingleIdx('energyGrid', EN_TR, EN_EN, function(){return selEnergy;}, function(v){selEnergy=v;}, 'onr', null);
+
+  // Physical symptoms (multi)
+  var PS_TR = [t('cramps'),t('bloating'),t('headache'),t('backPain'),t('breastTenderness'),t('nausea'),t('fatigue'),t('acne'),t('foodCravings'),t('spotting')];
+  var PS_EN = ['Cramps','Bloating','Headache','Back Pain','Breast Tenderness','Nausea','Fatigue','Acne','Food Cravings','Spotting'];
+  buildMultiIdx('physSymGrid', PS_TR, PS_EN, selPhysSym, 'onr');
+
+  // Period flow
+  var PF_TR = ['Spotting',t('light'),lang==='ja'?'中':'Medium',lang==='ja'?'多め':'Heavy',lang==='ja'?'非常に多い':'Very Heavy'];
+  var PF_EN = ['Spotting','Light','Medium','Heavy','Very Heavy'];
+  buildSingleIdx('pFlowGrid', PF_TR, PF_EN, function(){return selPFlow;}, function(v){selPFlow=v;}, 'onr', null);
+
+  // Period symptoms (multi)
+  var PSYM_TR = [t('cramps'),t('bloating'),t('headache'),t('backPain'),t('nausea'),t('fatigue'),lang==='ja'?'胸の痛み':'Breast Pain',lang==='ja'?'気分の波':'Mood Swings'];
+  var PSYM_EN = ['Cramps','Bloating','Headache','Back Pain','Nausea','Fatigue','Breast Pain','Mood Swings'];
+  buildMultiIdx('pSymGrid', PSYM_TR, PSYM_EN, selPSym, 'onr');
+
+  // Period modal form labels
+  setLabel('pStart', t('startDate'));
+  setLabel('pEnd', t('endDate'));
+
+  // ── STATIC TEXT IN HTML ──────────────────────────
+  // Measurements card title
+  var measTitle = document.querySelector('#sec-body .card-t');
+  if (measTitle) measTitle.textContent = t('measurementsTitle');
+
+  // Journal section title
+  var journalTitle = document.querySelector('#sec-journal .lh div');
+  if (journalTitle) journalTitle.textContent = t('dailyJournalTitle');
+
+  // Add entry button
+  var addEntryBtnEl = document.querySelector('[onclick="openEntryModal()"]');
+  if (addEntryBtnEl) addEntryBtnEl.textContent = t('addEntryBtn2');
+
+  // Period button
+  var periodBtnEl = document.querySelector('[onclick="openPeriodModal()"]');
+  if (periodBtnEl) periodBtnEl.textContent = t('logPeriodBtn');
+
+  // Weight trend legend
+  var wLeg = document.getElementById('wChartLeg');
+  if (wLeg) {
+    var poorSleepLbl = lang==='ja'?'睡眠不足':'Poor Sleep';
+    var periodDotLbl = lang==='ja'?'生理日':'Period day';
+    var html2 = '<span><span class="ld" style="background:#b8963c"></span>'+t('weightCard')+'</span><span><span class="ld" style="background:#5a3080"></span>'+poorSleepLbl+'</span>';
+    if (isFemale) html2 += '<span><span class="ld" style="background:#b03060"></span>'+periodDotLbl+'</span>';
+    wLeg.innerHTML = html2;
+  }
+
+  // ── RE-RENDER ────────────────────────────────────
+  renderDash();
+  renderJournal();
+  renderBodyLog();
+  renderInsight();
+  if (isFemale) renderCycle();
+}
+
+// Helper: set label text for a form field
+
+function setSectionLabel(gridId, text) {
+  var el = document.getElementById(gridId);
+  if (!el) return;
+  var prev = el.previousElementSibling;
+  if (prev && prev.classList && prev.classList.contains('slbl2')) {
+    prev.textContent = text;
+  }
+}
+function setCalLabel(text) {
+  var cp = document.querySelector('.cp');
+  if (cp) {
+    var span = cp.querySelector('span');
+    if (span) span.textContent = text;
+  }
+}
+
+function setLabel(inputId, text) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  var label = el.previousElementSibling || el.parentElement.previousElementSibling;
+  // Try parentElement's label
+  var fg = el.closest ? el.closest('.fg') : el.parentElement;
+  if (fg) {
+    var lbl = fg.querySelector('.fl');
+    if (lbl) { lbl.textContent = text; return; }
+  }
+}
+
+// Build single-select with English stored values, translated display
+function buildSingleIdx(cid, displayItems, storeItems, gV, sV, cls, cb) {
+  var con = document.getElementById(cid); if (!con) return; con.innerHTML = '';
+  for (var i = 0; i < displayItems.length; i++) {
+    (function(disp, store) {
+      var b = document.createElement('button');
+      b.className = 'sb' + (gV() === store ? ' '+cls : '');
+      b.textContent = disp;
+      b.onclick = function() {
+        sV(store);
+        var btns = con.querySelectorAll('.sb');
+        for (var j=0;j<btns.length;j++) btns[j].className='sb'+(storeItems[j]===gV()?' '+cls:'');
+        if (cb) cb();
+      };
+      con.appendChild(b);
+    })(displayItems[i], storeItems[i]);
+  }
+}
+
+// Build multi-select with English stored values, translated display
+function buildMultiIdx(cid, displayItems, storeItems, arr, cls) {
+  var con = document.getElementById(cid); if (!con) return; con.innerHTML = '';
+  for (var i = 0; i < displayItems.length; i++) {
+    (function(disp, store) {
+      var b = document.createElement('button');
+      b.className = 'sb' + (arr.indexOf(store) >= 0 ? ' '+cls : '');
+      b.textContent = disp;
+      b.onclick = function() {
+        var idx = arr.indexOf(store);
+        if (idx >= 0) { arr.splice(idx,1); b.className='sb'; }
+        else { arr.push(store); b.className='sb '+cls; }
+      };
+      con.appendChild(b);
+    })(displayItems[i], storeItems[i]);
+  }
+}
+
 var SB_URL = 'https://tjbslsvekrtpamtpweqi.supabase.co';
 var SB_KEY = 'sb_publishable_Ofd66dPtQh0-zHAlrk-OKg_FS9RutiS';
 var sb = supabase.createClient(SB_URL, SB_KEY);
@@ -1143,7 +1721,7 @@ function getCycleDates() {
 
 function renderBodyLog() {
   var el = document.getElementById('bodyLog');
-  if (!bodyData.length) { el.innerHTML = '<div class="nd">No measurements recorded yet</div>'; return; }
+  if (!bodyData.length) { el.innerHTML = '<div class="nd">'+t('noMeasurementsMsg')+'</div>'; return; }
   var html = '';
   var rev = bodyData.slice().reverse();
   for (var i = 0; i < rev.length; i++) {
@@ -1158,12 +1736,74 @@ function renderBodyLog() {
   el.innerHTML = html;
 }
 
+
+// ── TRANSLATION HELPERS ──────────────────────────────
+function trTiming(v) {
+  var map = {Morning:t('morning'),Noon:t('noon'),Night:t('night'),
+    Breakfast:t('breakfast'),Lunch:t('lunch'),Dinner:t('dinner'),
+    Snack:t('snack'),'Protein Shake':t('proteinShake')};
+  return map[v] || v;
+}
+function trGenre(v) {
+  var map = {American:t('american'),Japanese:t('japanese'),Chinese:t('chinese'),
+    Korean:t('korean'),'Fast Food':t('fastFood'),Salad:t('salad'),
+    Protein:t('protein'),Other:t('other2')};
+  return map[v] || v;
+}
+function trSize(v) {
+  var map = {Light:t('light'),Regular:t('regular'),Large:t('large')};
+  return map[v] || v;
+}
+function trAlc(v) {
+  var map = {None:t('noAlcohol'),Beer:t('beer'),Wine:t('wine'),
+    Spirits:t('spirits'),Cocktail:t('cocktail'),Multiple:t('multiple')};
+  return map[v] || v;
+}
+function trSleepQ(v) {
+  var map = {Excellent:t('excellent'),Good:t('good'),OK:t('ok'),
+    Poor:t('poor'),'Very Poor':t('veryPoor')};
+  return map[v] || v;
+}
+function trWakeUp(v) {
+  var map = {None:t('none'),Once:t('once'),Twice:t('twice'),'3+ times':t('threePlus')};
+  return map[v] || v;
+}
+function trMood(v) {
+  var map = {Happy:t('happy'),Calm:t('calm'),Neutral:t('neutral'),
+    Anxious:t('anxious'),Irritable:t('irritable'),Sad:t('sad'),Emotional:t('emotional')};
+  return map[v] || v;
+}
+function trFlow(v) {
+  var map = {None:t('none'),Spotting:'Spotting',Light:t('light'),
+    Medium:'Medium',Heavy:'Heavy','Very Heavy':'Very Heavy'};
+  return map[v] || v;
+}
+function trEnergy(v) {
+  var map = {High:t('high'),Normal:t('normal'),Low:t('low'),Exhausted:t('exhausted')};
+  return map[v] || v;
+}
+function trSym(v) {
+  var map = {Cramps:t('cramps'),Bloating:t('bloating'),Headache:t('headache'),
+    'Back Pain':t('backPain'),'Breast Tenderness':t('breastTenderness'),
+    Nausea:t('nausea'),Fatigue:t('fatigue'),Acne:t('acne'),
+    'Food Cravings':t('foodCravings'),Spotting:t('spotting')};
+  return map[v] || v;
+}
+// Language-specific labels used inline
+// dynamic - recalculated each render
+var lang_hours = lang === 'ja' ? '時間' : ' hours';
+var lang_min   = lang === 'ja' ? '分' : ' min';
+var lang_wakings = lang === 'ja' ? '夜中の目覚め' : 'Wakings';
+var lang_mood  = lang === 'ja' ? '気分' : 'Mood';
+var lang_flow  = lang === 'ja' ? '出血量' : 'Flow';
+var lang_energy = lang === 'ja' ? 'エネルギー' : 'Energy';
+
 function renderJournal() {
   var el = document.getElementById('journalList');
   var dateSet = {};
   for (var i = 0; i < entries.length; i++) dateSet[entries[i].date] = true;
   var dates = Object.keys(dateSet).sort().reverse();
-  if (!dates.length) { el.innerHTML = '<div class="nd">No entries yet. Tap "+ Add Entry" to start.</div>'; return; }
+  if (!dates.length) { el.innerHTML = '<div class="nd">'+t('noEntriesMsg')+'</div>'; return; }
   var html = '';
   for (var di = 0; di < dates.length; di++) {
     var date = dates[di];
@@ -1175,16 +1815,16 @@ function renderJournal() {
     for (var i = 0; i < ents.length; i++) {
       var e = ents[i];
       if (e.type === 'meal') {
-        var alcTag = (e.alcohol && e.alcohol !== 'None') ? '<span class="det rose">🍺 '+e.alcohol+'</span>' : '';
-        html += '<div class="de"><div class="deb meal">'+e.timing+'</div><div style="flex:1"><div class="dem">'+e.genre+' / '+e.size+'</div><div class="des">'+(e.note||'')+'</div><span class="det">'+e.calories+' kcal</span>'+alcTag+'</div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
+        var alcTag = (e.alcohol && e.alcohol !== 'None') ? '<span class="det rose">🍺 '+trAlc(e.alcohol)+'</span>' : '';
+        html += '<div class="de"><div class="deb meal">'+trTiming(e.timing)+'</div><div style="flex:1"><div class="dem">'+trGenre(e.genre)+' / '+trSize(e.size)+'</div><div class="des">'+(e.note||'')+'</div><span class="det">'+e.calories+' kcal</span>'+alcTag+'</div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >'+t('edit')+'</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'exercise') {
         var dots = ''; for (var j = 0; j < e.intensity; j++) dots += '●'; for (var j = e.intensity; j < 5; j++) dots += '○';
-        html += '<div class="de"><div class="deb ex">Exercise</div><div style="flex:1"><div class="dem">'+e.exType+' '+dots+'</div><div class="des">'+(e.duration ? e.duration+' min · ' : '')+(e.memo||'')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
+        html += '<div class="de"><div class="deb ex">'+t('exercise')+'</div><div style="flex:1"><div class="dem">'+e.exType+' '+dots+'</div><div class="des">'+(e.duration ? e.duration+lang_min+' · ' : '')+(e.memo||'')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >'+t('edit')+'</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'sleep') {
-        html += '<div class="de"><div class="deb sleep">Sleep</div><div style="flex:1"><div class="dem">'+(e.hours ? e.hours.toFixed(1)+' hours' : '—')+'</div><div class="des">'+e.bedTime+'–'+e.wakeTime+' · '+e.quality+' · Wakings: '+e.wakeUp+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
+        html += '<div class="de"><div class="deb sleep">'+t('sleep')+'</div><div style="flex:1"><div class="dem">'+(e.hours ? e.hours.toFixed(1)+lang_hours : '—')+'</div><div class="des">'+e.bedTime+'–'+e.wakeTime+' · '+trSleepQ(e.quality)+' · '+lang_wakings+': '+trWakeUp(e.wakeUp)+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >'+t('edit')+'</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       } else if (e.type === 'symptom') {
-        var symsText = (e.physSyms && e.physSyms.length) ? e.physSyms.join(', ') : 'No physical symptoms';
-        html += '<div class="de"><div class="deb sym">Symptoms</div><div style="flex:1"><div class="dem">Mood: '+e.mood+' · Flow: '+e.flow+' · Energy: '+e.energy+'</div><div class="des">'+symsText+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >Edit</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
+        var symsText = (e.physSyms && e.physSyms.length) ? e.physSyms.map(trSym).join(', ') : t('noPhysSym');
+        html += '<div class="de"><div class="deb sym">'+t('symptoms')+'</div><div style="flex:1"><div class="dem">'+lang_mood+': '+trMood(e.mood)+' · '+lang_flow+': '+trFlow(e.flow)+' · '+lang_energy+': '+trEnergy(e.energy)+'</div><div class="des">'+symsText+(e.note ? ' · '+e.note : '')+'</div></div><button class="edit-btn" onclick="editEntry(\''+e._id+'\')" >'+t('edit')+'</button><button class="del-btn" onclick="deleteEntry(\''+e._id+'\')" >✕</button></div>';
       }
     }
     html += '</div>';
@@ -1204,24 +1844,28 @@ function renderDash() {
     if (!a || !b || !a[k] || !b[k]) return '';
     var d = (a[k] - b[k]).toFixed(1);
     var cl = (d > 0) === lg ? 'bad' : 'good';
-    return '<div class="mc-c '+cl+'">'+(d > 0 ? '+' : '')+d+' prev</div>';
+    return '<div class="mc-c '+cl+'">'+(d > 0 ? '+' : '')+d+' '+t('prevLabel')+'</div>';
   }
 
   var slC = latSl ? (latSl.hours >= 7 ? '#2a7a4b' : latSl.hours >= 5 ? '#b8963c' : '#8a1a1a') : '#888';
   var cycleCard = '';
   if (isFemale && cd.next) {
     var dp = daysUntil(cd.next);
-    cycleCard = '<div class="mc rose"><div class="mc-l">Next Period</div><div class="mc-v" style="color:var(--rose);font-size:18px">'+dateStr(cd.next)+'</div><div class="mc-sub">'+(dp >= 0 ? 'In '+dp+' days' : 'Overdue '+Math.abs(dp)+'d')+'</div></div>';
+    cycleCard = '<div class="mc rose"><div class="mc-l">'+t('nextPeriodCard2')+'</div><div class="mc-v" style="color:var(--rose);font-size:18px">'+dateStr(cd.next)+'</div><div class="mc-sub">'+(dp >= 0 ? t('inDaysLabel')+' '+dp+' '+t('daysLabel') : t('overdueLabel')+' '+Math.abs(dp)+'d')+'</div></div>';
   }
 
   var latBF = lat && lat.body_fat ? lat.body_fat : null;
   var latMu = lat && lat.muscle ? lat.muscle : null;
 
+  var wUnit = weightUnit === 'lbs' ? 'lbs' : 'kg';
+  var dispW = lat ? (weightUnit==='lbs'?(lat.weight*2.20462).toFixed(1):lat.weight.toFixed(1)) : '--';
+  var dispBF = latBF ? latBF.toFixed(1) : '--';
+  var dispMu = latMu ? (weightUnit==='lbs'?(latMu*2.20462).toFixed(1):latMu.toFixed(1)) : '--';
   document.getElementById('metricGrid').innerHTML =
-    '<div class="mc"><div class="mc-l">Weight</div><div class="mc-v">'+(lat ? lat.weight.toFixed(1) : '--')+'<span class="mc-u">kg</span></div>'+chg(lat,prev,'weight',true)+'</div>' +
-    '<div class="mc blue"><div class="mc-l">Body Fat</div><div class="mc-v">'+(latBF ? latBF.toFixed(1) : '--')+'<span class="mc-u">%</span></div>'+chg(lat,prev,'body_fat',true)+'</div>' +
-    '<div class="mc green"><div class="mc-l">Muscle</div><div class="mc-v">'+(latMu ? latMu.toFixed(1) : '--')+'<span class="mc-u">kg</span></div>'+chg(lat,prev,'muscle',false)+'</div>' +
-    '<div class="mc purple"><div class="mc-l">Last Sleep</div><div class="mc-v" style="color:'+slC+';font-size:20px">'+(latSl ? latSl.hours.toFixed(1) : '--')+'<span class="mc-u">h</span></div><div class="mc-sub">'+(latSl ? latSl.quality : '')+'</div></div>' +
+    '<div class="mc"><div class="mc-l">'+t('weightCard')+'</div><div class="mc-v">'+dispW+'<span class="mc-u">'+wUnit+'</span></div>'+chg(lat,prev,'weight',true)+'</div>' +
+    '<div class="mc blue"><div class="mc-l">'+t('bodyFatCard')+'</div><div class="mc-v">'+dispBF+'<span class="mc-u">%</span></div>'+chg(lat,prev,'body_fat',true)+'</div>' +
+    '<div class="mc green"><div class="mc-l">'+t('muscleCard')+'</div><div class="mc-v">'+dispMu+'<span class="mc-u">'+wUnit+'</span></div>'+chg(lat,prev,'muscle',false)+'</div>' +
+    '<div class="mc purple"><div class="mc-l">'+t('lastSleepCard')+'</div><div class="mc-v" style="color:'+slC+';font-size:20px">'+(latSl ? latSl.hours.toFixed(1) : '--')+'<span class="mc-u">h</span></div><div class="mc-sub">'+(latSl ? trSleepQ(latSl.quality) : '')+'</div></div>' +
     cycleCard;
 
   renderWChart(curDays); renderHL();
@@ -1275,8 +1919,8 @@ function renderHL() {
     else if (e.type === 'sleep') slH += '<div class="drow"><span class="dtag slp">Sleep</span><span class="dc">'+(e.hours ? e.hours.toFixed(1)+'h' : '')+' / '+e.quality+'</span></div>';
     else if (e.type === 'symptom') syH += '<div class="drow"><span class="dtag sym">Symptoms</span><span class="dc">Mood: '+e.mood+' · Flow: '+e.flow+'</span></div>';
   }
-  var body = mH+eH+slH+syH || '<div style="font-size:11px;color:rgba(255,255,255,0.25)">No entries for this day</div>';
-  el.innerHTML = '<div class="dcard"><div class="dcard-h"><div class="dcard-ico">'+(diff<0?'↓':'↑')+'</div><div><div class="dcard-t">Biggest Change: '+fmt(dp)+' → '+fmt(dt)+'</div><div class="dcard-s">Weight '+(diff>0?'+':'')+diff+'kg</div></div></div><div class="dcard-b">'+body+'</div></div>';
+  var body = mH+eH+slH+syH || '<div style="font-size:11px;color:rgba(255,255,255,0.25)">'+t('noEntriesDay')+'</div>';
+  el.innerHTML = '<div class="dcard"><div class="dcard-h"><div class="dcard-ico">'+(diff<0?'↓':'↑')+'</div><div><div class="dcard-t">'+t('biggestChangeCard')+': '+fmt(dp)+' → '+fmt(dt)+'</div><div class="dcard-s">'+t('weightCard')+' '+(diff>0?'+':'')+diff+'kg</div></div></div><div class="dcard-b">'+body+'</div></div>';
 }
 
 function renderCycleStatus() {
@@ -1287,7 +1931,8 @@ function renderCycleStatus() {
   var inF = dov >= -1 && dov <= 5;
   var avgLen = getAvgCycleLen();
   var dl = periods.length >= 2 ? 'avg of '+periods.length+' periods' : 'manual entry';
-  el.innerHTML = '<div class="dcard rb"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Status</div><div class="dcard-s">'+avgLen+'-day avg · '+dl+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Next Period</span><span class="dc">'+dateStr(cd.next)+' — in <b style="color:var(--peach)">'+Math.abs(dp)+' days</b>'+(dp<0?' (overdue)':'')+'</span></div><div class="drow"><span class="dtag per" style="background:rgba(90,48,128,0.3);color:#c0a0f0;border-color:rgba(90,48,128,0.5)">Ovulation</span><span class="dc">'+dateStr(cd.ovul)+' — in <b style="color:#c0a0f0">'+Math.abs(dov)+' days</b></span></div><div class="drow"><span class="dtag per" style="background:rgba(26,90,138,0.3);color:#6ab4f0;border-color:rgba(26,90,138,0.5)">Fertile</span><span class="dc">'+dateStr(cd.fertStart)+' – '+dateStr(cd.fertEnd)+(inF?' <b style="color:#6ab4f0"> ← you are here</b>':'')+'</span></div></div></div>';
+  var dayWord = lang==='ja'?'日':'days';
+  el.innerHTML = '<div class="dcard rb"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">'+t('cycleStatusCard')+'</div><div class="dcard-s">'+avgLen+(lang==='ja'?'日':'日')+' '+t('avgOfLabel')+' · '+dl+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">'+t('nextPeriodCard2')+'</span><span class="dc">'+dateStr(cd.next)+' — '+t('inDaysLabel')+' <b style="color:var(--peach)">'+Math.abs(dp)+' '+t('daysLabel')+'</b>'+(dp<0?' ('+t('overdueLabel')+')':'')+'</span></div><div class="drow"><span class="dtag per" style="background:rgba(90,48,128,0.3);color:#c0a0f0;border-color:rgba(90,48,128,0.5)">'+t('ovulationCard')+'</span><span class="dc">'+dateStr(cd.ovul)+' — '+t('inDaysLabel')+' <b style="color:#c0a0f0">'+Math.abs(dov)+' '+t('daysLabel')+'</b></span></div><div class="drow"><span class="dtag per" style="background:rgba(26,90,138,0.3);color:#6ab4f0;border-color:rgba(26,90,138,0.5)">'+t('fertileCard')+'</span><span class="dc">'+dateStr(cd.fertStart)+' – '+dateStr(cd.fertEnd)+(inF?' <b style="color:#6ab4f0">'+t('youAreHereLabel')+'</b>':'')+'</span></div></div></div>';
 }
 
 function prevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCycle(); }
@@ -1339,7 +1984,7 @@ function renderCycle() {
     banner.style.display = 'grid';
     var al = getAvgCycleLen();
     var dl = periods.length >= 2 ? 'avg of '+periods.length+' periods' : 'manual';
-    banner.innerHTML = '<div class="cb"><div class="cb-l">Next Period</div><div class="cb-v">'+dateStr(cd.next)+'</div><div class="cb-s">In '+Math.abs(daysUntil(cd.next))+' days · '+dl+'</div></div><div class="cb"><div class="cb-l">Ovulation Est.</div><div class="cb-v" style="color:var(--purple)">'+dateStr(cd.ovul)+'</div><div class="cb-s">Fertile: '+dateStr(cd.fertStart)+'–'+dateStr(cd.fertEnd)+'</div></div>';
+    banner.innerHTML = '<div class="cb"><div class="cb-l">'+t('nextPeriodBanner')+'</div><div class="cb-v">'+dateStr(cd.next)+'</div><div class="cb-s">'+t('inDaysLabel')+' '+Math.abs(daysUntil(cd.next))+' '+t('daysLabel')+' · '+dl+'</div></div><div class="cb"><div class="cb-l">'+t('ovulEstBanner')+'</div><div class="cb-v" style="color:var(--purple)">'+dateStr(cd.ovul)+'</div><div class="cb-s">'+t('fertileBanner')+' '+dateStr(cd.fertStart)+'–'+dateStr(cd.fertEnd)+'</div></div>';
   } else {
     banner.style.display = 'none';
   }
@@ -1352,15 +1997,19 @@ function renderCycleLog() {
   for (var i = 0; i < periods.length; i++) items.push(periods[i]);
   for (var i = 0; i < entries.length; i++) if (entries[i].type === 'symptom') items.push(entries[i]);
   items.sort(function(a,b) { return b.date.localeCompare(a.date); });
-  if (!items.length) { el.innerHTML = '<div class="nd">No cycle data yet.</div>'; return; }
+  if (!items.length) { el.innerHTML = '<div class="nd">'+t('noCycleMsg')+'</div>'; return; }
   var html = '';
   for (var i = 0; i < Math.min(items.length, 12); i++) {
     var r = items[i];
     if (!r.type || r.flow !== undefined) {
-      html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb period">Period</div><div><div class="dem">Flow: '+r.flow+(r.endDate?' · Ends '+fmt(r.endDate):'')+'</div><div class="des">'+(r.symptoms && r.symptoms.join ? r.symptoms.join(', ') : '')+(r.note?' · '+r.note:'')+'</div></div></div></div>';
+      var periodLabel = lang === 'ja' ? '生理' : 'Period';
+    var flowLabel = lang === 'ja' ? '出血量' : 'Flow';
+    var endsLabel = lang === 'ja' ? '終了' : 'Ends';
+    html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb period">'+periodLabel+'</div><div><div class="dem">'+flowLabel+': '+trFlow(r.flow)+(r.endDate?' · '+endsLabel+' '+fmt(r.endDate):'')+'</div><div class="des">'+(r.symptoms && r.symptoms.join ? r.symptoms.map(trSym).join(', ') : '')+(r.note?' · '+r.note:'')+'</div></div></div></div>';
     } else {
-      var symsText = (r.physSyms && r.physSyms.length) ? r.physSyms.join(', ') : 'No physical symptoms';
-      html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb sym">Symptoms</div><div><div class="dem">Mood: '+r.mood+' · Flow: '+r.flow+' · Energy: '+r.energy+'</div><div class="des">'+symsText+'</div></div></div></div>';
+      var symsText2 = (r.physSyms && r.physSyms.length) ? r.physSyms.map(trSym).join(', ') : t('noPhysSym');
+      var moodL = lang==='ja'?'気分':'Mood'; var flowL = lang==='ja'?'出血量':'Flow'; var energyL = lang==='ja'?'エネルギー':'Energy';
+      html += '<div class="dd"><div class="db">'+fmtF(r.date)+'</div><div class="de"><div class="deb sym">'+t('symptoms')+'</div><div><div class="dem">'+moodL+': '+trMood(r.mood)+' · '+flowL+': '+trFlow(r.flow)+' · '+energyL+': '+trEnergy(r.energy)+'</div><div class="des">'+symsText2+'</div></div></div></div>';
     }
   }
   el.innerHTML = html;
@@ -1369,7 +2018,7 @@ function renderCycleLog() {
 function renderInsight() {
   renderSlChart();
   if (bodyData.length < 2) {
-    document.getElementById('trendGrid').innerHTML = '<div class="tp" style="grid-column:1/-1"><div class="nd">Add 2+ measurements to see trends</div></div>';
+    document.getElementById('trendGrid').innerHTML = '<div class="tp" style="grid-column:1/-1"><div class="nd">'+t('add2measMsg')+'</div></div>';
     renderPattern(); return;
   }
   var lose = [], gain = [];
@@ -1390,7 +2039,7 @@ function renderInsight() {
   }
   lose.sort(function(a,b){return a.diff-b.diff;}); gain.sort(function(a,b){return b.diff-a.diff;});
   function tList(arr, cls) {
-    if (!arr.length) return '<div class="nd" style="padding:10px;font-size:12px">No data yet</div>';
+    if (!arr.length) return '<div class="nd" style="padding:10px;font-size:12px">'+t('noDataYet')+'</div>';
     var h = '';
     for (var i = 0; i < Math.min(arr.length,4); i++) {
       var item = arr[i];
@@ -1403,7 +2052,7 @@ function renderInsight() {
     }
     return h;
   }
-  document.getElementById('trendGrid').innerHTML = '<div class="tp"><div class="th lose">↓ Days Weight Dropped</div>'+tList(lose,'lose')+'</div><div class="tp"><div class="th gain">↑ Days Weight Increased</div>'+tList(gain,'gain')+'</div>';
+  document.getElementById('trendGrid').innerHTML = '<div class="tp"><div class="th lose">'+t('dropDaysTitle')+'</div>'+tList(lose,'lose')+'</div><div class="tp"><div class="th gain">'+t('gainDaysTitle')+'</div>'+tList(gain,'gain')+'</div>';
   renderPattern();
 }
 
@@ -1428,7 +2077,8 @@ function renderPattern() {
     var short = 0; for (var i = 0; i < slEnts.length; i++) if (slEnts[i].hours < 6) short++;
     var good = 0; for (var i = 0; i < slEnts.length; i++) if (slEnts[i].hours >= 7 && (slEnts[i].quality === 'Good' || slEnts[i].quality === 'Excellent')) good++;
     var avgColor = parseFloat(avgH) >= 7 ? '#6ad4a0' : parseFloat(avgH) >= 5 ? '#b8963c' : '#e07070';
-    html += '<div class="dcard" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico" style="font-size:9px">AI</div><div><div class="dcard-t">Sleep Pattern</div><div class="dcard-s">Your sleep trends</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag slp">Average</span><span class="dc">Average sleep: <b style="color:'+avgColor+'">'+avgH+' hours</b> (recommended: 7-9h)</span></div><div class="drow"><span class="dtag slp">Short</span><span class="dc">Under 6 hours: <b style="color:'+(short>2?'#e07070':'#6ad4a0')+'">'+short+'</b></span></div><div class="drow"><span class="dtag slp">Good</span><span class="dc">7h+ quality: <b style="color:#6ad4a0">'+good+'</b> nights</span></div></div></div>';
+    var hrWord = lang==='ja'?'時間':'hours'; var nightWord = lang==='ja'?'夜':'nights';
+    html += '<div class="dcard" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico" style="font-size:9px">AI</div><div><div class="dcard-t">'+t('sleepPatternTitle')+'</div><div class="dcard-s">'+t('yourSleepTrends')+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag slp">'+(lang==='ja'?'平均':'Average')+'</span><span class="dc">'+t('avgSleepLabel')+' <b style="color:'+avgColor+'">'+avgH+' '+hrWord+'</b> '+t('recommendedLabel')+'</span></div><div class="drow"><span class="dtag slp">'+(lang==='ja'?'短い':'Short')+'</span><span class="dc">'+t('shortNightsLabel')+' <b style="color:'+(short>2?'#e07070':'#6ad4a0')+'">'+short+'</b></span></div><div class="drow"><span class="dtag slp">'+(lang==='ja'?'良質':'Good')+'</span><span class="dc">'+t('goodNightsLabel')+' <b style="color:#6ad4a0">'+good+'</b> '+nightWord+'</span></div></div></div>';
   }
   if (isFemale) {
     var avgCL = getAvgCycleLen(); var numP = periods.length;
@@ -1452,11 +2102,12 @@ function renderPattern() {
           }
         }
         var tArr = Object.keys(t).map(function(k){return [k,t[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
-        topSymsHtml = '<div class="drow"><span class="dtag per">Symptoms</span><span class="dc">'+tArr.map(function(s){return s[0]+' ('+s[1]+'x)';}).join(', ')+'</span></div>';
+        topSymsHtml = '<div class="drow"><span class="dtag per">'+t('topSymptomsCard')+'</span><span class="dc">'+tArr.map(function(s){return s[0]+' ('+s[1]+'x)';}).join(', ')+'</span></div>';
       }
-      html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div><div class="dcard-s">From your logged periods</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">'+avgCL+' days</b>'+clRange+' from '+numP+' periods</span></div>'+topSymsHtml+'</div></div>';
+      html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">'+t('cycleInsightsTitle')+'</div><div class="dcard-s">'+t('fromPeriodsLabel')+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Avg Cycle</span><span class="dc"><b style="color:var(--peach)">'+avgCL+' days</b>'+clRange+' from '+numP+' periods</span></div>'+topSymsHtml+'</div></div>';
     } else if (numP === 1) {
-      html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">Cycle Insights</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">Progress</span><span class="dc">1 period logged. Log <b style="color:var(--peach)">at least 2</b> to calculate your cycle length.</span></div></div></div>';
+      var progressMsg = lang==='ja' ? '1回記録済み。<b style="color:var(--peach)">2回以上</b>記録するとサイクルが計算されます。' : '1 period logged. Log <b style="color:var(--peach)">at least 2</b> to calculate your cycle length.';
+    html += '<div class="dcard rb" style="margin-top:11px"><div class="dcard-h"><div class="dcard-ico">🌸</div><div><div class="dcard-t">'+t('cycleInsightsTitle')+'</div></div></div><div class="dcard-b"><div class="drow"><span class="dtag per">'+(lang==='ja'?'進捗':'Progress')+'</span><span class="dc">'+progressMsg+'</span></div></div></div>';
     }
   }
   el.innerHTML = html;
